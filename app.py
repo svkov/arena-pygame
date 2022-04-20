@@ -1,5 +1,5 @@
 import pygame
-from src.animated_enemy import AnimatedEnemy
+from src.camera import Camera
 from src.container import Container
 from src.enemy import Enemy
 from src.hud import HUD
@@ -10,8 +10,9 @@ from src.player import Player
 running = True
 
 
-def setup_scene():
-    player = Player((0, 0), 'assets/knight.png', max_hp=100, hp=100)
+def setup_scene(camera):
+
+    player = Player((0, 0), 'assets/knight.png', max_hp=100, hp=100, camera=camera)
     spawn_object(player)
 
     skeleton = Enemy((300, 300), 'assets/skeleton.png', max_hp=100, hp=100)
@@ -49,18 +50,19 @@ def main():
     clock = pygame.time.Clock()
     screen_resolution = (1920, 1080)
     screen = pygame.display.set_mode(screen_resolution)
-    player = setup_scene()
-
+    camera = Camera(0, 0, screen_resolution)
+    player = setup_scene(camera)
     hud = HUD(player)
+
     while running:
         dt = clock.tick(30)
         handle_input_keyboard()
         screen.fill((0, 0, 0))
 
-        game_objects.update(screen=screen, dt=dt)
+        game_objects.update(screen=screen, dt=dt, camera=camera)
         game_objects.draw(screen)
 
-        projectile_objects.update(dt=dt)
+        projectile_objects.update(dt=dt, camera=camera)
         projectile_objects.draw(screen)
 
         for projectile in projectile_objects:

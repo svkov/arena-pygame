@@ -1,6 +1,7 @@
 import pygame
 import numpy as np
 from src.actor import Actor
+from src.camera import Camera
 
 from src.projectile import Projectile
 from src.utils import spawn_projectile
@@ -10,6 +11,7 @@ class Player(Actor):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.camera: Camera = kwargs['camera']
         self.exp = 0
         self.level = 1
         self.exp_to_lvlup = 100
@@ -38,11 +40,12 @@ class Player(Actor):
     def update(self, *args, **kwargs) -> None:
         self.handle_keyboard_input()
         self.handle_mouse_input()
+        self.camera.x = int(self.pos[0])
+        self.camera.y = int(self.pos[1])
         super().update(*args, **kwargs)
 
     def shoot(self):
-        p = Projectile.shoot(self, pygame.mouse.get_pos(),
-                             'assets/snow.png', speed=2)
+        p = Projectile.shoot(self, pygame.mouse.get_pos(), self.camera, 'assets/snow.png', speed=2)
         spawn_projectile(p)
         self.shooted()
 

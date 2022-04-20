@@ -1,4 +1,5 @@
 import pygame
+from src.hud_config import HUDConfig
 
 from src.player import Player
 
@@ -6,10 +7,8 @@ from src.player import Player
 class HUD(pygame.sprite.Sprite):
 
     def __init__(self, player) -> None:
-        self.percent_to_hud = 0.2
-        self.hp_pivot = 0.5
-        self.hp_height = 30
         self.player: Player = player
+        self.hud_config: HUDConfig = HUDConfig()
 
     def update(self, *args, **kwargs):
         screen = kwargs['screen']
@@ -22,43 +21,43 @@ class HUD(pygame.sprite.Sprite):
         self.draw_level(screen, font)
 
     def draw_hud_area(self, screen, resolution):
-        self.x_start = (1 - self.percent_to_hud) * resolution[0]
+        self.x_start = (1 - self.hud_config.percent_to_hud) * resolution[0]
         self.y_start = 0
-        self.width = self.percent_to_hud * resolution[0]
+        self.width = self.hud_config.percent_to_hud * resolution[0]
         self.height = resolution[1]
         pygame.draw.rect(screen, (255, 255, 255),
                          (self.x_start, self.y_start, self.width, self.height))
 
     def draw_hp(self, screen, font):
-        self.hp_y_start = self.hp_pivot * (self.y_start + self.height)
+        self.hp_y_start = self.hud_config.hp_pivot * (self.y_start + self.height)
         self.hp_progress = self.player.hp / self.player.max_hp
         self.draw_progress_bar(
             screen=screen,
             progress=self.hp_progress,
             y_start=self.hp_y_start,
-            height=self.hp_height,
+            height=self.hud_config.hp_height,
             color_back=(255, 0, 0),
             color_front=(0, 255, 0)
         )
         text_content = f'{self.player.hp}/{self.player.max_hp}'
         text_surface = font.render(text_content, False, (255, 255, 255))
         self.draw_text_in_progress_bar(
-            screen, self.hp_y_start, self.hp_height, text_surface)
+            screen, self.hp_y_start, self.hud_config.hp_height, text_surface)
 
     def draw_exp(self, screen: pygame.surface.Surface, font: pygame.font.Font):
-        self.exp_y_start = self.hp_y_start + self.hp_height
+        self.exp_y_start = self.hp_y_start + self.hud_config.hp_height
         self.exp_progress = self.player.exp / self.player.exp_to_lvlup
         self.draw_progress_bar(
             screen=screen,
             progress=self.exp_progress,
             y_start=self.exp_y_start,
-            height=self.hp_height,
+            height=self.hud_config.hp_height,
             color_back='#b8b8b8',
             color_front='#a32cb8'
         )
         text_content = f'{self.player.exp}/{self.player.exp_to_lvlup}'
         text_surface = font.render(text_content, False, (255, 255, 255))
-        self.draw_text_in_progress_bar(screen, self.exp_y_start, self.hp_height, text_surface)
+        self.draw_text_in_progress_bar(screen, self.exp_y_start, self.hud_config.hp_height, text_surface)
 
     def draw_level(self, screen: pygame.surface.Surface, font: pygame.font.Font):
         text_content = f'Level: {self.player.level}'

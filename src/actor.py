@@ -1,4 +1,5 @@
 import numpy as np
+from src.camera import Camera
 from src.damage_recieve_mixin import DamageRecieveMixin
 from src.game_object import GameObject
 from src.hp_bar import HpBar
@@ -9,7 +10,7 @@ class Actor(GameObject, DamageRecieveMixin, ShootCooldownMixin):
 
     def __init__(self, pos, image_path, image_size=None,
                  damage_recieve_cooldown=None, shoot_cooldown=None,
-                 max_hp=None, hp=None):
+                 max_hp=None, hp=None, **kwargs):
         super().__init__(pos, image_path, image_size)
         DamageRecieveMixin.__init__(self, damage_recieve_cooldown)
         ShootCooldownMixin.__init__(self, shoot_cooldown)
@@ -35,12 +36,14 @@ class Actor(GameObject, DamageRecieveMixin, ShootCooldownMixin):
         self.update_cooldown()
         screen = kwargs['screen']
         dt = kwargs['dt']
+        camera: Camera = kwargs['camera']
         self.hp_bar.update(screen)
 
         self.pos = self.pos + self.speed * dt
 
-        self.rect.x = int(self.pos[0])
-        self.rect.y = int(self.pos[1])
+        new_pos = camera.to_screen_coord(self.pos)
+        self.rect.x = int(new_pos[0])
+        self.rect.y = int(new_pos[1])
 
     def on_collision(self, obj):
         if self.can_recieve_damage:
