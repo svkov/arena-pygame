@@ -37,7 +37,7 @@ class Actor(GameObject, DamageRecieveMixin, ShootCooldownMixin):
         screen = kwargs['screen']
         dt = kwargs['dt']
         camera: Camera = kwargs['camera']
-        self.hp_bar.update(screen)
+        self.hp_bar.update(screen, camera)
 
         self.pos = self.pos + self.speed * dt
 

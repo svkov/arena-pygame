@@ -17,7 +17,7 @@ class Camera:
         return np.array(self.get_pos())
 
     def to_screen_coord(self, pos):
-        return np.array(pos) - self.get_pos_arr() + self.screen_resolution // 2
+        return np.array(pos) - self.get_pos_arr() + self.screen_resolution // 2 - 64
 
     def to_world_coord(self, pos):
-        return np.array(pos) + self.get_pos_arr() - self.screen_resolution // 2
+        return np.array(pos) + self.get_pos_arr() - self.screen_resolution // 2 - 64
