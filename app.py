@@ -1,4 +1,5 @@
 import pygame
+from src.animated_enemy import AnimatedEnemy
 from src.camera import Camera
 from src.container import Container
 from src.enemy import Enemy
@@ -24,9 +25,9 @@ def setup_scene(camera):
     chest = Container((500, 500), 'assets/chest.png', max_hp=100, hp=50)
     spawn_object(chest)
 
-    # anim_skeleton = AnimatedEnemy(
-    #     (600, 600), 'assets/skeleton_walk.png', max_hp=100, hp=100, image_size=(1536, 512))
-    # spawn_object(anim_skeleton)
+    anim_skeleton = AnimatedEnemy(
+        (600, 600), 'assets/skeleton_walk.png', max_hp=100, hp=100, image_size=(1536, 512))
+    spawn_object(anim_skeleton)
 
     return player
 
