@@ -75,6 +75,10 @@ class AnimationManager:
     def current_animation(self):
         return self.state_to_animation[self._state]
 
+    @property
+    def image(self):
+        return self.current_animation.get_image()
+
     def set_state(self, new_state):
         self._state = new_state
         self.current_animation.reset_animation()

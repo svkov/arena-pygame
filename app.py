@@ -6,6 +6,7 @@ from src.camera import Camera
 from src.container import Container
 from src.enemy import Enemy
 from src.hud import HUD
+from src.skeleton import generate_skeleton_states
 from src.utils import spawn_object
 from src.global_objects import game_objects, projectile_objects
 from src.player import Player
@@ -21,7 +22,7 @@ def load_sprites(path_to_assets) -> Dict[str, pygame.surface.Surface]:
             sprites[sprite_name] = pygame.image.load(path).convert_alpha()
     return sprites
 
-def setup_scene(camera, sprites):
+def setup_scene(camera, sprites, fps):
 
     player = Player((0, 0), sprites['knight'], max_hp=100, hp=100, camera=camera, projectile_image=sprites['snow'])
     spawn_object(player)
@@ -35,9 +36,11 @@ def setup_scene(camera, sprites):
     chest = Container((500, 500), sprites['chest'], max_hp=100, hp=50)
     spawn_object(chest)
 
-    # anim_skeleton = AnimatedEnemy(
-    #     (600, 600), sprites['skeleton_walk'], max_hp=100, hp=100, image_size=(1536, 512))
-    # spawn_object(anim_skeleton)
+    skeleton_states = generate_skeleton_states(sprites, fps)
+
+    anim_skeleton = AnimatedEnemy((600, 600), sprites['skeleton'], max_hp=100, hp=100, image_size=(
+        1536, 512), animation_states=skeleton_states, projectile_image=sprites['snow'])
+    spawn_object(anim_skeleton)
 
     return player
 
@@ -57,17 +60,18 @@ def main():
     pygame.display.set_caption("Arena")
     pygame.font.init()
     my_font = pygame.font.SysFont(pygame.font.get_default_font(), 28)
+    fps = 30
 
     clock = pygame.time.Clock()
     screen_resolution = (1920, 1080)
     screen = pygame.display.set_mode(screen_resolution)
     sprites = load_sprites('assets')
     camera = Camera(0, 0, screen_resolution)
-    player = setup_scene(camera, sprites)
+    player = setup_scene(camera, sprites, fps)
     hud = HUD(player)
 
     while running:
-        dt = clock.tick(30)
+        dt = clock.tick(fps)
         handle_input_keyboard()
         screen.fill((0, 0, 0))
 
