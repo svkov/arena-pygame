@@ -38,8 +38,9 @@ def setup_scene(camera, sprites, fps):
 
     skeleton_states = generate_skeleton_states(sprites, fps)
 
-    anim_skeleton = AnimatedEnemy((600, 600), sprites['skeleton'], max_hp=100, hp=100, image_size=(
-        1536, 512), animation_states=skeleton_states, projectile_image=sprites['snow'])
+    anim_skeleton = AnimatedEnemy((600, 600), sprites['skeleton'],
+                                  max_hp=100, hp=100, animation_states=skeleton_states,
+                                  projectile_image=sprites['snow'])
     spawn_object(anim_skeleton)
 
     return player

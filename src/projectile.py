@@ -35,15 +35,15 @@ class Projectile(GameObject):
         pass
 
     @classmethod
-    def shoot(cls, owner_obj, target_pos, camera, image, speed=1, image_size=None):
+    def shoot(cls, owner_obj, target_pos, camera: Camera, image, speed=1, image_size=None):
         if image_size is None:
             image_size = (32, 32)
-        target_pos = np.array(target_pos) - np.array(image_size) / 2
-        target_world_pos = camera.to_world_coord(target_pos)
+        target_pos = np.array(target_pos)
+        target_world_pos = camera.to_world_coord(target_pos) - np.array(image_size) / 2
         owner_world_pos = camera.to_world_coord(owner_obj.center)
         direction = np.array(target_world_pos) - owner_world_pos
         direction = direction / np.linalg.norm(direction)
-        pos = owner_world_pos + direction * np.array(owner_obj.image_size) + direction * np.array(image_size)
+        pos = owner_world_pos + direction * (np.array(owner_obj.image_size) + np.array(image_size))
         speed_vector = direction * speed
         return cls(pos, speed_vector, image=image,
                    image_size=image_size, owner=owner_obj)
