@@ -21,7 +21,7 @@ class Animation:
         self.times_to_play = times_to_play
         if times_to_play is not None:
             self.times_to_play = times_to_play
-        self.is_playing = True
+        self._is_playing = True
 
     @property
     def images_in_anim(self):
@@ -54,7 +54,7 @@ class Animation:
             self.sprites[i] = pygame.transform.scale(sprite, self.scene_image_size)
 
     def update(self):
-        if self.is_playing:
+        if self._is_playing:
             self._counter += 1
             if self.one_frame_counter == self._counter:
                 self.next_image()
@@ -68,8 +68,14 @@ class Animation:
             self.stop_play_if_enough()
 
     def stop_play_if_enough(self):
+        if self.times_to_play is None:
+            return
         if self.times_played == self.times_to_play:
-            self.is_playing = False
+            self._is_playing = False
+
+    @property
+    def is_playing(self):
+        return self._is_playing and self.times_to_play is not None
 
     def get_image(self):
         return self.sprites[self.image_counter]
@@ -78,14 +84,16 @@ class Animation:
         self._counter = 0
         self.times_played = 0
         self.image_counter = 0
-        self.is_playing = True
+        self._is_playing = True
 
 
 class AnimationManager:
 
-    def __init__(self, state_to_animation: Dict[int, Animation]) -> None:
+    def __init__(self, state_to_animation: Dict[int, Animation], default_state) -> None:
         self.state_to_animation = state_to_animation
         self._state = list(self.state_to_animation.keys())[0]
+        self.next_state = self._state
+        self.default_state = default_state
 
     @property
     def current_animation(self):
@@ -96,10 +104,16 @@ class AnimationManager:
         return self.current_animation.get_image()
 
     def set_state(self, new_state):
-        if new_state == self._state and self.current_animation.is_playing:
+        if self.current_animation.is_playing:
+            self.next_state = new_state
+            return
+        if new_state == self._state:
             return
         self._state = new_state
         self.current_animation.reset_animation()
 
     def update(self):
+        if not self.current_animation.is_playing:
+            self.set_state(self.next_state)
+            self.next_state = self.default_state
         self.current_animation.update()
