@@ -10,11 +10,12 @@ class Actor(GameObject, DamageRecieveMixin, ShootCooldownMixin):
 
     def __init__(self, pos, image_path, image_size=None,
                  damage_recieve_cooldown=None, shoot_cooldown=None,
-                 max_hp=None, hp=None, **kwargs):
+                 max_hp=None, hp=None, projectile_image=None, **kwargs):
         super().__init__(pos, image_path, image_size)
         DamageRecieveMixin.__init__(self, damage_recieve_cooldown)
         ShootCooldownMixin.__init__(self, shoot_cooldown)
         self.speed = np.array([0, 0])
+        self.projectile_image = projectile_image
         self.max_hp = max_hp
         self.hp = hp
         self.hp_bar = HpBar(self)

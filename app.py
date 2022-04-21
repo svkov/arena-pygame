@@ -1,3 +1,5 @@
+import os
+from typing import Dict
 import pygame
 from src.animated_enemy import AnimatedEnemy
 from src.camera import Camera
@@ -10,24 +12,32 @@ from src.player import Player
 
 running = True
 
+def load_sprites(path_to_assets) -> Dict[str, pygame.surface.Surface]:
+    sprites = {}
+    for asset in os.listdir(path_to_assets):
+        if '.png' in asset:
+            path = os.path.join(path_to_assets, asset)
+            sprite_name = os.path.splitext(asset)[0]
+            sprites[sprite_name] = pygame.image.load(path).convert_alpha()
+    return sprites
 
-def setup_scene(camera):
+def setup_scene(camera, sprites):
 
-    player = Player((0, 0), 'assets/knight.png', max_hp=100, hp=100, camera=camera)
+    player = Player((0, 0), sprites['knight'], max_hp=100, hp=100, camera=camera, projectile_image=sprites['snow'])
     spawn_object(player)
 
-    skeleton = Enemy((300, 300), 'assets/skeleton.png', max_hp=100, hp=100)
+    skeleton = Enemy((300, 300), sprites['skeleton'], max_hp=100, hp=100, projectile_image=sprites['snow'])
     spawn_object(skeleton)
 
-    skeleton = Enemy((500, 300), 'assets/skeleton.png', max_hp=100, hp=100)
+    skeleton = Enemy((500, 300), sprites['skeleton'], max_hp=100, hp=100, projectile_image=sprites['snow'])
     spawn_object(skeleton)
 
-    chest = Container((500, 500), 'assets/chest.png', max_hp=100, hp=50)
+    chest = Container((500, 500), sprites['chest'], max_hp=100, hp=50)
     spawn_object(chest)
 
-    anim_skeleton = AnimatedEnemy(
-        (600, 600), 'assets/skeleton_walk.png', max_hp=100, hp=100, image_size=(1536, 512))
-    spawn_object(anim_skeleton)
+    # anim_skeleton = AnimatedEnemy(
+    #     (600, 600), sprites['skeleton_walk'], max_hp=100, hp=100, image_size=(1536, 512))
+    # spawn_object(anim_skeleton)
 
     return player
 
@@ -51,8 +61,9 @@ def main():
     clock = pygame.time.Clock()
     screen_resolution = (1920, 1080)
     screen = pygame.display.set_mode(screen_resolution)
+    sprites = load_sprites('assets')
     camera = Camera(0, 0, screen_resolution)
-    player = setup_scene(camera)
+    player = setup_scene(camera, sprites)
     hud = HUD(player)
 
     while running:
@@ -60,7 +71,7 @@ def main():
         handle_input_keyboard()
         screen.fill((0, 0, 0))
 
-        game_objects.update(screen=screen, dt=dt, camera=camera)
+        game_objects.update(screen=screen, dt=dt, camera=camera, sprites=sprites)
         game_objects.draw(screen)
 
         projectile_objects.update(dt=dt, camera=camera)

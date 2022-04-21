@@ -14,7 +14,7 @@ class Enemy(Actor):
     def shoot(self, camera: Camera):
         if self.can_shoot:
             self.shooted()
-            p = Projectile.shoot(self, camera.get_pos(), camera, 'assets/snow.png', speed=1)
+            p = Projectile.shoot(self, camera.get_pos(), camera, self.projectile_image, speed=1)
             spawn_projectile(p)
 
     def update(self, *args, **kwargs) -> None:

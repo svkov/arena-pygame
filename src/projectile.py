@@ -9,11 +9,11 @@ class Projectile(GameObject):
     def __init__(self,
                  pos,
                  speed,
-                 image_path,
+                 image,
                  image_size=None,
                  range=500,
                  owner=None):
-        super().__init__(pos, image_path, image_size)
+        super().__init__(pos, image, image_size)
         self.speed = np.array(speed)
         self.dist = 0
         self.range = range
@@ -35,7 +35,7 @@ class Projectile(GameObject):
         pass
 
     @classmethod
-    def shoot(cls, owner_obj, target_pos, camera, image_path, speed=1, image_size=None):
+    def shoot(cls, owner_obj, target_pos, camera, image, speed=1, image_size=None):
         if image_size is None:
             image_size = (32, 32)
         target_pos = np.array(target_pos) - np.array(image_size) / 2
@@ -45,7 +45,7 @@ class Projectile(GameObject):
         direction = direction / np.linalg.norm(direction)
         pos = owner_world_pos + direction * np.array(owner_obj.image_size) + direction * np.array(image_size)
         speed_vector = direction * speed
-        return cls(pos, speed_vector, image_path=image_path,
+        return cls(pos, speed_vector, image=image,
                    image_size=image_size, owner=owner_obj)
 
     @property

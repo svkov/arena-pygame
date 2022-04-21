@@ -1,6 +1,6 @@
 import pygame
 
-from typing import List
+from typing import Dict, List
 
 from src.utils import crop_spritesheet_by_image_size, crop_spritesheet_by_matrix_size
 
@@ -14,12 +14,24 @@ class Animation:
         self.resize_sprites()
         self._counter = 0
         self.image_counter = 0
-        self.images_in_anim = len(self.sprites)
         self.duration = duration
-        self.one_frame_duration = self.duration / self.images_in_anim
         self.fps = fps
-        self.one_frame_counter = int(self.one_frame_duration * self.fps)
-        self.total_frames_to_play = self.duration * self.fps
+
+    @property
+    def images_in_anim(self):
+        return len(self.sprites)
+
+    @property
+    def one_frame_duration(self):
+        return self.duration / self.images_in_anim
+
+    @property
+    def one_frame_counter(self):
+        return int(self.one_frame_duration * self.fps)
+
+    @property
+    def total_frames_to_play(self):
+        return self.duration * self.fps
 
     def get_sprites(self, spritesheet, image_size, matrix_size):
         sprites = []
@@ -48,3 +60,24 @@ class Animation:
 
     def get_image(self):
         return self.sprites[self.image_counter]
+
+    def reset_animation(self):
+        self._counter = 0
+
+
+class AnimationManager:
+
+    def __init__(self, state_to_animation: Dict[int, Animation]) -> None:
+        self.state_to_animation = state_to_animation
+        self._state = list(self.state_to_animation.keys())[0]
+
+    @property
+    def current_animation(self):
+        return self.state_to_animation[self._state]
+
+    def set_state(self, new_state):
+        self._state = new_state
+        self.current_animation.reset_animation()
+
+    def update(self):
+        self.current_animation.update()

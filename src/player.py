@@ -45,7 +45,7 @@ class Player(Actor):
         super().update(*args, **kwargs)
 
     def shoot(self):
-        p = Projectile.shoot(self, pygame.mouse.get_pos(), self.camera, 'assets/snow.png', speed=2)
+        p = Projectile.shoot(self, pygame.mouse.get_pos(), self.camera, self.projectile_image, speed=2)
         spawn_projectile(p)
         self.shooted()
 

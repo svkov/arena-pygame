@@ -41,7 +41,6 @@ def crop_by_matrix_size_and_image_size(image: pygame.surface.Surface,
             y = col * height
             y = y - 1 if y > 0 else y
             rect = [x, y, width - 1, height - 1]
-            print(rect, image.get_size())
             sprite = image.subsurface(rect)
             sprites.append(sprite)
     return sprites
