@@ -4,7 +4,6 @@ import pygame
 from src.animated_enemy import AnimatedEnemy
 from src.camera import Camera
 from src.container import Container
-from src.enemy import Enemy
 from src.hud import HUD
 from src.skeleton import generate_skeleton_states
 from src.utils import spawn_object
@@ -27,18 +26,18 @@ def setup_scene(camera, sprites, fps):
     player = Player((0, 0), sprites['knight'], max_hp=100, hp=100, camera=camera, projectile_image=sprites['snow'])
     spawn_object(player)
 
-    skeleton = Enemy((300, 300), sprites['skeleton'], max_hp=100, hp=100, projectile_image=sprites['snow'])
-    spawn_object(skeleton)
+    # skeleton = Enemy((300, 300), sprites['skeleton'], max_hp=100, hp=100, projectile_image=sprites['snow'])
+    # spawn_object(skeleton)
 
-    skeleton = Enemy((500, 300), sprites['skeleton'], max_hp=100, hp=100, projectile_image=sprites['snow'])
-    spawn_object(skeleton)
+    # skeleton = Enemy((500, 300), sprites['skeleton'], max_hp=100, hp=100, projectile_image=sprites['snow'])
+    # spawn_object(skeleton)
 
     chest = Container((500, 500), sprites['chest'], max_hp=100, hp=50)
     spawn_object(chest)
 
     skeleton_states = generate_skeleton_states(sprites, fps)
 
-    anim_skeleton = AnimatedEnemy((600, 600), sprites['skeleton'],
+    anim_skeleton = AnimatedEnemy((200, 300), sprites['skeleton'],
                                   max_hp=100, hp=100, animation_states=skeleton_states,
                                   projectile_image=sprites['snow'])
     spawn_object(anim_skeleton)

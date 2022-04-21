@@ -6,7 +6,8 @@ from src.utils import crop_spritesheet_by_image_size, crop_spritesheet_by_matrix
 
 class Animation:
 
-    def __init__(self, spritesheet, duration, fps, image_size=None, matrix_size=None, scene_image_size=None):
+    def __init__(self, spritesheet, duration, fps,
+                 image_size=None, matrix_size=None, scene_image_size=None, times_to_play=None):
         if scene_image_size is None:
             scene_image_size = (128, 128)
         self.scene_image_size = scene_image_size
@@ -16,6 +17,11 @@ class Animation:
         self.image_counter = 0
         self.duration = duration
         self.fps = fps
+        self.times_played = 0
+        self.times_to_play = times_to_play
+        if times_to_play is not None:
+            self.times_to_play = times_to_play
+        self.is_playing = True
 
     @property
     def images_in_anim(self):
@@ -48,21 +54,31 @@ class Animation:
             self.sprites[i] = pygame.transform.scale(sprite, self.scene_image_size)
 
     def update(self):
-        self._counter += 1
-        if self.one_frame_counter == self._counter:
-            self.next_image()
-            self._counter = 0
+        if self.is_playing:
+            self._counter += 1
+            if self.one_frame_counter == self._counter:
+                self.next_image()
+                self._counter = 0
 
     def next_image(self):
         self.image_counter += 1
         if self.image_counter == self.images_in_anim:
             self.image_counter = 0
+            self.times_played += 1
+            self.stop_play_if_enough()
+
+    def stop_play_if_enough(self):
+        if self.times_played == self.times_to_play:
+            self.is_playing = False
 
     def get_image(self):
         return self.sprites[self.image_counter]
 
     def reset_animation(self):
         self._counter = 0
+        self.times_played = 0
+        self.image_counter = 0
+        self.is_playing = True
 
 
 class AnimationManager:
@@ -80,6 +96,8 @@ class AnimationManager:
         return self.current_animation.get_image()
 
     def set_state(self, new_state):
+        if new_state == self._state and self.current_animation.is_playing:
+            return
         self._state = new_state
         self.current_animation.reset_animation()
 
