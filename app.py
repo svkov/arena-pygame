@@ -4,6 +4,7 @@ import pygame
 from src.animated_enemy import AnimatedEnemy
 from src.camera import Camera
 from src.container import Container
+from src.game_object import GameObject
 from src.hud import HUD
 from src.skeleton import generate_skeleton_states
 from src.utils import spawn_object
@@ -22,8 +23,11 @@ def load_sprites(path_to_assets) -> Dict[str, pygame.surface.Surface]:
     return sprites
 
 def setup_scene(camera, sprites, fps):
+    background = GameObject((0, 0), sprites['background'], (8000, 8000))
+    spawn_object(background)
 
-    player = Player((0, 0), sprites['knight'], max_hp=100, hp=100, camera=camera, projectile_image=sprites['snow'])
+    player = Player(background.center, sprites['knight'], max_hp=100, hp=100,
+                    camera=camera, projectile_image=sprites['snow'])
     spawn_object(player)
 
     # skeleton = Enemy((300, 300), sprites['skeleton'], max_hp=100, hp=100, projectile_image=sprites['snow'])
@@ -37,7 +41,7 @@ def setup_scene(camera, sprites, fps):
 
     skeleton_states = generate_skeleton_states(sprites, fps)
 
-    anim_skeleton = AnimatedEnemy((200, 300), sprites['skeleton'],
+    anim_skeleton = AnimatedEnemy((player.pos[0] + 200, player.pos[1] + 300), sprites['skeleton'],
                                   max_hp=100, hp=100, animation_states=skeleton_states,
                                   projectile_image=sprites['snow'])
     spawn_object(anim_skeleton)

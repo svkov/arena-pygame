@@ -17,6 +17,12 @@ class GameObject(pygame.sprite.Sprite):
         self.rect.x = self.pos[0]
         self.rect.y = self.pos[1]
 
+    def update(self, *args, **kwargs):
+        camera = kwargs['camera']
+        new_pos = camera.to_screen_coord(self.pos)
+        self.rect.x = int(new_pos[0])
+        self.rect.y = int(new_pos[1])
+
     @property
     def center(self):
         return (self.rect.x + self.image_size[0] // 2, self.rect.y + self.image_size[1] // 2)
