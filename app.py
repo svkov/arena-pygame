@@ -31,7 +31,7 @@ def setup_scene(camera, sprites, fps):
                     camera=camera, projectile_image=sprites['snow'])
     spawn_object(player)
 
-    for alpha in np.linspace(0, 2 * np.pi, 100):
+    for alpha in np.linspace(0, 2 * np.pi, 500):
         pos = background.center
         new_pos_x = pos[0] + np.sin(alpha) * 3600
         new_pos_y = pos[1] + np.cos(alpha) * 3600
