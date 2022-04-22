@@ -23,21 +23,42 @@ def load_sprites(path_to_assets) -> Dict[str, pygame.surface.Surface]:
             sprites[sprite_name] = pygame.image.load(path).convert_alpha()
     return sprites
 
+def setup_arena(background, radius, sprites):
+    for alpha in np.linspace(0, 2 * np.pi, 500):
+        pos = background.center
+        new_pos_x = pos[0] + np.sin(alpha) * radius
+        new_pos_y = pos[1] + np.cos(alpha) * radius
+        pos = [new_pos_x, new_pos_y]
+        wall = GameObject(pos, sprites['wall_without_contour'], (512, 512))
+        spawn_static_object(wall)
+
+def setup_object_randomly(background, radius, sprites, n_sample=15, sprite_name='cactus', image_size=None):    
+    if image_size is None:
+        image_size = (128, 256)
+    top_right_x = background.center[0] + np.sin(np.pi / 4) * radius
+    top_right_y = background.center[1] + np.cos(np.pi / 4) * radius
+    bottom_left_x = background.center[0] - np.sin(np.pi / 4) * radius
+    bottom_left_y = background.center[1] - np.cos(np.pi / 4) * radius
+    object_pos_x = np.random.randint(bottom_left_x, top_right_x, size=(n_sample, 1))
+    object_pos_y = np.random.randint(bottom_left_y, top_right_y, size=(n_sample, 1))
+    object_poses = np.hstack((object_pos_x, object_pos_y))
+    for object_i in range(n_sample):
+        pos = object_poses[object_i]
+        obj = GameObject(pos, sprites[sprite_name], image_size=image_size)
+        spawn_static_object(obj)
+
+
 def setup_scene(camera, sprites, fps):
     background = GameObject((0, 0), sprites['background'], (8000, 8000))
+    radius = 3500
     spawn_background(background)
 
     player = Player(background.center, sprites['knight'], max_hp=100, hp=100,
                     camera=camera, projectile_image=sprites['snow'])
     spawn_object(player)
-
-    for alpha in np.linspace(0, 2 * np.pi, 500):
-        pos = background.center
-        new_pos_x = pos[0] + np.sin(alpha) * 3600
-        new_pos_y = pos[1] + np.cos(alpha) * 3600
-        pos = [new_pos_x, new_pos_y]
-        wall = GameObject(pos, sprites['wall_without_contour'], (512, 512))
-        spawn_static_object(wall)
+    setup_arena(background, radius, sprites)
+    setup_object_randomly(background, radius, sprites)
+    setup_object_randomly(background, radius, sprites, n_sample=10, sprite_name='tombstone')
 
     chest = Container((500, 500), sprites['chest'], max_hp=100, hp=50)
     spawn_object(chest)
