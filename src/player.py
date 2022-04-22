@@ -38,11 +38,20 @@ class Player(Actor):
             self.shoot()
 
     def update(self, *args, **kwargs) -> None:
+        screen = kwargs['screen']
+        dt = kwargs['dt']
+        camera: Camera = kwargs['camera']
         self.handle_keyboard_input()
         self.handle_mouse_input()
-        self.camera.x = int(self.pos[0])
-        self.camera.y = int(self.pos[1])
-        super().update(*args, **kwargs)
+        self.update_cooldown()
+
+        self.move_world_coord(dt)
+        self.update_camera_pos(camera)
+        self.update_screen_coord(screen, camera)
+
+    def update_camera_pos(self, camera: Camera):
+        camera.x = self.pos[0]
+        camera.y = self.pos[1]
 
     def shoot(self):
         p = Projectile.shoot(self, pygame.mouse.get_pos(), self.camera, self.projectile_image, speed=2)

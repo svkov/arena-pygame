@@ -38,11 +38,15 @@ class Actor(GameObject, DamageRecieveMixin, ShootCooldownMixin):
         screen = kwargs['screen']
         dt = kwargs['dt']
         camera: Camera = kwargs['camera']
-        self.hp_bar.update(screen, camera)
+        self.move_world_coord(dt)
+        self.update_screen_coord(screen, camera)
 
+    def move_world_coord(self, dt):
         self.pos = self.pos + self.speed * dt
 
-        super().update(*args, **kwargs)
+    def update_screen_coord(self, screen, camera: Camera):
+        self.hp_bar.update(screen, camera)
+        super().update_screen_coord(camera)
 
     def on_collision(self, obj):
         if self.can_recieve_damage:

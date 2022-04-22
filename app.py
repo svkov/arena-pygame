@@ -30,7 +30,7 @@ def setup_arena(background, radius, sprites):
         new_pos_x = pos[0] + np.sin(alpha) * radius
         new_pos_y = pos[1] + np.cos(alpha) * radius
         pos = [new_pos_x, new_pos_y]
-        wall = GameObject(pos, sprites['wall_without_contour'], (512, 512))
+        wall = StaticObject(pos, sprites['wall_without_contour'], (512, 512))
         spawn_static_object(wall)
 
 def setup_object_randomly(background, radius, sprites, n_sample=15, sprite_name='cactus', image_size=None):
@@ -102,7 +102,6 @@ def main():
     while running:
         dt = clock.tick(fps)
         handle_input_keyboard()
-        screen.fill((0, 0, 0))
 
         update_kwargs = {
             'screen': screen,
@@ -111,18 +110,15 @@ def main():
             'sprites': sprites
         }
 
-        background_group.update(**update_kwargs)
-
-        static_objects.update(**update_kwargs)
-
         game_objects.update(**update_kwargs)
-
+        background_group.update(**update_kwargs)
+        static_objects.update(**update_kwargs)
         projectile_objects.update(**update_kwargs)
 
         for game_obj in game_objects:
             collided_objects = pygame.sprite.spritecollide(game_obj, static_objects, False)
             for collided in collided_objects:
-                collided.on_collision(game_obj)
+                collided.on_collision(game_obj, dt)
 
         for static in static_objects:
             pygame.sprite.spritecollide(static, projectile_objects, True)
@@ -134,10 +130,12 @@ def main():
                     projectile.on_collision(game_obj)
                     game_obj.on_collision(projectile)
 
+        screen.fill((0, 0, 0))
         background_group.draw(screen)
         static_objects.draw(screen)
         game_objects.draw(screen)
         projectile_objects.draw(screen)
+
         hud.update(screen=screen, screen_resolution=screen_resolution, font=my_font)
         pygame.display.flip()
 

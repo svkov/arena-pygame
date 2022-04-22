@@ -19,6 +19,9 @@ class GameObject(pygame.sprite.Sprite):
 
     def update(self, *args, **kwargs):
         camera = kwargs['camera']
+        self.update_screen_coord(camera)
+
+    def update_screen_coord(self, camera):
         new_pos = camera.to_screen_coord(self.pos)
         self.rect.x = int(new_pos[0])
         self.rect.y = int(new_pos[1])
@@ -26,6 +29,38 @@ class GameObject(pygame.sprite.Sprite):
     @property
     def center(self):
         return (self.rect.x + self.image_size[0] // 2, self.rect.y + self.image_size[1] // 2)
+
+    @property
+    def pos_right(self):
+        return int(self.pos[0] + self.image_size[0])
+
+    @pos_right.setter
+    def pos_right(self, value):
+        self.pos[0] = value - self.image_size[0]
+
+    @property
+    def pos_left(self):
+        return int(self.pos[0])
+
+    @pos_left.setter
+    def pos_left(self, value):
+        self.pos[0] = value
+
+    @property
+    def pos_top(self):
+        return int(self.pos[1])
+
+    @pos_top.setter
+    def pos_top(self, value):
+        self.pos[1] = value
+
+    @property
+    def pos_bottom(self):
+        return int(self.pos[1] + self.image_size[1])
+
+    @pos_bottom.setter
+    def pos_bottom(self, value):
+        self.pos[1] = value - self.image_size[1]
 
     def on_collision(self, obj):
         pass
