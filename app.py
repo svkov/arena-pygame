@@ -1,5 +1,6 @@
 import os
 from typing import Dict
+import numpy as np
 import pygame
 from src.animated_enemy import AnimatedEnemy
 from src.camera import Camera
@@ -7,8 +8,8 @@ from src.container import Container
 from src.game_object import GameObject
 from src.hud import HUD
 from src.skeleton import generate_skeleton_states
-from src.utils import spawn_object
-from src.global_objects import game_objects, projectile_objects
+from src.utils import spawn_background, spawn_object, spawn_static_object, background_group
+from src.global_objects import game_objects, projectile_objects, static_objects
 from src.player import Player
 
 running = True
@@ -24,17 +25,19 @@ def load_sprites(path_to_assets) -> Dict[str, pygame.surface.Surface]:
 
 def setup_scene(camera, sprites, fps):
     background = GameObject((0, 0), sprites['background'], (8000, 8000))
-    spawn_object(background)
+    spawn_background(background)
 
     player = Player(background.center, sprites['knight'], max_hp=100, hp=100,
                     camera=camera, projectile_image=sprites['snow'])
     spawn_object(player)
 
-    # skeleton = Enemy((300, 300), sprites['skeleton'], max_hp=100, hp=100, projectile_image=sprites['snow'])
-    # spawn_object(skeleton)
-
-    # skeleton = Enemy((500, 300), sprites['skeleton'], max_hp=100, hp=100, projectile_image=sprites['snow'])
-    # spawn_object(skeleton)
+    for alpha in np.linspace(0, 2 * np.pi, 100):
+        pos = background.center
+        new_pos_x = pos[0] + np.sin(alpha) * 3600
+        new_pos_y = pos[1] + np.cos(alpha) * 3600
+        pos = [new_pos_x, new_pos_y]
+        wall = GameObject(pos, sprites['wall_without_contour'], (512, 512))
+        spawn_static_object(wall)
 
     chest = Container((500, 500), sprites['chest'], max_hp=100, hp=50)
     spawn_object(chest)
@@ -79,10 +82,23 @@ def main():
         handle_input_keyboard()
         screen.fill((0, 0, 0))
 
-        game_objects.update(screen=screen, dt=dt, camera=camera, sprites=sprites)
+        update_kwargs = {
+            'screen': screen,
+            'dt': dt,
+            'camera': camera,
+            'sprites': sprites
+        }
+
+        background_group.update(**update_kwargs)
+        background_group.draw(screen)
+
+        static_objects.update(**update_kwargs)
+        static_objects.draw(screen)
+
+        game_objects.update(**update_kwargs)
         game_objects.draw(screen)
 
-        projectile_objects.update(dt=dt, camera=camera)
+        projectile_objects.update(**update_kwargs)
         projectile_objects.draw(screen)
 
         for projectile in projectile_objects:
