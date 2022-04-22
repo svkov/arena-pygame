@@ -8,6 +8,7 @@ from src.container import Container
 from src.game_object import GameObject
 from src.hud import HUD
 from src.skeleton import generate_skeleton_states
+from src.static_object import StaticObject
 from src.utils import spawn_background, spawn_object, spawn_static_object, background_group
 from src.global_objects import game_objects, projectile_objects, static_objects
 from src.player import Player
@@ -32,7 +33,7 @@ def setup_arena(background, radius, sprites):
         wall = GameObject(pos, sprites['wall_without_contour'], (512, 512))
         spawn_static_object(wall)
 
-def setup_object_randomly(background, radius, sprites, n_sample=15, sprite_name='cactus', image_size=None):    
+def setup_object_randomly(background, radius, sprites, n_sample=15, sprite_name='cactus', image_size=None):
     if image_size is None:
         image_size = (128, 256)
     top_right_x = background.center[0] + np.sin(np.pi / 4) * radius
@@ -44,7 +45,7 @@ def setup_object_randomly(background, radius, sprites, n_sample=15, sprite_name=
     object_poses = np.hstack((object_pos_x, object_pos_y))
     for object_i in range(n_sample):
         pos = object_poses[object_i]
-        obj = GameObject(pos, sprites[sprite_name], image_size=image_size)
+        obj = StaticObject(pos, sprites[sprite_name], image_size=image_size)
         spawn_static_object(obj)
 
 
@@ -111,16 +112,20 @@ def main():
         }
 
         background_group.update(**update_kwargs)
-        background_group.draw(screen)
 
         static_objects.update(**update_kwargs)
-        static_objects.draw(screen)
 
         game_objects.update(**update_kwargs)
-        game_objects.draw(screen)
 
         projectile_objects.update(**update_kwargs)
-        projectile_objects.draw(screen)
+
+        for game_obj in game_objects:
+            collided_objects = pygame.sprite.spritecollide(game_obj, static_objects, False)
+            for collided in collided_objects:
+                collided.on_collision(game_obj)
+
+        for static in static_objects:
+            pygame.sprite.spritecollide(static, projectile_objects, True)
 
         for projectile in projectile_objects:
             for game_obj in game_objects:
@@ -129,6 +134,10 @@ def main():
                     projectile.on_collision(game_obj)
                     game_obj.on_collision(projectile)
 
+        background_group.draw(screen)
+        static_objects.draw(screen)
+        game_objects.draw(screen)
+        projectile_objects.draw(screen)
         hud.update(screen=screen, screen_resolution=screen_resolution, font=my_font)
         pygame.display.flip()
 
