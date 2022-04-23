@@ -118,7 +118,7 @@ def main():
         for game_obj in game_objects:
             collided_objects = pygame.sprite.spritecollide(game_obj, static_objects, False)
             for collided in collided_objects:
-                collided.on_collision(game_obj, dt)
+                collided.on_collision(game_obj, dt, screen, camera)
 
         for static in static_objects:
             pygame.sprite.spritecollide(static, projectile_objects, True)

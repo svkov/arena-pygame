@@ -46,8 +46,11 @@ class Player(Actor):
         self.update_cooldown()
 
         self.move_world_coord(dt)
-        self.update_camera_pos(camera)
         self.update_screen_coord(screen, camera)
+
+    def update_screen_coord(self, screen, camera: Camera):
+        self.update_camera_pos(camera)
+        super().update_screen_coord(screen, camera)
 
     def update_camera_pos(self, camera: Camera):
         camera.x = self.pos[0]
