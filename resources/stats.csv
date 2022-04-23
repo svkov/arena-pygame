@@ -1,7 +1,7 @@
-name;image;image_size_x;image_size_y;projectile_image;max_hp;radius
-skeleton;skeleton;128;128;snow;100;
-player;knight;128;128;snow;500;
-vampire;vampire;128;128;snow;200;
-background;background;8000;8000;;;3500
-cactus;cactus;128;256;;;
-tombstone;tombstone;128;256;;;
+name;image;image_size_x;image_size_y;projectile_image;max_hp;radius;base_hp;base_atk;strength;intelligence;agility;defense;speed
+skeleton;skeleton;128;128;snow;100;;10;5;1;0;1;1;1
+player;knight;128;128;snow;500;;10;1;1;1;50;1;1
+vampire;vampire;128;128;snow;200;;;;;;;;
+background;background;8000;8000;;;3500;;;;;;;
+cactus;cactus;128;256;;;;;;;;;;
+tombstone;tombstone;128;256;;;;;;;;;;
