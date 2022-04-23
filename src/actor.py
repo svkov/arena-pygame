@@ -8,10 +8,10 @@ from src.shoot_cooldown_mixin import ShootCooldownMixin
 
 class Actor(GameObject, DamageRecieveMixin, ShootCooldownMixin):
 
-    def __init__(self, pos, image_path, image_size=None,
+    def __init__(self, pos, image, image_size=None,
                  damage_recieve_cooldown=None, shoot_cooldown=None,
                  max_hp=None, hp=None, projectile_image=None, **kwargs):
-        super().__init__(pos, image_path, image_size)
+        super().__init__(pos, image, image_size)
         DamageRecieveMixin.__init__(self, damage_recieve_cooldown)
         ShootCooldownMixin.__init__(self, shoot_cooldown)
         self.speed = np.array([0, 0])

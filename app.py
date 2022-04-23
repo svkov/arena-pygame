@@ -9,6 +9,7 @@ from src.game_object import GameObject
 from src.hud import HUD
 from src.skeleton import generate_skeleton_states
 from src.static_object import StaticObject
+from src.stats_config import StatsConfig
 from src.utils import spawn_background, spawn_object, spawn_static_object, background_group
 from src.global_objects import game_objects, projectile_objects, static_objects
 from src.player import Player
@@ -48,14 +49,14 @@ def setup_object_randomly(background, radius, sprites, n_sample=15, sprite_name=
         obj = StaticObject(pos, sprites[sprite_name], image_size=image_size)
         spawn_static_object(obj)
 
-
 def setup_scene(camera, sprites, fps):
+    stats_config = StatsConfig('resources/stats.csv', sprites)
+    print()
     background = GameObject((0, 0), sprites['background'], (8000, 8000))
     radius = 3500
     spawn_background(background)
 
-    player = Player(background.center, sprites['knight'], max_hp=100, hp=100,
-                    camera=camera, projectile_image=sprites['snow'])
+    player = Player(background.center, camera=camera, **stats_config.get_by_name('player'))
     spawn_object(player)
     setup_arena(background, radius, sprites)
     setup_object_randomly(background, radius, sprites)
@@ -66,9 +67,8 @@ def setup_scene(camera, sprites, fps):
 
     skeleton_states = generate_skeleton_states(sprites, fps)
 
-    anim_skeleton = AnimatedEnemy((player.pos[0] + 200, player.pos[1] + 300), sprites['skeleton'],
-                                  max_hp=100, hp=100, animation_states=skeleton_states,
-                                  projectile_image=sprites['snow'])
+    anim_skeleton = AnimatedEnemy((player.pos[0] + 200, player.pos[1] + 300),
+                                  animation_states=skeleton_states, **stats_config.get_by_name('skeleton'))
     spawn_object(anim_skeleton)
 
     return player
