@@ -15,13 +15,13 @@ class Actor(GameObject, DamageRecieveMixin, ShootCooldownMixin):
         super().__init__(pos, image, image_size)
         DamageRecieveMixin.__init__(self, damage_recieve_cooldown)
         self.stats: ActorStats = stats
-        ShootCooldownMixin.__init__(self, stats.attack_speed_in_frames)
+        attack_speed_in_frames = stats.attack_speed_in_frames(kwargs['fps'])
+        ShootCooldownMixin.__init__(self, attack_speed_in_frames)
+        print(attack_speed_in_frames)
         self.speed = np.array([0, 0])
         self.projectile_image = projectile_image
         self.hp = self.max_hp
         self.hp_bar = HpBar(self)
-        self._low_damage = 10
-        self._high_damage = 20
 
     @property
     def max_hp(self):
@@ -46,6 +46,11 @@ class Actor(GameObject, DamageRecieveMixin, ShootCooldownMixin):
         self.move_world_coord(dt)
         self.update_screen_coord(screen, camera)
 
+    def normalize_speed(self):
+        if np.linalg.norm(self.speed) > 0:
+            self.speed = self.speed / np.linalg.norm(self.speed)
+        self.speed = self.speed * self.stats.movement_speed
+
     def move_world_coord(self, dt):
         self.pos = self.pos + self.speed * dt
 
@@ -56,6 +61,7 @@ class Actor(GameObject, DamageRecieveMixin, ShootCooldownMixin):
     def on_collision(self, obj):
         if self.can_recieve_damage:
             damage = obj.damage
+            damage = self.stats.damage_take(damage)
             self.hp -= damage
             if self.hp <= 0:
                 self.on_death(obj)

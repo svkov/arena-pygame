@@ -1,5 +1,4 @@
 import pygame
-import numpy as np
 from src.actor import Actor
 from src.camera import Camera
 
@@ -30,8 +29,7 @@ class Player(Actor):
         if keyboard[pygame.K_d]:
             self.speed[0] = 1
 
-        if np.linalg.norm(self.speed) > 0:
-            self.speed = self.speed / np.linalg.norm(self.speed)
+        self.normalize_speed()
 
     def handle_mouse_input(self):
         if pygame.mouse.get_pressed()[0] and self.can_shoot:
@@ -57,12 +55,17 @@ class Player(Actor):
         camera.y = self.pos[1]
 
     def shoot(self):
-        p = Projectile.shoot(self, pygame.mouse.get_pos(), self.camera, self.projectile_image, speed=2)
+        p = Projectile.shoot(self, pygame.mouse.get_pos(), self.camera, self.projectile_image,
+                             speed=self.stats.projectile_speed)
         spawn_projectile(p)
         self.shooted()
 
     def increase_xp(self, new_exp):
-        self.exp += new_exp
+        exp = self.stats.exp_gain(new_exp)
+        self.exp += exp
+        self.lvlup_if_needed()
+
+    def lvlup_if_needed(self):
         if self.exp >= self.exp_to_lvlup:
             # if exp is enough to lvlup multiple times
             self.level += self.exp // self.exp_to_lvlup
