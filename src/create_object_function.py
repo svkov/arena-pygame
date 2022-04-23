@@ -1,3 +1,4 @@
+from src.actor_stats import ActorStats
 from src.animated_enemy import AnimatedEnemy
 from src.background import Background
 from src.player import Player
@@ -10,12 +11,15 @@ def skeleton(*args, **kwargs):
     sprites = kwargs['sprites']
     fps = kwargs['fps']
     skeleton_states = generate_skeleton_states(sprites, fps)
-    skeleton = AnimatedEnemy(*args, animation_states=skeleton_states, **kwargs)
+    stats = ActorStats(**kwargs)
+
+    skeleton = AnimatedEnemy(*args, animation_states=skeleton_states, stats=stats, **kwargs)
     spawn_object(skeleton)
     return skeleton
 
 def player(*args, **kwargs):
-    player = Player(*args, **kwargs)
+    stats = ActorStats(**kwargs)
+    player = Player(*args, stats=stats, **kwargs)
     spawn_object(player)
     return player
 

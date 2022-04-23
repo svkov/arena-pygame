@@ -3,7 +3,7 @@ class DamageRecieveMixin:
     def __init__(self, cooldown) -> None:
         self.damage_recieve_cooldown = cooldown
         if self.damage_recieve_cooldown is None:
-            self.damage_recieve_cooldown = 10
+            self.damage_recieve_cooldown = 1
         self.damage_recieve_counter = 0
 
     def update_damage_cooldown(self):

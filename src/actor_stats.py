@@ -33,6 +33,7 @@ class ActorStats:
 
     @property
     def attack_speed(self):
+        # values get by wolfram exponential fit
         # 1 agi = 1.5s / attack
         # 10 - 1s
         # 20 - 0.7

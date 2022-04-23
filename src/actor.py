@@ -1,4 +1,5 @@
 import numpy as np
+from src.actor_stats import ActorStats
 from src.camera import Camera
 from src.damage_recieve_mixin import DamageRecieveMixin
 from src.game_object import GameObject
@@ -9,22 +10,26 @@ from src.shoot_cooldown_mixin import ShootCooldownMixin
 class Actor(GameObject, DamageRecieveMixin, ShootCooldownMixin):
 
     def __init__(self, pos, image, image_size=None,
-                 damage_recieve_cooldown=None, shoot_cooldown=None,
-                 max_hp=None, hp=None, projectile_image=None, **kwargs):
+                 damage_recieve_cooldown=None,
+                 projectile_image=None, stats: ActorStats = None, **kwargs):
         super().__init__(pos, image, image_size)
         DamageRecieveMixin.__init__(self, damage_recieve_cooldown)
-        ShootCooldownMixin.__init__(self, shoot_cooldown)
+        self.stats: ActorStats = stats
+        ShootCooldownMixin.__init__(self, stats.attack_speed_in_frames)
         self.speed = np.array([0, 0])
         self.projectile_image = projectile_image
-        self.max_hp = max_hp
-        self.hp = hp
+        self.hp = self.max_hp
         self.hp_bar = HpBar(self)
         self._low_damage = 10
         self._high_damage = 20
 
     @property
+    def max_hp(self):
+        return self.stats.max_hp
+
+    @property
     def damage(self):
-        return np.random.randint(self._low_damage, self._high_damage)
+        return self.stats.damage
 
     def set_zero_speed(self):
         self.speed = np.array([0, 0])

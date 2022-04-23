@@ -81,9 +81,11 @@ def main():
             'camera': camera,
             'sprites': sprites
         }
+        screen.fill((0, 0, 0))
+        background_group.draw(screen)
 
-        game_objects.update(**update_kwargs)
         background_group.update(**update_kwargs)
+        game_objects.update(**update_kwargs)
         static_objects.update(**update_kwargs)
         projectile_objects.update(**update_kwargs)
 
@@ -99,11 +101,9 @@ def main():
             for game_obj in game_objects:
                 collide = projectile.rect.colliderect(game_obj.rect)
                 if collide:
-                    projectile.on_collision(game_obj)
                     game_obj.on_collision(projectile)
+                    projectile.on_collision(game_obj)
 
-        screen.fill((0, 0, 0))
-        background_group.draw(screen)
         static_objects.draw(screen)
         game_objects.draw(screen)
         projectile_objects.draw(screen)

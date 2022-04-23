@@ -32,7 +32,7 @@ class Projectile(GameObject):
             self.kill()
 
     def on_collision(self, obj):
-        pass
+        self.kill()
 
     @classmethod
     def shoot(cls, owner_obj, target_pos, camera: Camera, image, speed=1, image_size=None):
