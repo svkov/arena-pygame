@@ -17,7 +17,6 @@ class Actor(GameObject, DamageRecieveMixin, ShootCooldownMixin):
         self.stats: ActorStats = stats
         attack_speed_in_frames = stats.attack_speed_in_frames(kwargs['fps'])
         ShootCooldownMixin.__init__(self, attack_speed_in_frames)
-        print(attack_speed_in_frames)
         self.speed = np.array([0, 0])
         self.projectile_image = projectile_image
         self.hp = self.max_hp

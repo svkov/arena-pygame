@@ -42,7 +42,6 @@ class ActorStats:
         return 1.54 * np.exp(-0.035 * self.agility)
 
     def attack_speed_in_frames(self, fps):
-        print(self.attack_speed, 1 / fps)
         return max(1, int(self.attack_speed * fps))
 
     @property
