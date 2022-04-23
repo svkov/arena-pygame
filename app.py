@@ -2,17 +2,13 @@ import os
 from typing import Dict
 import numpy as np
 import pygame
-from src.animated_enemy import AnimatedEnemy
 from src.camera import Camera
-from src.container import Container
-from src.game_object import GameObject
 from src.hud import HUD
-from src.skeleton import generate_skeleton_states
+from src.level_config import LevelConfig
 from src.static_object import StaticObject
 from src.stats_config import StatsConfig
-from src.utils import spawn_background, spawn_object, spawn_static_object, background_group
+from src.utils import spawn_static_object, background_group
 from src.global_objects import game_objects, projectile_objects, static_objects
-from src.player import Player
 
 running = True
 
@@ -25,14 +21,6 @@ def load_sprites(path_to_assets) -> Dict[str, pygame.surface.Surface]:
             sprites[sprite_name] = pygame.image.load(path).convert_alpha()
     return sprites
 
-def setup_arena(background, radius, sprites):
-    for alpha in np.linspace(0, 2 * np.pi, 500):
-        pos = background.center
-        new_pos_x = pos[0] + np.sin(alpha) * radius
-        new_pos_y = pos[1] + np.cos(alpha) * radius
-        pos = [new_pos_x, new_pos_y]
-        wall = StaticObject(pos, sprites['wall_without_contour'], (512, 512))
-        spawn_static_object(wall)
 
 def setup_object_randomly(background, radius, sprites, n_sample=15, sprite_name='cactus', image_size=None):
     if image_size is None:
@@ -51,27 +39,11 @@ def setup_object_randomly(background, radius, sprites, n_sample=15, sprite_name=
 
 def setup_scene(camera, sprites, fps):
     stats_config = StatsConfig('resources/stats.csv', sprites)
-    print()
-    background = GameObject((0, 0), sprites['background'], (8000, 8000))
-    radius = 3500
-    spawn_background(background)
-
-    player = Player(background.center, camera=camera, **stats_config.get_by_name('player'))
-    spawn_object(player)
-    setup_arena(background, radius, sprites)
-    setup_object_randomly(background, radius, sprites)
-    setup_object_randomly(background, radius, sprites, n_sample=10, sprite_name='tombstone')
-
-    chest = Container((500, 500), sprites['chest'], max_hp=100, hp=50)
-    spawn_object(chest)
-
-    skeleton_states = generate_skeleton_states(sprites, fps)
-
-    anim_skeleton = AnimatedEnemy((player.pos[0] + 200, player.pos[1] + 300),
-                                  animation_states=skeleton_states, **stats_config.get_by_name('skeleton'))
-    spawn_object(anim_skeleton)
-
-    return player
+    level_config = LevelConfig('resources/level1.csv', camera, fps, stats_config)
+    level_config.setup_level()
+    # setup_object_randomly(background, radius, sprites)
+    # setup_object_randomly(background, radius, sprites, n_sample=10, sprite_name='tombstone')
+    return level_config.player
 
 
 def handle_input_keyboard():

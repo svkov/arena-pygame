@@ -3,7 +3,7 @@ import pygame
 
 class GameObject(pygame.sprite.Sprite):
 
-    def __init__(self, pos, image, image_size=None) -> None:
+    def __init__(self, pos, image, image_size=None, **kwargs) -> None:
         pygame.sprite.Sprite.__init__(self)
         self.pos = np.array(pos, dtype=np.float)
         self.image_size = image_size

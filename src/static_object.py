@@ -7,8 +7,8 @@ class StaticObject(GameObject):
     This is the object which you can't go through
     """
 
-    def __init__(self, pos, image, image_size=None) -> None:
-        super().__init__(pos, image, image_size)
+    def __init__(self, pos, image, image_size=None, **kwargs) -> None:
+        super().__init__(pos, image, image_size, **kwargs)
 
     def on_collision(self, obj: Actor, dt, camera, screen):
         self._collision(obj, dt, camera, screen)
