@@ -2,4 +2,5 @@ pygame==2.1.2
 numpy==1.22.3
 autopep8
 pandas
+flake8
 pyinstaller
