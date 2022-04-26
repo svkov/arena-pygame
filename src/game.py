@@ -13,17 +13,14 @@ class Game:
         self.sprites = Game.load_sprites('assets')
         self.running = True
         self.states = {
-            'game': GameState(self.screen_resolution, self.fps, self.sprites),
-            'menu': MenuState(self.screen_resolution)
+            'game': GameState(self, self.screen_resolution, self.fps, self.sprites),
+            'menu': MenuState(self, self.screen_resolution)
         }
         self.state = self.states['menu']
         self.clock = pygame.time.Clock()
 
     def handle_input_keyboard(self):
         keyboard = pygame.key.get_pressed()
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                self.running = False
         if keyboard[pygame.K_q]:
             self.running = False
 
@@ -47,3 +44,9 @@ class Game:
             'sprites': self.sprites
         }
         self.state.update(**update_kwargs)
+
+    def go_to_game(self):
+        self.state = self.states['game']
+
+    def go_to_menu(self):
+        self.state = self.states['menu']
