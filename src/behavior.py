@@ -37,4 +37,3 @@ class Behavior:
             self.current_iter = 0
             shift = (np.random.random(size=2) - 0.5) * 500
             self.destination = self.actor.pos + shift
-            print('new destination', self.destination)
