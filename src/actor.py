@@ -5,6 +5,7 @@ from src.damage_recieve_mixin import DamageRecieveMixin
 from src.game_object import GameObject
 from src.groups import GameStateGroups
 from src.hp_bar import HpBar
+from src.ingame_label import DamageLabel
 from src.shoot_cooldown_mixin import ShootCooldownMixin
 
 
@@ -24,7 +25,7 @@ class Actor(GameObject, DamageRecieveMixin, ShootCooldownMixin):
         self.projectile_image = projectile_image
         self.hp = self.max_hp
         self.hp_bar = HpBar(self, groups=groups)
-        # self.groups.spawn_hp_bar(self.hp_bar)
+        self.camera = kwargs['camera']
 
     @property
     def max_hp(self):
@@ -45,10 +46,10 @@ class Actor(GameObject, DamageRecieveMixin, ShootCooldownMixin):
         self.update_cooldown()
         screen = kwargs['screen']
         dt = kwargs['dt']
-        camera: Camera = kwargs['camera']
+        self.camera: Camera = kwargs['camera']
         self.normalize_speed()
         self.move_world_coord(dt)
-        self.update_screen_coord(screen, camera)
+        self.update_screen_coord(screen, self.camera)
 
     def normalize_speed(self):
         if np.linalg.norm(self.speed) < self.stats.movement_speed:
@@ -61,13 +62,14 @@ class Actor(GameObject, DamageRecieveMixin, ShootCooldownMixin):
         self.pos = self.pos + self.speed * dt
 
     def update_screen_coord(self, screen, camera: Camera):
-        # self.hp_bar.update(screen, camera)
         super().update_screen_coord(camera)
 
     def on_collision(self, obj):
         if self.can_recieve_damage:
             damage = obj.damage
             damage = self.stats.damage_take(damage)
+            damage_label = DamageLabel(f'-{damage}', self.pos, self.camera)
+            self.groups.spawn_hp_bar(damage_label)
             self.hp -= damage
             if self.hp <= 0:
                 self.on_death(obj)

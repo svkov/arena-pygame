@@ -71,8 +71,8 @@ class HpBar:
 
         self.green = GreenSurface(owner, size)
         self.red = RedSurface(owner, size)
-        groups.hp_bars.add(self.red)
-        groups.hp_bars.add(self.green)
+        groups.ui_objects.add(self.red)
+        groups.ui_objects.add(self.green)
 
     def on_death(self):
         self.red.kill()

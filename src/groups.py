@@ -13,7 +13,7 @@ class GameStateGroups:
         self.enemy_projectiles = Group()
         self.enemy_objects = Group()
 
-        self.hp_bars = Group()
+        self.ui_objects = Group()
         self.update_groups_order = [
             self.background_group,
             self.static_objects,
@@ -21,7 +21,7 @@ class GameStateGroups:
             self.player_projectiles,
             self.enemy_objects,
             self.enemy_projectiles,
-            self.hp_bars
+            self.ui_objects
         ]
         self.draw_groups_order = [
             self.static_objects,
@@ -29,7 +29,7 @@ class GameStateGroups:
             self.player_projectiles,
             self.enemy_objects,
             self.enemy_projectiles,
-            self.hp_bars
+            self.ui_objects
         ]
 
     def update(self, update_kwargs):
@@ -63,4 +63,4 @@ class GameStateGroups:
         self.player_projectiles.add(obj)
 
     def spawn_hp_bar(self, obj):
-        self.hp_bars.add(obj)
+        self.ui_objects.add(obj)
