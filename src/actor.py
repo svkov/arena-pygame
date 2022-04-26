@@ -42,13 +42,16 @@ class Actor(GameObject, DamageRecieveMixin, ShootCooldownMixin):
         screen = kwargs['screen']
         dt = kwargs['dt']
         camera: Camera = kwargs['camera']
+        self.normalize_speed()
         self.move_world_coord(dt)
         self.update_screen_coord(screen, camera)
 
     def normalize_speed(self):
+        if np.linalg.norm(self.speed) < self.stats.movement_speed:
+            return
         if np.linalg.norm(self.speed) > 0:
             self.speed = self.speed / np.linalg.norm(self.speed)
-        self.speed = self.speed * self.stats.movement_speed
+            self.speed = self.speed * self.stats.movement_speed
 
     def move_world_coord(self, dt):
         self.pos = self.pos + self.speed * dt

@@ -46,8 +46,15 @@ class ActorStats:
 
     @property
     def movement_speed(self):
-        return self.speed * 0.2
+        return self.speed * 0.05
 
     @property
     def projectile_speed(self):
         return self.speed * 0.3
+
+
+class EnemyStats(ActorStats):
+
+    @property
+    def movement_speed(self):
+        return super().movement_speed
