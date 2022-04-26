@@ -2,6 +2,7 @@ import os
 from typing import Dict
 import pygame
 from src.state.game import GameState
+from src.state.menu import MenuState
 
 class Game:
 
@@ -11,7 +12,11 @@ class Game:
         self.screen = pygame.display.set_mode(self.screen_resolution)
         self.sprites = Game.load_sprites('assets')
         self.running = True
-        self.state = GameState(self.screen_resolution, self.fps, self.sprites)
+        self.states = {
+            'game': GameState(self.screen_resolution, self.fps, self.sprites),
+            'menu': MenuState(self.screen_resolution)
+        }
+        self.state = self.states['menu']
         self.clock = pygame.time.Clock()
 
     def handle_input_keyboard(self):
