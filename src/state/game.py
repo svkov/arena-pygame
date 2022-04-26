@@ -6,13 +6,14 @@ from src.groups import GameStateGroups
 from src.hud import HUD
 from src.level_config import LevelConfig
 from src.spawner import Spawner
+from src.state.pause import PauseState
 from src.static_object import StaticObject
 from src.stats_config import StatsConfig
 
 class GameState:
     def __init__(self, game, screen_resolution, fps, sprites) -> None:
         self.game = game
-        self.my_font = pygame.font.SysFont(pygame.font.get_default_font(), 28)
+        self.hud_font = pygame.font.SysFont(pygame.font.get_default_font(), 28)
         self.pause_font = pygame.font.SysFont(pygame.font.get_default_font(), 72)
         self.screen_resolution = screen_resolution
         self.fps = fps
@@ -21,8 +22,9 @@ class GameState:
         self.groups = GameStateGroups()
         self.spawner = Spawner(self.groups)
         self.setup_scene()
-        self.hud = HUD(self.player)
+        self.hud = HUD(self.player, self.hud_font)
         self.paused = False
+        self.pause = PauseState(self.groups, self.hud, self.screen_resolution, self.pause_font)
 
     def setup_scene(self):
         stats_config = StatsConfig('resources/stats.csv', self.sprites)
@@ -53,7 +55,7 @@ class GameState:
         if not self.paused:
             self._update(screen, update_kwargs)
         else:
-            self._update_paused(screen)
+            self._update_paused(screen=screen)
 
     def _update(self, screen, update_kwargs):
         screen.fill((0, 0, 0))
@@ -62,22 +64,12 @@ class GameState:
         self.groups.handle_collisions(update_kwargs)
 
         self.groups.draw(screen)
-        self.hud.update(screen=screen, screen_resolution=self.screen_resolution, font=self.my_font)
+        self.hud.update(screen=screen, screen_resolution=self.screen_resolution, font=self.hud_font)
 
         pygame.display.flip()
 
-    def _update_paused(self, screen):
-        screen.fill((0, 0, 0))
-        self.groups.background_group.draw(screen)
-        self.groups.draw(screen)
-        self.hud.update(screen=screen, screen_resolution=self.screen_resolution, font=self.my_font)
-        text_surface = self.pause_font.render('Paused', False, (0, 0, 0))
-        text_size = text_surface.get_size()
-
-        rect_x = (((1 - self.hud.hud_config.percent_to_hud) * self.screen_resolution[0]) - text_size[0]) // 2
-        rect_y = int(self.screen_resolution[1] * 0.1 + text_size[1])
-        screen.blit(text_surface, [rect_x, rect_y])
-        pygame.display.flip()
+    def _update_paused(self, *args, **kwargs):
+        self.pause.update(*args, **kwargs)
 
     def setup_object_randomly(self, background, radius, sprites, n_sample=15, sprite_name='cactus', image_size=None):
         if image_size is None:
