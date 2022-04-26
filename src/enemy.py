@@ -27,6 +27,7 @@ class Enemy(Actor):
         return super().update(*args, **kwargs)
 
     def on_death(self, death_from):
+        super().on_death(death_from)
         death_from.owner.increase_xp(self.exp_after_death)
 
     def increase_xp(self):

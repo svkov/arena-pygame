@@ -13,20 +13,32 @@ class GameStateGroups:
         self.enemy_projectiles = Group()
         self.enemy_objects = Group()
 
+        self.hp_bars = Group()
+        self.update_groups_order = [
+            self.background_group,
+            self.static_objects,
+            self.player_objects,
+            self.player_projectiles,
+            self.enemy_objects,
+            self.enemy_projectiles,
+            self.hp_bars
+        ]
+        self.draw_groups_order = [
+            self.static_objects,
+            self.player_objects,
+            self.player_projectiles,
+            self.enemy_objects,
+            self.enemy_projectiles,
+            self.hp_bars
+        ]
+
     def update(self, update_kwargs):
-        self.background_group.update(**update_kwargs)
-        self.static_objects.update(**update_kwargs)
-        self.player_objects.update(**update_kwargs)
-        self.player_projectiles.update(**update_kwargs)
-        self.enemy_objects.update(**update_kwargs)
-        self.enemy_projectiles.update(**update_kwargs)
+        for group in self.update_groups_order:
+            group.update(**update_kwargs)
 
     def draw(self, screen):
-        self.static_objects.draw(screen)
-        self.player_objects.draw(screen)
-        self.player_projectiles.draw(screen)
-        self.enemy_objects.draw(screen)
-        self.enemy_projectiles.draw(screen)
+        for group in self.draw_groups_order:
+            group.draw(screen)
 
     def handle_collisions(self, update_kwargs):
         CollisionHandler.full_collision(self.player_objects, self.enemy_projectiles, self.static_objects, update_kwargs)
@@ -49,3 +61,6 @@ class GameStateGroups:
 
     def spawn_player_projectile(self, obj):
         self.player_projectiles.add(obj)
+
+    def spawn_hp_bar(self, obj):
+        self.hp_bars.add(obj)

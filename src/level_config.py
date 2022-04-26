@@ -1,23 +1,27 @@
 import pandas as pd
 from src.camera import Camera
+from src.groups import GameStateGroups
 from src.spawner import Spawner
 from src.stats_config import StatsConfig
 
 class LevelConfig:
 
-    def __init__(self, path, camera: Camera, fps, stats_config: StatsConfig, spawner: Spawner) -> None:
+    def __init__(self, path, camera: Camera, fps, stats_config: StatsConfig,
+                 spawner: Spawner, groups: GameStateGroups) -> None:
         self.path = path
         self.df = pd.read_csv(path, sep=';')
         self.camera = camera
         self.fps = fps
         self.stats_config = stats_config
         self.spawner = spawner
+        self.groups = groups
 
     def setup_level(self):
         shared_args = {
             'camera': self.camera,
             'fps': self.fps,
-            'sprites': self.stats_config.sprites
+            'sprites': self.stats_config.sprites,
+            'groups': self.groups
         }
         for i, row in self.df.iterrows():
             obj_dict = row.to_dict()
