@@ -1,28 +1,6 @@
 
 from typing import List, Tuple
 import pygame
-import src.global_objects as global_
-
-# def spawn_object(obj):
-#     game_objects.add(obj)
-
-def spawn_enemy_projectile(obj):
-    global_.enemy_projectiles.add(obj)
-
-def spawn_enemy_object(obj):
-    global_.enemy_objects.add(obj)
-
-def spawn_static_object(obj):
-    global_.static_objects.add(obj)
-
-def spawn_background(obj):
-    global_.background_group.add(obj)
-
-def spawn_player_obj(obj):
-    global_.player_objects.add(obj)
-
-def spawn_player_projectile(obj):
-    global_.player_projectiles.add(obj)
 
 def crop_spritesheet_by_image_size(image: pygame.surface.Surface,
                                    image_size: Tuple[int, int]) -> List[pygame.surface.Surface]:

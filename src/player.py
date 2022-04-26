@@ -1,9 +1,9 @@
 import pygame
 from src.actor import Actor
 from src.camera import Camera
+from src.groups import GameStateGroups
 
 from src.projectile import Projectile
-from src.utils import spawn_player_projectile
 
 
 class Player(Actor):
@@ -31,16 +31,17 @@ class Player(Actor):
 
         self.normalize_speed()
 
-    def handle_mouse_input(self):
+    def handle_mouse_input(self, groups: GameStateGroups):
         if pygame.mouse.get_pressed()[0] and self.can_shoot:
-            self.shoot()
+            self.shoot(groups)
 
     def update(self, *args, **kwargs) -> None:
         screen = kwargs['screen']
         dt = kwargs['dt']
         camera: Camera = kwargs['camera']
+        groups: GameStateGroups = kwargs['groups']
         self.handle_keyboard_input()
-        self.handle_mouse_input()
+        self.handle_mouse_input(groups)
         self.update_cooldown()
 
         self.move_world_coord(dt)
@@ -54,10 +55,10 @@ class Player(Actor):
         camera.x = self.pos[0]
         camera.y = self.pos[1]
 
-    def shoot(self):
+    def shoot(self, groups: GameStateGroups):
         p = Projectile.shoot(self, pygame.mouse.get_pos(), self.camera, self.projectile_image,
                              speed=self.stats.projectile_speed)
-        spawn_player_projectile(p)
+        groups.spawn_player_projectile(p)
         self.shooted()
 
     def increase_xp(self, new_exp):
