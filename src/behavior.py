@@ -13,6 +13,7 @@ class Behavior:
         self.new_pos = self.actor.pos
         self.max_iter = 50
         self.current_iter = 0
+        self.distance_for_dest = 500
 
     def update(self, *args, **kwargs):
         self.prev_pos = self.new_pos
@@ -35,5 +36,5 @@ class Behavior:
         is_stuck = self.current_iter == self.max_iter
         if close_to_destination or is_stuck:
             self.current_iter = 0
-            shift = (np.random.random(size=2) - 0.5) * 500
+            shift = (np.random.random(size=2) - 0.5) * self.distance_for_dest
             self.destination = self.actor.pos + shift

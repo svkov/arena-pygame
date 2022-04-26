@@ -3,7 +3,7 @@ from src.actor import Actor
 from src.camera import Camera
 
 from src.projectile import Projectile
-from src.utils import spawn_projectile
+from src.utils import spawn_player_projectile
 
 
 class Player(Actor):
@@ -57,7 +57,7 @@ class Player(Actor):
     def shoot(self):
         p = Projectile.shoot(self, pygame.mouse.get_pos(), self.camera, self.projectile_image,
                              speed=self.stats.projectile_speed)
-        spawn_projectile(p)
+        spawn_player_projectile(p)
         self.shooted()
 
     def increase_xp(self, new_exp):

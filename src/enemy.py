@@ -3,7 +3,7 @@ from src.behavior import Behavior
 from src.camera import Camera
 
 from src.projectile import Projectile
-from src.utils import spawn_projectile
+from src.utils import spawn_enemy_projectile
 
 
 class Enemy(Actor):
@@ -18,7 +18,7 @@ class Enemy(Actor):
             self.shooted()
             p = Projectile.shoot(self, camera.to_screen_coord(camera.get_pos()), camera, self.projectile_image,
                                  speed=self.stats.projectile_speed)
-            spawn_projectile(p)
+            spawn_enemy_projectile(p)
 
     def update(self, *args, **kwargs) -> None:
         camera: Camera = kwargs['camera']

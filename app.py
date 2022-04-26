@@ -7,8 +7,9 @@ from src.hud import HUD
 from src.level_config import LevelConfig
 from src.static_object import StaticObject
 from src.stats_config import StatsConfig
-from src.utils import spawn_static_object, background_group
-from src.global_objects import game_objects, projectile_objects, static_objects
+from src.utils import spawn_static_object
+from src.global_objects import static_objects, player_projectiles, \
+    player_objects, enemy_objects, enemy_projectiles, background_group
 
 running = True
 
@@ -56,6 +57,40 @@ def handle_input_keyboard():
         running = False
 
 
+def update_everything(update_kwargs):
+    background_group.update(**update_kwargs)
+    static_objects.update(**update_kwargs)
+    player_objects.update(**update_kwargs)
+    player_projectiles.update(**update_kwargs)
+    enemy_objects.update(**update_kwargs)
+    enemy_projectiles.update(**update_kwargs)
+
+def draw_everything(screen: Screen):
+    static_objects.draw(screen)
+    player_objects.draw(screen)
+    player_projectiles.draw(screen)
+    enemy_objects.draw(screen)
+    enemy_projectiles.draw(screen)
+
+
+def find_collision(obj_group, projectile_group):
+    for obj in obj_group:
+        collided_objects = pygame.sprite.spritecollide(obj, projectile_group, False)
+        for collided in collided_objects:
+            collided.on_collision(obj)
+            obj.on_collision(collided)
+
+
+def collide_group_to_static(obj_group, static_group, kwargs):
+    for game_obj in obj_group:
+        collided_objects = pygame.sprite.spritecollide(game_obj, static_group, False)
+        for collided in collided_objects:
+            collided.on_collision(game_obj, **kwargs)
+
+def collide_projectiles_to_static(projectile_group, static_group):
+    for static in static_group:
+        pygame.sprite.spritecollide(static, projectile_group, True)
+
 def main():
     pygame.init()
     pygame.display.set_caption("Arena")
@@ -84,29 +119,18 @@ def main():
         screen.fill((0, 0, 0))
         background_group.draw(screen)
 
-        background_group.update(**update_kwargs)
-        game_objects.update(**update_kwargs)
-        static_objects.update(**update_kwargs)
-        projectile_objects.update(**update_kwargs)
+        update_everything(update_kwargs)
 
-        for game_obj in game_objects:
-            collided_objects = pygame.sprite.spritecollide(game_obj, static_objects, False)
-            for collided in collided_objects:
-                collided.on_collision(game_obj, dt, screen, camera)
+        collide_group_to_static(player_objects, static_objects, update_kwargs)
+        collide_group_to_static(enemy_objects, static_objects, update_kwargs)
 
-        for static in static_objects:
-            pygame.sprite.spritecollide(static, projectile_objects, True)
+        collide_projectiles_to_static(player_projectiles, static_objects)
+        collide_projectiles_to_static(enemy_projectiles, static_objects)
 
-        for projectile in projectile_objects:
-            for game_obj in game_objects:
-                collide = projectile.rect.colliderect(game_obj.rect)
-                if collide:
-                    game_obj.on_collision(projectile)
-                    projectile.on_collision(game_obj)
+        find_collision(player_objects, enemy_projectiles)
+        find_collision(enemy_objects, player_projectiles)
 
-        static_objects.draw(screen)
-        game_objects.draw(screen)
-        projectile_objects.draw(screen)
+        draw_everything(screen)
 
         hud.update(screen=screen, screen_resolution=screen_resolution, font=my_font)
         pygame.display.flip()

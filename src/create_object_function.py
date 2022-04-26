@@ -4,7 +4,7 @@ from src.background import Background
 from src.player import Player
 from src.skeleton import generate_skeleton_states
 from src.static_object import StaticObject
-from src.utils import spawn_background, spawn_object, spawn_static_object
+from src.utils import spawn_background, spawn_enemy_object, spawn_static_object, spawn_player_obj
 import numpy as np
 
 def skeleton(*args, **kwargs):
@@ -14,13 +14,13 @@ def skeleton(*args, **kwargs):
     stats = EnemyStats(**kwargs)
 
     skeleton = AnimatedEnemy(*args, animation_states=skeleton_states, stats=stats, **kwargs)
-    spawn_object(skeleton)
+    spawn_enemy_object(skeleton)
     return skeleton
 
 def player(*args, **kwargs):
     stats = ActorStats(**kwargs)
     player = Player(*args, stats=stats, **kwargs)
-    spawn_object(player)
+    spawn_player_obj(player)
     return player
 
 def static_object(*args, **kwargs):

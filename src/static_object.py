@@ -10,8 +10,11 @@ class StaticObject(GameObject):
     def __init__(self, pos, image, image_size=None, **kwargs) -> None:
         super().__init__(pos, image, image_size, **kwargs)
 
-    def on_collision(self, obj: Actor, dt, camera, screen):
-        self._collision(obj, dt, camera, screen)
+    def on_collision(self, obj: Actor, **kwargs):
+        dt = kwargs['dt']
+        camera = kwargs['camera']
+        screen = kwargs['screen']
+        self._collision(obj, dt, screen, camera)
 
     def _collision(self, obj: Actor, dt, screen, camera):
         obj.pos_right - self.pos_left
