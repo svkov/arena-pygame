@@ -62,5 +62,5 @@ class GameStateGroups:
     def spawn_player_projectile(self, obj):
         self.player_projectiles.add(obj)
 
-    def spawn_hp_bar(self, obj):
+    def spawn_ui(self, obj):
         self.ui_objects.add(obj)

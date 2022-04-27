@@ -10,7 +10,7 @@ class IngameLabel(pygame.sprite.Sprite):
         super().__init__()
         self.font = font
         self.rendered_text = self.font.render(content, True, color)
-        self.pos = pos
+        self.pos = pos.copy()
         self.camera = camera
         self.image = pygame.surface.Surface(self.rendered_text.get_size(), pygame.SRCALPHA).convert_alpha()
         self.image.fill((0, 0, 0))
@@ -39,3 +39,14 @@ class DamageLabel(IngameLabel):
     def update(self, *args, **kwargs):
         self.pos[1] += 1
         return super().update(*args, **kwargs)
+
+class ExpLabel(IngameLabel):
+
+    def __init__(self, content: str, pos: Tuple[int, int], camera: Camera) -> None:
+        font = pygame.font.SysFont(pygame.font.get_default_font(), 32)
+        color = (0, 0, 255, 0)
+        super().__init__(font, content, color, pos, camera)
+
+    def update(self, *args, **kwargs):
+        self.pos[1] -= 3
+        super().update(*args, **kwargs)

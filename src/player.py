@@ -2,6 +2,7 @@ import pygame
 from src.actor import Actor
 from src.camera import Camera
 from src.groups import GameStateGroups
+from src.ingame_label import ExpLabel
 
 from src.projectile import Projectile
 
@@ -64,7 +65,12 @@ class Player(Actor):
     def increase_xp(self, new_exp):
         exp = self.stats.exp_gain(new_exp)
         self.exp += exp
+        self.make_exp_label(exp)
         self.lvlup_if_needed()
+
+    def make_exp_label(self, exp):
+        exp_label = ExpLabel(f'+{int(exp)} XP', self.pos, self.camera)
+        self.groups.spawn_ui(exp_label)
 
     def lvlup_if_needed(self):
         if self.exp >= self.exp_to_lvlup:

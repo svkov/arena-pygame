@@ -68,8 +68,8 @@ class Actor(GameObject, DamageRecieveMixin, ShootCooldownMixin):
         if self.can_recieve_damage:
             damage = obj.damage
             damage = self.stats.damage_take(damage)
-            damage_label = DamageLabel(f'-{damage}', self.pos, self.camera)
-            self.groups.spawn_hp_bar(damage_label)
+            damage_label = DamageLabel(f'-{int(damage)}', self.pos, self.camera)
+            self.groups.spawn_ui(damage_label)
             self.hp -= damage
             if self.hp <= 0:
                 self.on_death(obj)
