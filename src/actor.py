@@ -28,6 +28,10 @@ class Actor(GameObject, DamageRecieveMixin, ShootCooldownMixin):
         self.camera = kwargs['camera']
 
     @property
+    def is_alive(self):
+        return self.hp > 0
+
+    @property
     def max_hp(self):
         return self.stats.max_hp
 

@@ -59,6 +59,8 @@ class GameState:
             self._update_paused(screen=screen)
 
     def _update(self, screen, update_kwargs):
+        if not self.player.is_alive:
+            self.game.game_over()
         screen.fill((0, 0, 0))
         self.groups.background_group.draw(screen)
         self.groups.update(update_kwargs)

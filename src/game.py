@@ -14,7 +14,9 @@ class Game:
         self.running = True
         self.states = {
             'game': GameState(self, self.screen_resolution, self.fps, self.sprites),
-            'menu': MenuState(self, self.screen_resolution)
+            'menu': MenuState(self, self.screen_resolution),
+            # TODO: make game over screen
+            'game_over': MenuState(self, self.screen_resolution),
         }
         self.state = self.states['menu']
         self.clock = pygame.time.Clock()
@@ -50,3 +52,6 @@ class Game:
 
     def go_to_menu(self):
         self.state = self.states['menu']
+
+    def game_over(self):
+        self.state = self.states['game_over']
