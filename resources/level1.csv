@@ -14,6 +14,13 @@ skeleton;4500;2800
 skeleton;3500;1800
 skeleton;3200;2800
 skeleton;4000;3000
-tombstone;3900;3900
-cactus;3500;3900
 vampire;2500;4500
+tombstone;3500;3600
+tombstone;3800;3600
+tombstone;4100;3600
+tombstone;4400;3600
+tombstone;3600;3900
+tombstone;3600;4200
+tombstone;3600;4500
+tombstone;3600;4700
+cactus;3500;3900
