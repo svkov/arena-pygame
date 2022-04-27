@@ -33,7 +33,7 @@ class MenuState:
             ('800x600', (800, 600)),
             ('1280x720', (1280, 720)),
             ('1920x1080', (1920, 1080)),
-            ('2560x1080', (2560, 1080))
+            ('2560x1440', (2560, 1440))
         ]
         self.resolution_index = self.select_resolution_index()
 
@@ -41,6 +41,7 @@ class MenuState:
                                         default=self.fps_index, onchange=self.on_fps_change)
         self.settings_menu.add.selector('Resolution: ', self.resolution_selectable,
                                         default=self.resolution_index, onchange=self.on_resolution_change)
+        self.settings_menu.add.button('Apply', self.apply_changes)
         self.settings_menu.add.button('Back', self.to_main)
 
     def select_fps_index(self):
@@ -64,10 +65,15 @@ class MenuState:
         self.game.start_game()
 
     def on_fps_change(self, selected, *args, **kwargs):
-        print(selected)
+        (str_value, fps_value), index_value = selected
+        self.game.config.fps = fps_value
 
     def on_resolution_change(self, selected, *args, **kwargs):
-        print(selected)
+        (str_value, resolution_value), index_value = selected
+        self.game.config.screen_resolution = resolution_value
+
+    def apply_changes(self):
+        self.game.config.save()
 
     def to_settings(self):
         self.current_menu.disable()

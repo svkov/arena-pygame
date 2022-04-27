@@ -15,3 +15,15 @@ class GameConfig:
                 return yaml.safe_load(stream)
             except yaml.YAMLError as exc:
                 print(exc)
+
+    def save(self):
+        with open(self.path, 'w') as stream:
+            yaml.safe_dump(self.to_dict(), stream)
+
+    def to_dict(self):
+        return {
+            'fps': self.fps,
+            'resolution_x': self.screen_resolution[0],
+            'resolution_y': self.screen_resolution[1],
+            'draw_enemy_attention': self.draw_enemy_attention
+        }
