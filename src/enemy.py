@@ -22,11 +22,14 @@ class Enemy(Actor):
     def update(self, *args, **kwargs) -> None:
         camera: Camera = kwargs['camera']
         screen = kwargs['screen']
+        draw_enemy_attention = kwargs['draw_enemy_attention']
         self.behavior.update(*args, **kwargs)
         super().update(*args, **kwargs)
-        self.draw_attention_circle(screen, camera)
+        self.draw_attention_circle(screen, camera, draw_enemy_attention)
 
-    def draw_attention_circle(self, screen, camera):
+    def draw_attention_circle(self, screen, camera, draw_enemy_attention):
+        if not draw_enemy_attention:
+            return
         if self.behavior.is_see_player:
             color = (255, 0, 0)
         else:

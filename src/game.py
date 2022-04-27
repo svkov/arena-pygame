@@ -2,14 +2,16 @@ import os
 from typing import Dict
 import pygame
 from src.fader import Fader
+from src.game_config import GameConfig
 from src.state.game import GameState
 from src.state.menu import MenuState
 
 class Game:
 
     def __init__(self) -> None:
-        self.fps = 30
-        self.screen_resolution = (1920, 1080)
+        self.config = GameConfig('config.yaml')
+        self.fps = self.config.fps
+        self.screen_resolution = self.config.screen_resolution
         self.screen = pygame.display.set_mode(self.screen_resolution)
         self.sprites = Game.load_sprites('assets')
         self.running = True
@@ -45,7 +47,8 @@ class Game:
         update_kwargs = {
             'screen': self.screen,
             'dt': dt,
-            'sprites': self.sprites
+            'sprites': self.sprites,
+            'draw_enemy_attention': self.config.draw_enemy_attention
         }
         self.fader.update(**update_kwargs)
         pygame.display.flip()
