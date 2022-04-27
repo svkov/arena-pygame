@@ -1,5 +1,6 @@
 import numpy as np
 from src.animated_enemy import AnimatedEnemy
+from src.enemy import Enemy
 from src.groups import GameStateGroups
 from src.skeleton import generate_skeleton_states
 from src.actor_stats import ActorStats, EnemyStats
@@ -13,6 +14,7 @@ class Spawner:
         self.groups = groups
         self._map_object_name_to_create_function = {
             'skeleton': self.skeleton,
+            'vampire': self.vampire,
             'player': self.player,
             'background': self.background,
             'cactus': self.static_object,
@@ -31,6 +33,12 @@ class Spawner:
         skeleton = AnimatedEnemy(*args, animation_states=skeleton_states, stats=stats, **kwargs)
         self.groups.spawn_enemy_object(skeleton)
         return skeleton
+
+    def vampire(self, *args, **kwargs):
+        stats = EnemyStats(**kwargs)
+        vampire = Enemy(*args, stats=stats, **kwargs)
+        self.groups.spawn_enemy_object(vampire)
+        return vampire
 
     def player(self, *args, **kwargs):
         stats = ActorStats(**kwargs)
