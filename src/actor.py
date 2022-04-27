@@ -27,6 +27,9 @@ class Actor(GameObject, DamageRecieveMixin, ShootCooldownMixin):
         self.hp_bar = HpBar(self, groups=groups)
         self.camera = kwargs['camera']
 
+    def shoot(self, camera: Camera):
+        pass
+
     @property
     def is_alive(self):
         return self.hp > 0

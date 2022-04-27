@@ -1,7 +1,7 @@
+import pygame
 from src.actor import Actor
 from src.behavior import Behavior
 from src.camera import Camera
-from src.groups import GameStateGroups
 from src.projectile import Projectile
 
 
@@ -12,19 +12,26 @@ class Enemy(Actor):
         self.exp_after_death = 50
         self.behavior = kwargs.get('behavior', Behavior(self))
 
-    def shoot(self, camera: Camera, groups: GameStateGroups):
+    def shoot(self, camera: Camera):
         if self.can_shoot:
             self.shooted()
             p = Projectile.shoot(self, camera.to_screen_coord(camera.get_pos()), camera, self.projectile_image,
                                  speed=self.stats.projectile_speed)
-            groups.spawn_enemy_projectile(p)
+            self.groups.spawn_enemy_projectile(p)
 
     def update(self, *args, **kwargs) -> None:
         camera: Camera = kwargs['camera']
-        groups: GameStateGroups = kwargs['groups']
-        self.shoot(camera, groups)
+        screen = kwargs['screen']
         self.behavior.update(*args, **kwargs)
-        return super().update(*args, **kwargs)
+        super().update(*args, **kwargs)
+        self.draw_attention_circle(screen, camera)
+
+    def draw_attention_circle(self, screen, camera):
+        if self.behavior.is_see_player:
+            color = (255, 0, 0)
+        else:
+            color = (0, 255, 0)
+        pygame.draw.circle(screen, color, camera.to_screen_coord(self.pos), self.behavior.attention_radius, 5)
 
     def on_death(self, death_from):
         super().on_death(death_from)
