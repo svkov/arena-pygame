@@ -3,25 +3,32 @@ import pygame_menu
 
 class MenuState:
 
-    def __init__(self, game, screen_resolusion) -> None:
+    def __init__(self, game, screen_resolution) -> None:
         self.game = game
-        self.screen_resolution = screen_resolusion
+        self.screen_resolution = screen_resolution
+        self.init_menu()
+        self.init_settings()
+        self.init_help()
+        self.current_menu = self.menu
+        self.current_menu.enable()
+
+    def init_menu(self):
         self.menu = pygame_menu.Menu(
-            width=screen_resolusion[0],
-            height=screen_resolusion[1],
+            width=self.screen_resolution[0],
+            height=self.screen_resolution[1],
             theme=pygame_menu.themes.THEME_DEFAULT,
             title='Arena',
         )
         self.menu.add.button('Start game', self.start_game)
         self.menu.add.selector('Difficulty: ', [('Hard', 1), ('Easy', 2)])
         self.menu.add.button('Settings', self.to_settings)
+        self.menu.add.button('Help', self.to_help)
         self.menu.add.button('Quit', pygame_menu.events.EXIT)
-        self.current_menu = self.menu
-        self.current_menu.enable()
 
+    def init_settings(self):
         self.settings_menu = pygame_menu.Menu(
-            width=screen_resolusion[0],
-            height=screen_resolusion[1],
+            width=self.screen_resolution[0],
+            height=self.screen_resolution[1],
             theme=pygame_menu.themes.THEME_DEFAULT,
             title='Settings'
         )
@@ -37,12 +44,32 @@ class MenuState:
         ]
         self.resolution_index = self.select_resolution_index()
 
+        warning = 'WARNING: changes will apply after restart'
+        warning_color = (255, 255, 50)
+        self.warning_label = self.settings_menu.add.label(warning, font_color=warning_color)
         self.settings_menu.add.selector('FPS: ', self.fps_selectable,
                                         default=self.fps_index, onchange=self.on_fps_change)
         self.settings_menu.add.selector('Resolution: ', self.resolution_selectable,
                                         default=self.resolution_index, onchange=self.on_resolution_change)
-        self.settings_menu.add.button('Apply', self.apply_changes)
+        self.apply_button = self.settings_menu.add.button('Apply', self.apply_changes)
         self.settings_menu.add.button('Back', self.to_main)
+        self.warning_label.hide()
+        self.apply_button.hide()
+
+    def init_help(self):
+        self.help_menu = pygame_menu.Menu(
+            width=self.screen_resolution[0],
+            height=self.screen_resolution[1],
+            theme=pygame_menu.themes.THEME_DEFAULT,
+            title='Help'
+        )
+        help_content = 'W-A-S-D - move \n' \
+            'P - pause \n' \
+            'LMB - attack \n' \
+            'Q - exit \n' \
+            '\n'
+        self.help_menu.add.label(help_content)
+        self.help_menu.add.button('Back', self.to_main)
 
     def select_fps_index(self):
         for index, (str_fps, fps) in enumerate(self.fps_selectable):
@@ -67,13 +94,22 @@ class MenuState:
     def on_fps_change(self, selected, *args, **kwargs):
         (str_value, fps_value), index_value = selected
         self.game.config.fps = fps_value
+        self.show_apply()
 
     def on_resolution_change(self, selected, *args, **kwargs):
         (str_value, resolution_value), index_value = selected
         self.game.config.screen_resolution = resolution_value
+        self.show_apply()
+
+    def show_apply(self):
+        if hasattr(self, 'apply_button'):
+            self.apply_button.show()
+        if hasattr(self, 'warning_label'):
+            self.warning_label.show()
 
     def apply_changes(self):
         self.game.config.save()
+        self.apply_button.hide()
 
     def to_settings(self):
         self.current_menu.disable()
@@ -83,4 +119,9 @@ class MenuState:
     def to_main(self):
         self.current_menu.disable()
         self.current_menu = self.menu
+        self.current_menu.enable()
+
+    def to_help(self):
+        self.current_menu.disable()
+        self.current_menu = self.help_menu
         self.current_menu.enable()
