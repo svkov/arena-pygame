@@ -69,8 +69,6 @@ class GameState:
         self.groups.draw(screen)
         self.hud.update(screen=screen, screen_resolution=self.screen_resolution, font=self.hud_font)
 
-        pygame.display.flip()
-
     def _update_paused(self, *args, **kwargs):
         self.pause.update(*args, **kwargs)
 

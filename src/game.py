@@ -1,6 +1,7 @@
 import os
 from typing import Dict
 import pygame
+from src.fader import Fader
 from src.state.game import GameState
 from src.state.menu import MenuState
 
@@ -20,6 +21,7 @@ class Game:
         }
         self.state = self.states['menu']
         self.clock = pygame.time.Clock()
+        self.fader = Fader([self.states['menu'], self.states['game']], callback=self.set_game_state)
 
     def handle_input_keyboard(self):
         keyboard = pygame.key.get_pressed()
@@ -45,9 +47,13 @@ class Game:
             'dt': dt,
             'sprites': self.sprites
         }
-        self.state.update(**update_kwargs)
+        self.fader.update(**update_kwargs)
+        pygame.display.flip()
 
-    def go_to_game(self):
+    def start_game(self):
+        self.fader.next()
+
+    def set_game_state(self):
         self.state = self.states['game']
 
     def go_to_menu(self):

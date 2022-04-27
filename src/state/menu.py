@@ -23,7 +23,6 @@ class MenuState:
         screen.fill((0, 0, 0))
         self.menu.update(events)
         self.menu.draw(screen)
-        pygame.display.flip()
 
     def start_game(self):
-        self.game.go_to_game()
+        self.game.start_game()
