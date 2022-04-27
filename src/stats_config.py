@@ -10,7 +10,6 @@ class StatsConfig:
     def get_by_name(self, name):
         d = self.df.loc[name].to_dict()
         d['image_size'] = d['image_size_x'], d['image_size_y']
-        d['hp'] = d['max_hp']
         d['image'] = self.sprites[d['image']]
         if d['projectile_image'] in self.sprites:
             d['projectile_image'] = self.sprites[d['projectile_image']]
