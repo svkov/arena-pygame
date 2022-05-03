@@ -28,7 +28,7 @@ class GameState:
 
     def setup_scene(self):
         stats_config = StatsConfig('resources/stats.csv', self.sprites)
-        level_config = LevelConfig('resources/level1.csv', self.camera, self.fps,
+        level_config = LevelConfig('resources/level2.csv', self.camera, self.fps,
                                    stats_config, self.spawner, self.groups)
         level_config.setup_level()
         # setup_object_randomly(background, radius, sprites)

@@ -1,5 +1,7 @@
 import pygame
 from src.actor import Actor
+from src.animation import AnimationManager
+from src.animation.states import PlayerStates
 from src.camera import Camera
 from src.groups import GameStateGroups
 from src.ingame_label import ExpLabel
@@ -17,6 +19,9 @@ class Player(Actor):
         self.exp_to_lvlup = 100
         self._low_damage = 100
         self._high_damage = 150
+        self.animation_manager = AnimationManager(kwargs['animation_states'], default_state=PlayerStates.IDLE)
+        self.animation_manager.set_state(PlayerStates.IDLE)
+        self.image = self.animation_manager.image
 
     def handle_keyboard_input(self):
         self.set_zero_speed()
@@ -43,10 +48,21 @@ class Player(Actor):
         groups: GameStateGroups = kwargs['groups']
         self.handle_keyboard_input()
         self.handle_mouse_input(groups)
+        self.handle_animation()
         self.update_cooldown()
 
         self.move_world_coord(dt)
         self.update_screen_coord(screen, camera)
+
+        self.animation_manager.update()
+        self.image = self.animation_manager.image
+
+    def handle_animation(self):
+        if not self.animation_manager.is_busy:
+            if self.speed[1] < 0:
+                self.animation_manager.set_state(PlayerStates.BACK)
+            else:
+                self.animation_manager.set_state(PlayerStates.IDLE)
 
     def update_screen_coord(self, screen, camera: Camera):
         self.update_camera_pos(camera)
@@ -61,6 +77,7 @@ class Player(Actor):
                              speed=self.stats.projectile_speed)
         groups.spawn_player_projectile(p)
         self.shooted()
+        self.animation_manager.set_state(PlayerStates.ATTACK)
 
     def increase_xp(self, new_exp):
         exp = self.stats.exp_gain(new_exp)
