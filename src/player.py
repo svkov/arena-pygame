@@ -5,6 +5,7 @@ from src.animation.states import PlayerStates
 from src.camera import Camera
 from src.groups import GameStateGroups
 from src.ingame_label import ExpLabel
+from src.item.potion import Potion
 
 from src.projectile import Projectile
 
@@ -38,8 +39,12 @@ class Player(Actor):
         self.normalize_speed()
 
     def handle_mouse_input(self, groups: GameStateGroups):
-        if pygame.mouse.get_pressed()[0] and self.can_shoot:
+        if pygame.mouse.get_pressed()[0] and self.cooldowns['shoot'].is_cooldown_over:
             self.shoot(groups)
+        if pygame.mouse.get_pressed()[2] and self.cooldowns['hp_potion'].is_cooldown_over:
+            potion = Potion(self, 50)
+            potion.on_use()
+            self.cooldowns['hp_potion'].reset_counter()
 
     def update(self, *args, **kwargs) -> None:
         screen = kwargs['screen']
@@ -76,7 +81,7 @@ class Player(Actor):
         p = Projectile.shoot(self, pygame.mouse.get_pos(), self.camera, self.projectile_image,
                              speed=self.stats.projectile_speed)
         groups.spawn_player_projectile(p)
-        self.shooted()
+        self.cooldowns['shoot'].reset_counter()
         self.animation_manager.set_state(PlayerStates.ATTACK)
 
     def increase_xp(self, new_exp):

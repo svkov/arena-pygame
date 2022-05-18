@@ -13,8 +13,8 @@ class Enemy(Actor):
         self.behavior = kwargs.get('behavior', Behavior(self))
 
     def shoot(self, camera: Camera):
-        if self.can_shoot:
-            self.shooted()
+        if self.cooldowns['shoot'].is_cooldown_over:
+            self.cooldowns['shoot'].reset_counter()
             p = Projectile.shoot(self, camera.to_screen_coord(camera.get_pos()), camera, self.projectile_image,
                                  speed=self.stats.projectile_speed)
             self.groups.spawn_enemy_projectile(p)

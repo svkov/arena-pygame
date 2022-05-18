@@ -1,31 +1,35 @@
 import numpy as np
 from src.actor_stats import ActorStats
 from src.camera import Camera
-from src.damage_recieve_mixin import DamageRecieveMixin
+from src.cooldown_mixin import CooldownMixin
 from src.game_object import GameObject
 from src.groups import GameStateGroups
 from src.hp_bar import HpBar
 from src.ingame_label import DamageLabel
-from src.shoot_cooldown_mixin import ShootCooldownMixin
 
 
-class Actor(GameObject, DamageRecieveMixin, ShootCooldownMixin):
+class Actor(GameObject):
 
     def __init__(self, pos, image, image_size=None,
                  damage_recieve_cooldown=None,
                  projectile_image=None, stats: ActorStats = None,
                  groups: GameStateGroups = None, **kwargs):
         super().__init__(pos, image, image_size)
-        DamageRecieveMixin.__init__(self, damage_recieve_cooldown)
         self.stats: ActorStats = stats
         self.groups: GameStateGroups = groups
-        attack_speed_in_frames = stats.attack_speed_in_frames(kwargs['fps'])
-        ShootCooldownMixin.__init__(self, attack_speed_in_frames)
         self.speed = np.array([0, 0])
         self.projectile_image = projectile_image
         self.hp = self.max_hp
         self.hp_bar = HpBar(self, groups=groups)
         self.camera = kwargs['camera']
+        attack_speed_in_frames = stats.attack_speed_in_frames(kwargs['fps'])
+        # TODO: integrate with potion module
+        hp_potion_cooldown = 50
+        self.cooldowns = {
+            'damage': CooldownMixin(damage_recieve_cooldown),
+            'shoot': CooldownMixin(attack_speed_in_frames),
+            'hp_potion': CooldownMixin(hp_potion_cooldown)
+        }
 
     def shoot(self, camera: Camera):
         pass
@@ -46,8 +50,8 @@ class Actor(GameObject, DamageRecieveMixin, ShootCooldownMixin):
         self.speed = np.array([0, 0])
 
     def update_cooldown(self):
-        self.update_damage_cooldown()
-        self.update_shoot_cooldown()
+        for key, val in self.cooldowns.items():
+            val.update_cooldown()
 
     def update(self, *args, **kwargs) -> None:
         self.update_cooldown()
@@ -72,7 +76,7 @@ class Actor(GameObject, DamageRecieveMixin, ShootCooldownMixin):
         super().update_screen_coord(camera)
 
     def on_collision(self, obj):
-        if self.can_recieve_damage:
+        if self.cooldowns['damage'].is_cooldown_over:
             damage = obj.damage
             damage = self.stats.damage_take(damage)
             damage_label = DamageLabel(f'-{int(damage)}', self.pos, self.camera)
@@ -81,7 +85,7 @@ class Actor(GameObject, DamageRecieveMixin, ShootCooldownMixin):
             if self.hp <= 0:
                 self.on_death(obj)
                 self.kill()
-            self.damaged()
+            self.cooldowns['damage'].reset_counter()
 
     def on_death(self, death_from):
         self.hp_bar.on_death()
