@@ -15,14 +15,17 @@ class Game:
         self.screen = pygame.display.set_mode(self.screen_resolution)
         self.sprites = Game.load_sprites('assets')
         self.running = True
+        self.init_level()
+        self.clock = pygame.time.Clock()
+
+    def init_level(self):
         self.states = {
             'game': GameState(self, self.screen_resolution, self.fps, self.sprites),
             'menu': MenuState(self, self.screen_resolution),
             # TODO: make game over screen
             'game_over': MenuState(self, self.screen_resolution),
         }
-        self.state = self.states['menu']
-        self.clock = pygame.time.Clock()
+        self.go_to_menu()
         self.fader = Fader([self.states['menu'], self.states['game']], callback=self.set_game_state)
 
     def handle_input_keyboard(self):
@@ -63,4 +66,9 @@ class Game:
         self.state = self.states['menu']
 
     def game_over(self):
-        self.state = self.states['game_over']
+        self.go_to_menu()
+        self.fader.next()
+
+    def win(self):
+        self.go_to_menu()
+        self.init_level()
