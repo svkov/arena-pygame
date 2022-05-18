@@ -16,28 +16,3 @@ class CooldownMixin:
     @property
     def is_cooldown_over(self):
         return self.counter == self.cooldown
-
-class DamageRecieveMixin(CooldownMixin):
-    def __init__(self, cooldown=None) -> None:
-        super().__init__(cooldown)
-
-    @property
-    def can_recieve_damage(self):
-        return self.is_cooldown_over
-
-class ShootCooldownMixin(CooldownMixin):
-
-    def __init__(self, cooldown=None) -> None:
-        super().__init__(cooldown)
-
-    @property
-    def can_shoot(self):
-        return self.is_cooldown_over
-
-class HPPotionCooldownMixin(CooldownMixin):
-    def __init__(self, cooldown=None) -> None:
-        super().__init__(cooldown)
-
-    @property
-    def can_drink_hp_potion(self):
-        return self.is_cooldown_over
