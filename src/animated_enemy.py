@@ -18,12 +18,11 @@ class AnimatedEnemy(Enemy):
 
     def set_walk_animation(self):
         moving = abs(self.speed[0]) > 0 or abs(self.speed[1]) > 0
-        not_attacking = self.animation_manager._state != EnemyStates.ATTACK or \
+        not_attacking = self.animation_manager._state != EnemyStates.ATTACK and \
             self.animation_manager.next_state != EnemyStates.ATTACK
-        print(moving, not_attacking)
-        if moving and not not_attacking:
+        if moving and not_attacking:
             self.animation_manager.set_state(EnemyStates.WALK)
 
     def shooted(self):
-        self.animation_manager.set_state(EnemyStates.ATTACK)
+        self.animation_manager.set_state(EnemyStates.ATTACK, force=True)
         return super().shooted()

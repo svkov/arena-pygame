@@ -1,7 +1,6 @@
 import pygame
 
 from typing import Dict, List
-from src.animation.states import EnemyStates
 
 from src.utils import crop_spritesheet_by_image_size, crop_spritesheet_by_matrix_size
 
@@ -112,16 +111,16 @@ class AnimationManager:
     def is_busy(self):
         return self.current_animation.is_playing
 
-    def set_state(self, new_state):
+    def set_state(self, new_state, force=False):
+        if force:
+            self._state = new_state
+            self.next_state = None
+            self.current_animation.reset_animation()
         if self.current_animation.is_playing:
-            if new_state in EnemyStates:
-                print(self._state, self.next_state, new_state)
             self.next_state = new_state
             return
         self._state = new_state
         self.current_animation.reset_animation()
-        # if self._state in EnemyStates:
-        #     print(self._state, self.next_state)
 
     def update(self):
         if not self.is_busy:
