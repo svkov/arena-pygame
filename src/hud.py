@@ -23,6 +23,7 @@ class HUD(pygame.sprite.Sprite):
         self.draw_stats(screen)
         self.draw_hp(screen)
         self.draw_exp(screen)
+        self.draw_inventory(screen)
         self.draw_info_field(screen, self.info_description)
         self.info_description = ''
 
@@ -67,11 +68,44 @@ class HUD(pygame.sprite.Sprite):
         self.draw_text_in_progress_bar(screen, self.exp_y_start, self.hud_config.hp_height, text_surface)
         self.current_y += self.hud_config.hp_height + self.hud_config.margin
 
+    def draw_inventory(self, screen):
+        height = self.hud_config.inventory_height_percent * self.height
+        rect = [
+            self.x_start,
+            self.current_y,
+            self.width,
+            height
+        ]
+        pygame.draw.rect(screen, self.hud_config.panel_color, rect)
+        inventory_height = 3
+        inventory_width = 6
+        one_cell_width = self.width // inventory_width
+        one_cell_height = height // inventory_height
+        for cell_i in range(inventory_width):
+            for cell_j in range(inventory_height):
+                rect = [
+                    self.x_start + cell_i * one_cell_width,
+                    self.current_y + cell_j * one_cell_height,
+                    one_cell_width,
+                    one_cell_height
+                ]
+                self.draw_inventory_cell(screen, rect)
+        self.current_y += height + self.hud_config.margin * 2
+
+    def draw_inventory_cell(self, screen, rect):
+        pygame.draw.rect(screen, self.hud_config.inventory_cell_color, rect, 1)
+
     def draw_info_field(self, screen, content):
-        pygame.draw.rect(screen, '#b8b8b8', [self.x_start, self.current_y, self.width, 200])
+        rect = [
+            self.x_start,
+            self.current_y,
+            self.width,
+            self.hud_config.info_height_percent * self.height
+        ]
+        pygame.draw.rect(screen, self.hud_config.panel_color, rect)
         if len(content) == 0:
             return
-        self.current_y += 5
+        self.current_y += self.hud_config.margin
         text_surface = self.font.render(content, False, (255, 255, 255))
         width, height = text_surface.get_size()
         num_of_lines = int(np.ceil(width / self.width))
