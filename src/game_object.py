@@ -26,6 +26,10 @@ class GameObject(pygame.sprite.Sprite):
         self.rect.x = int(new_pos[0])
         self.rect.y = int(new_pos[1])
 
+    def set_image_size(self, new_image_size):
+        self.image_size = new_image_size
+        self.image = pygame.transform.scale(self.image, self.image_size)
+
     @property
     def center(self):
         return (self.rect.x + self.image_size[0] // 2, self.rect.y + self.image_size[1] // 2)
