@@ -4,6 +4,7 @@ from src.enemy import Enemy
 from src.groups import GameStateGroups
 import src.animation.generate_state as generate_state
 from src.actor_stats import ActorStats, EnemyStats
+from src.item.potion import Potion
 from src.player import Player
 from src.background import Background
 from src.static_object import StaticObject
@@ -19,7 +20,8 @@ class Spawner:
             'background': self.background,
             'cactus': self.static_object,
             'tombstone': self.static_object,
-            'priestess': self.priestess
+            'priestess': self.priestess,
+            'hp_potion': self.hp_potion
         }
 
     def spawn_object(self, name, *args, **kwargs):
@@ -44,6 +46,11 @@ class Spawner:
         vampire = Enemy(*args, stats=stats, **kwargs)
         self.groups.spawn_enemy_object(vampire)
         return vampire
+
+    def hp_potion(self, *args, **kwargs):
+        potion = Potion(*args, **kwargs, owner=None)
+        self.groups.spawn_item(potion)
+        return potion
 
     def player(self, *args, **kwargs):
         stats = ActorStats(**kwargs)

@@ -6,6 +6,7 @@ class GameStateGroups:
     def __init__(self) -> None:
         self.static_objects = Group()
         self.background_group = Group()
+        self.items_on_floor = Group()
 
         self.player_projectiles = Group()
         self.player_objects = Group()
@@ -17,6 +18,7 @@ class GameStateGroups:
         self.update_groups_order = [
             self.background_group,
             self.static_objects,
+            self.items_on_floor,
             self.player_objects,
             self.player_projectiles,
             self.enemy_objects,
@@ -25,6 +27,7 @@ class GameStateGroups:
         ]
         self.draw_groups_order = [
             self.static_objects,
+            self.items_on_floor,
             self.player_objects,
             self.player_projectiles,
             self.enemy_objects,
@@ -43,6 +46,7 @@ class GameStateGroups:
     def handle_collisions(self, update_kwargs):
         CollisionHandler.full_collision(self.player_objects, self.enemy_projectiles, self.static_objects, update_kwargs)
         CollisionHandler.full_collision(self.enemy_objects, self.player_projectiles, self.static_objects, update_kwargs)
+        CollisionHandler.player_collision_to_items(self.player_objects, self.items_on_floor)
 
     def spawn_enemy_projectile(self, obj):
         self.enemy_projectiles.add(obj)
@@ -64,3 +68,6 @@ class GameStateGroups:
 
     def spawn_ui(self, obj):
         self.ui_objects.add(obj)
+
+    def spawn_item(self, obj):
+        self.items_on_floor.add(obj)

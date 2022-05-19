@@ -1,12 +1,13 @@
-from src.item import Item
+from src.item import InventoryItem
 
 
-class Potion(Item):
+class Potion(InventoryItem):
     cooldown = 50
+    description = "Drink this potion to recover some HP"
 
-    def __init__(self, owner, hp=50) -> None:
-        super().__init__(owner)
-        self.hp_recover = hp
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.hp_recover = kwargs.get('hp', 30)
 
     def on_use(self):
         hp_to_recover = self.owner.stats.max_hp - self.owner.hp

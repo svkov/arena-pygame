@@ -5,7 +5,6 @@ from src.animation.states import PlayerStates
 from src.camera import Camera
 from src.groups import GameStateGroups
 from src.ingame_label import ExpLabel
-from src.item.potion import Potion
 
 from src.projectile import Projectile
 
@@ -23,6 +22,9 @@ class Player(Actor):
         self.animation_manager = AnimationManager(kwargs['animation_states'], default_state=PlayerStates.IDLE)
         self.animation_manager.set_state(PlayerStates.IDLE)
         self.image = self.animation_manager.image
+        # TODO: connect to HUD more obviously
+        # You must specify HUD after creating the player
+        self.hud = None
 
     def handle_keyboard_input(self):
         self.set_zero_speed()
@@ -42,8 +44,6 @@ class Player(Actor):
         if pygame.mouse.get_pressed()[0] and self.cooldowns['shoot'].is_cooldown_over:
             self.shoot(groups)
         if pygame.mouse.get_pressed()[2] and self.cooldowns['hp_potion'].is_cooldown_over:
-            potion = Potion(self, 50)
-            potion.on_use()
             self.cooldowns['hp_potion'].reset_counter()
 
     def update(self, *args, **kwargs) -> None:
@@ -99,3 +99,8 @@ class Player(Actor):
             # if exp is enough to lvlup multiple times
             self.level += self.exp // self.exp_to_lvlup
             self.exp = self.exp % self.exp_to_lvlup
+
+    def draw_item_description(self, description):
+        if self.hud is None:
+            pass
+        self.hud.info_description = description

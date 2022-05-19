@@ -1,4 +1,5 @@
 from typing import Tuple
+import numpy as np
 import pygame
 from src.hud_config import HUDConfig
 
@@ -11,6 +12,7 @@ class HUD(pygame.sprite.Sprite):
         self.player: Player = player
         self.font = font
         self.hud_config: HUDConfig = HUDConfig()
+        self.info_description = ''
         self.current_y = 0
 
     def update(self, *args, **kwargs):
@@ -21,6 +23,8 @@ class HUD(pygame.sprite.Sprite):
         self.draw_stats(screen)
         self.draw_hp(screen)
         self.draw_exp(screen)
+        self.draw_info_field(screen, self.info_description)
+        self.info_description = ''
 
     def draw_hud_area(self, screen, resolution):
         self.x_start = (1 - self.hud_config.percent_to_hud) * resolution[0]
@@ -62,6 +66,26 @@ class HUD(pygame.sprite.Sprite):
         text_surface = self.font.render(text_content, False, (255, 255, 255))
         self.draw_text_in_progress_bar(screen, self.exp_y_start, self.hud_config.hp_height, text_surface)
         self.current_y += self.hud_config.hp_height + self.hud_config.margin
+
+    def draw_info_field(self, screen, content):
+        pygame.draw.rect(screen, '#b8b8b8', [self.x_start, self.current_y, self.width, 200])
+        if len(content) == 0:
+            return
+        self.current_y += 5
+        text_surface = self.font.render(content, False, (255, 255, 255))
+        width, height = text_surface.get_size()
+        num_of_lines = int(np.ceil(width / self.width))
+        content_per_line = len(content) // num_of_lines
+        for line in range(num_of_lines):
+            start_of_line = line * content_per_line
+            end_of_line = (line + 1) * content_per_line
+            if line == num_of_lines - 1:
+                line_content = content[start_of_line:]
+            else:
+                line_content = content[start_of_line:end_of_line]
+            line_surface = self.font.render(line_content, False, (255, 255, 255))
+            self.draw_text(screen, line_surface, self.current_y, self.x_start)
+            self.current_y += height
 
     def draw_stats(self, screen: pygame.surface.Surface):
         self.draw_stats_area(screen)

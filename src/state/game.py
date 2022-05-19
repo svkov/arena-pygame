@@ -23,6 +23,7 @@ class GameState:
         self.spawner = Spawner(self.groups)
         self.setup_scene()
         self.hud = HUD(self.player, self.hud_font)
+        self.player.hud = self.hud
         self.paused = False
         self.pause = PauseState(self.groups, self.hud, self.screen_resolution, self.pause_font)
 

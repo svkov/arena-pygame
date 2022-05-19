@@ -28,3 +28,11 @@ class CollisionHandler:
     def collide_projectiles_to_static(projectile_group: Group, static_group: Group):
         for static in static_group:
             pygame.sprite.spritecollide(static, projectile_group, True)
+
+    @staticmethod
+    def player_collision_to_items(player_group: Group, items_group: Group):
+        for player in player_group:
+            collided_objects = pygame.sprite.spritecollide(player, items_group, False)
+            if collided_objects:
+                obj = collided_objects[0]
+                player.draw_item_description(obj.description)
