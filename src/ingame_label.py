@@ -50,3 +50,26 @@ class ExpLabel(IngameLabel):
     def update(self, *args, **kwargs):
         self.pos[1] -= 3
         super().update(*args, **kwargs)
+
+class ItemLabel(IngameLabel):
+
+    def __init__(self, content: str, pos: Tuple[int, int], camera: Camera) -> None:
+        pos = np.array(pos)
+        pos = camera.to_world_coord(pos)
+        font = pygame.font.SysFont(pygame.font.get_default_font(), 32)
+        color = (255, 255, 255, 0)
+        super().__init__(font, content, color, pos, camera)
+        self.lifetime = 2
+        pos[0] -= self.rendered_text.get_size()[0] // 2
+
+    def update(self, *args, **kwargs):
+        (x, y) = self.camera.to_screen_coord(self.pos)
+        width, height = self.rendered_text.get_size()
+        rect = [
+            x - width // 2,
+            y,
+            width, 
+            height
+        ]
+        # pygame.draw.rect(kwargs['screen'], '#3d3d3d', rect)
+        super().update(*args, **kwargs)

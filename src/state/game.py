@@ -72,6 +72,7 @@ class GameState:
         self.groups.draw(screen)
         self.hud.update(screen=screen, screen_resolution=self.screen_resolution, font=self.hud_font)
         self.groups.items_in_inventory.draw(screen)
+        self.groups.items_description.draw(screen)
 
     def _update_paused(self, *args, **kwargs):
         self.pause.update(*args, **kwargs)

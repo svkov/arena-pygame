@@ -4,7 +4,7 @@ from src.animation import AnimationManager
 from src.animation.states import PlayerStates
 from src.camera import Camera
 from src.groups import GameStateGroups
-from src.ingame_label import ExpLabel
+from src.ingame_label import ExpLabel, ItemLabel
 from src.inventory import Inventory
 from src.item import InventoryItem
 
@@ -53,6 +53,12 @@ class Player(Actor):
         if pygame.mouse.get_pressed()[2] and self.cooldowns['hp_potion'].is_cooldown_over:
             self.cooldowns['hp_potion'].reset_counter()
 
+        mouse_pos = pygame.mouse.get_pos()
+        for inventory_item in self.groups.items_in_inventory:
+            if inventory_item.rect.collidepoint(mouse_pos):
+                self.spawn_item_description(inventory_item, mouse_pos)
+                break
+
     def update(self, *args, **kwargs) -> None:
         screen = kwargs['screen']
         dt = kwargs['dt']
@@ -100,6 +106,10 @@ class Player(Actor):
     def make_exp_label(self, exp):
         exp_label = ExpLabel(f'+{int(exp)} XP', self.pos, self.camera)
         self.groups.spawn_ui(exp_label)
+
+    def spawn_item_description(self, item, mouse_pos):
+        exp_label = ItemLabel(item.description, mouse_pos, self.camera)
+        self.groups.items_description.add(exp_label)
 
     def lvlup_if_needed(self):
         if self.exp >= self.exp_to_lvlup:

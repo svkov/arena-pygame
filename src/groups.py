@@ -15,7 +15,9 @@ class GameStateGroups:
         self.enemy_objects = Group()
 
         self.ui_objects = Group()
+        
         self.items_in_inventory = Group()
+        self.items_description = Group()
         self.update_groups_order = [
             self.background_group,
             self.static_objects,
@@ -25,7 +27,8 @@ class GameStateGroups:
             self.enemy_objects,
             self.enemy_projectiles,
             self.ui_objects,
-            self.items_in_inventory
+            self.items_in_inventory,
+            self.items_description
         ]
         self.draw_groups_order = [
             self.static_objects,
