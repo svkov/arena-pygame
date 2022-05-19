@@ -34,5 +34,5 @@ class CollisionHandler:
         for player in player_group:
             collided_objects = pygame.sprite.spritecollide(player, items_group, False)
             if collided_objects:
-                obj = collided_objects[0]
-                player.draw_item_description(obj.description)
+                item = collided_objects[0]
+                player.collide_with_item(item)

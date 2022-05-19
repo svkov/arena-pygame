@@ -5,6 +5,8 @@ from src.animation.states import PlayerStates
 from src.camera import Camera
 from src.groups import GameStateGroups
 from src.ingame_label import ExpLabel
+from src.inventory import Inventory
+from src.item import InventoryItem
 
 from src.projectile import Projectile
 
@@ -22,6 +24,8 @@ class Player(Actor):
         self.animation_manager = AnimationManager(kwargs['animation_states'], default_state=PlayerStates.IDLE)
         self.animation_manager.set_state(PlayerStates.IDLE)
         self.image = self.animation_manager.image
+        self.picking_up = False
+        self.inventory = Inventory()
         # TODO: connect to HUD more obviously
         # You must specify HUD after creating the player
         self.hud = None
@@ -37,8 +41,11 @@ class Player(Actor):
             self.speed[0] = -1
         if keyboard[pygame.K_d]:
             self.speed[0] = 1
-
         self.normalize_speed()
+
+        self.picking_up = False
+        if keyboard[pygame.K_f]:
+            self.picking_up = True
 
     def handle_mouse_input(self, groups: GameStateGroups):
         if pygame.mouse.get_pressed()[0] and self.cooldowns['shoot'].is_cooldown_over:
@@ -100,7 +107,12 @@ class Player(Actor):
             self.level += self.exp // self.exp_to_lvlup
             self.exp = self.exp % self.exp_to_lvlup
 
-    def draw_item_description(self, description):
+    def collide_with_item(self, item: InventoryItem):
         if self.hud is None:
             pass
-        self.hud.info_description = description
+        self.hud.info_description = item.description
+        if self.picking_up and self.inventory.is_enough_space():
+            item.on_pickup(self)
+            self.groups.items_on_floor.remove(item)
+            self.groups.items_in_inventory.add(item)
+            self.inventory.add(item)

@@ -15,6 +15,7 @@ class GameStateGroups:
         self.enemy_objects = Group()
 
         self.ui_objects = Group()
+        self.items_in_inventory = Group()
         self.update_groups_order = [
             self.background_group,
             self.static_objects,
@@ -23,7 +24,8 @@ class GameStateGroups:
             self.player_projectiles,
             self.enemy_objects,
             self.enemy_projectiles,
-            self.ui_objects
+            self.ui_objects,
+            self.items_in_inventory
         ]
         self.draw_groups_order = [
             self.static_objects,
@@ -32,7 +34,8 @@ class GameStateGroups:
             self.player_projectiles,
             self.enemy_objects,
             self.enemy_projectiles,
-            self.ui_objects
+            self.ui_objects,
+            self.items_in_inventory
         ]
 
     def update(self, update_kwargs):
