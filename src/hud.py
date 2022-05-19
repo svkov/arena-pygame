@@ -77,8 +77,8 @@ class HUD(pygame.sprite.Sprite):
             height
         ]
         pygame.draw.rect(screen, self.hud_config.panel_color, rect)
-        inventory_height = 3
-        inventory_width = 6
+        inventory_height = self.player.inventory.height
+        inventory_width = self.player.inventory.width
         one_cell_width = self.width // inventory_width
         one_cell_height = height // inventory_height
         for cell_i in range(inventory_width):
@@ -89,11 +89,15 @@ class HUD(pygame.sprite.Sprite):
                     one_cell_width,
                     one_cell_height
                 ]
-                self.draw_inventory_cell(screen, rect)
+                item = self.player.inventory.get_item(cell_j, cell_i)
+                self.draw_inventory_cell(screen, rect, item)
         self.current_y += height + self.hud_config.margin * 2
 
-    def draw_inventory_cell(self, screen, rect):
+    def draw_inventory_cell(self, screen, rect, item):
         pygame.draw.rect(screen, self.hud_config.inventory_cell_color, rect, 1)
+        if item is not None:
+            item.set_image_size((rect[2] - 2, rect[3] - 2))
+            item.pos = [rect[0], rect[1]]
 
     def draw_info_field(self, screen, content):
         rect = [
