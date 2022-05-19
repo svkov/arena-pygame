@@ -60,7 +60,7 @@ class HUD(pygame.sprite.Sprite):
             progress=self.exp_progress,
             y_start=self.exp_y_start,
             height=self.hud_config.hp_height,
-            color_back='#b8b8b8',
+            color_back=self.hud_config.panel_color,
             color_front='#a32cb8'
         )
         text_content = f'{int(self.player.exp)}/{int(self.player.exp_to_lvlup)}'
@@ -159,7 +159,7 @@ class HUD(pygame.sprite.Sprite):
         self.current_y += text_size[1] + self.hud_config.margin
 
     def draw_stats_area(self, screen: pygame.surface.Surface):
-        pygame.draw.rect(screen, '#b8b8b8',
+        pygame.draw.rect(screen, self.hud_config.panel_color,
                          (self.x_start, self.current_y - 5, self.width,
                           (self.hud_config.hp_height + self.hud_config.margin) * 2 + 5))
 
