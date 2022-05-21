@@ -73,9 +73,6 @@ class Spawner:
         skeleton_states = generate_state.skeleton(self.sprites, self.fps)
         skeleton = AnimatedEnemy(pos, animation_states=skeleton_states, **kwargs)
         self.groups.spawn_enemy_object(skeleton)
-
-        potion = self.hp_potion_in_inventory(pos=(0, 0))
-        skeleton.inventory.add(potion)
         return skeleton
 
     def priestess(self, pos, **kwargs):
@@ -101,20 +98,37 @@ class Spawner:
         return potion
 
     def get_hp_potion(self, pos, owner):
-        kwargs = self.generate_item_kwargs('hp_potion', owner)
-        return Potion(pos, **kwargs)
+        return self.get_item(pos, 'hp_potion', owner, Potion)
 
     def sword(self, pos, owner=None):
-        kwargs = self.generate_item_kwargs('sword', owner)
-        sword = SwordItem(pos, **kwargs)
+        sword = self.get_sword(pos, owner)
         self.groups.spawn_item(sword)
         return sword
 
+    def sword_in_inventory(self, pos, owner=None):
+        sword = self.get_sword(pos, owner)
+        self.groups.items_in_inventory.add(sword)
+        return sword
+
+    def get_sword(self, pos, owner):
+        return self.get_item(pos, 'sword', owner, SwordItem)
+
     def armor(self, pos, owner=None):
-        kwargs = self.generate_item_kwargs('armor', owner)
-        armor = ArmorItem(pos, **kwargs)
+        armor = self.get_armor(pos, owner)
         self.groups.spawn_item(armor)
         return armor
+
+    def armor_in_inventory(self, pos, owner=None):
+        armor = self.get_armor(pos, owner)
+        self.groups.items_in_inventory.add(armor)
+        return armor
+
+    def get_armor(self, pos, owner):
+        return self.get_item(pos, 'armor', owner, ArmorItem)
+
+    def get_item(self, pos, name, owner, class_):
+        kwargs = self.generate_item_kwargs(name, owner)
+        return class_(pos, **kwargs)
 
     def portal(self, pos, **kwargs):
         kwargs = self.generate_static_object_kwargs('portal')

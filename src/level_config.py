@@ -7,6 +7,7 @@ class LevelConfig:
     def __init__(self, level_number, spawner: Spawner) -> None:
         self.level_number = level_number
         self.path = f'resources/level{self.level_number}.csv'
+        raise FileNotFoundError()
         self.df = pd.read_csv(self.path, sep=';')
         self.spawner = spawner
 
@@ -39,9 +40,29 @@ class RandomLevelConfig:
         self.spawn_portal()
 
     def spawn_enemies(self):
+        enemies = []
         for _ in range(self.number_of_enemies):
             x, y = self.generate_random_point_inside_circle()
-            self.spawner.spawn_object('skeleton', pos=(x, y))
+            enemy = self.spawner.spawn_object('skeleton', pos=(x, y))
+            enemies.append(enemy)
+        self.generate_drop(enemies)
+
+    def generate_drop(self, enemies):
+        pos = (-1000, -1000)
+        soul_stone = self.spawner.soul_stone(pos)
+        enemies[-1].inventory.add(soul_stone)
+
+        number_of_potions = self.number_of_enemies // 3
+        potion_indices = np.random.choice(self.number_of_enemies - 1, number_of_potions)
+        for i in potion_indices:
+            potion = self.spawner.hp_potion_in_inventory(pos, enemies[i])
+            enemies[i].inventory.add(potion)
+
+        if np.random.randint(1, 10) == 1:
+            # generate sword
+            enemy_number = np.random.randint(0, self.number_of_enemies - 1)
+            sword = self.spawner.sword_in_inventory(pos, enemies[enemy_number])
+            enemies[enemy_number].inventory.add(sword)
 
     def spawn_static(self):
         for _ in range(self.number_of_static):
