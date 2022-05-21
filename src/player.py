@@ -61,10 +61,16 @@ class Player(Actor):
     def handle_events(self, events):
         for event in events:
             if event.type == pygame.MOUSEBUTTONUP:
-                mouse_pos = pygame.mouse.get_pos()
-                inventory_item = self.find_inventory_item_collision(mouse_pos)
-                if inventory_item is not None:
-                    self.use_inventory_item(inventory_item)
+                if event.button == 1:
+                    mouse_pos = pygame.mouse.get_pos()
+                    inventory_item = self.find_inventory_item_collision(mouse_pos)
+                    if inventory_item is not None:
+                        self.use_inventory_item(inventory_item)
+                if event.button == 3:
+                    mouse_pos = pygame.mouse.get_pos()
+                    inventory_item = self.find_inventory_item_collision(mouse_pos)
+                    if inventory_item is not None:
+                        self.drop_item(inventory_item)
 
     def use_inventory_item(self, item):
         must_delete = item.on_use()
@@ -75,6 +81,12 @@ class Player(Actor):
         for inventory_item in self.groups.items_in_inventory:
             if inventory_item.rect.collidepoint(pos):
                 return inventory_item
+
+    def drop_item(self, inventory_item):
+        inventory_item.kill()
+        self.inventory.remove(inventory_item)
+        self.groups.items_on_floor.add(inventory_item)
+        inventory_item.on_drop(self.pos)
 
     def update(self, *args, **kwargs) -> None:
         screen = kwargs['screen']
