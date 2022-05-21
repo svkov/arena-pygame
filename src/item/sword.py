@@ -10,9 +10,21 @@ class SwordItem(InventoryItem):
 
     def on_use(self):
         super().on_use()
+        if self.is_using_now:
+            self.unwield()
+        else:
+            self.wield()
+        return False
+
+    def wield(self):
+        if self.owner.weapon is not None:
+            self.owner.weapon.unwield()
         self.owner.weapon = self
         self.is_using_now = True
-        return False
+
+    def unwield(self):
+        self.owner.weapon = None
+        self.is_using_now = False
 
 class ItemStats:
     def __init__(self, **stats) -> None:
