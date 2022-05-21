@@ -94,10 +94,14 @@ class HUD(pygame.sprite.Sprite):
         self.current_y += height + self.hud_config.margin * 2
 
     def draw_inventory_cell(self, screen, rect, item):
-        pygame.draw.rect(screen, self.hud_config.inventory_cell_color, rect, 1)
+        background_color = self.hud_config.panel_color
         if item is not None:
             item.set_image_size((rect[2] - 2, rect[3] - 2))
             item.pos = [rect[0], rect[1]]
+            if item.is_using_now:
+                background_color = self.hud_config.inventory_using_cell_color
+        pygame.draw.rect(screen, background_color, rect)
+        pygame.draw.rect(screen, self.hud_config.inventory_cell_color, rect, 1)
 
     def draw_info_field(self, screen, content):
         rect = [

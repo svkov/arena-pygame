@@ -22,6 +22,7 @@ class Actor(GameObject):
         self.hp = self.max_hp
         self.hp_bar = HpBar(self, groups=groups)
         self.camera = kwargs['camera']
+        self.weapon = None
         attack_speed_in_frames = stats.attack_speed_in_frames(kwargs['fps'])
         # TODO: integrate with potion module
         hp_potion_cooldown = 50
@@ -44,6 +45,8 @@ class Actor(GameObject):
 
     @property
     def damage(self):
+        if self.weapon:
+            return self.stats.damage + self.weapon.stats.damage
         return self.stats.damage
 
     def set_zero_speed(self):

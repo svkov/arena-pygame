@@ -6,6 +6,7 @@ class InventoryItem(GameObject):
     def __init__(self, pos, image, image_size, owner, **kwargs) -> None:
         super().__init__(pos, image, image_size, **kwargs)
         self.owner = owner
+        self.is_using_now = False
 
     def update(self, *args, **kwargs):
         if self.owner is None:

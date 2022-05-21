@@ -7,3 +7,4 @@ class HUDConfig:
     info_height_percent = 0.1
     panel_color = '#b8b8b8'
     inventory_cell_color = '#2e2e2e'
+    inventory_using_cell_color = '#24a800'

@@ -6,13 +6,18 @@ class SwordItem(InventoryItem):
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self.stats = kwargs.get('stats', None)
+        self.stats = kwargs.get('stats', ItemStats(damage=10))
 
     def on_use(self):
         super().on_use()
         self.owner.weapon = self
+        self.is_using_now = True
         return False
 
 class ItemStats:
     def __init__(self, **stats) -> None:
         self._stats = stats
+
+    @property
+    def damage(self):
+        return self._stats['damage']

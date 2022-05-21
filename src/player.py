@@ -26,7 +26,6 @@ class Player(Actor):
         self.image = self.animation_manager.image
         self.picking_up = False
         self.inventory = Inventory()
-        self.weapon = None
         # TODO: connect to HUD more obviously
         # You must specify HUD after creating the player
         self.hud = None
