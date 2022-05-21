@@ -84,6 +84,10 @@ class Player(Actor):
         if must_delete:
             self.inventory.remove(item)
 
+    def use_quest_item(self, item):
+        item.activate()
+        self.inventory.remove(item)
+
     def find_inventory_item_collision(self, pos):
         for inventory_item in self.groups.items_in_inventory:
             if inventory_item.rect.collidepoint(pos):

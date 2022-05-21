@@ -5,6 +5,7 @@ class StoneSoulItem(InventoryItem):
     description = 'Vibrates near the portal'
 
     def on_use(self):
-        # Delete on use
+        return False
+
+    def activate(self):
         self.kill()
-        return True

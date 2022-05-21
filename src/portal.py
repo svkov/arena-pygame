@@ -33,7 +33,7 @@ class Portal(GameObject):
     def try_to_activate(self, actor):
         stone_soul = actor.inventory.contains(StoneSoulItem)
         if stone_soul:
-            actor.use_inventory_item(stone_soul)
+            actor.use_quest_item(stone_soul)
             self.activate_portal()
 
     def go_to_portal(self, actor):
