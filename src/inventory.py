@@ -8,7 +8,7 @@ class Inventory:
         self.height = 3
         self.size = self.width * self.height
         self.empty_space = self.size
-        self.inventory = [[None for i in range(self.width)] for j in range(self.height)]
+        self.inventory = [[None for j in range(self.width)] for i in range(self.height)]
 
     def is_enough_space(self):
         return self.empty_space > 0
@@ -29,15 +29,14 @@ class Inventory:
                 break
 
     def sort(self):
-        # TODO: fix bug with sorting
-        new_inventory = [[None for i in range(self.width)] for j in range(self.height)]
-        filled = 0
+        new_inventory = [[None for j in range(self.width)] for i in range(self.height)]
+        items = self.as_list()
         for i in range(self.height):
             for j in range(self.width):
-                if self.inventory[i][j] is not None:
-                    new_inventory[filled // self.height][filled % self.width] = self.inventory[i][j]
-                    filled += 1
-        self.inventory = new_inventory
+                if len(items) == 0:
+                    self.inventory = new_inventory
+                    return
+                new_inventory[i][j] = items.pop()
 
     def remove(self, item: InventoryItem):
         removed = False
