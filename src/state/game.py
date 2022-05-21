@@ -21,22 +21,20 @@ class GameState:
         self.fps = fps
         self.sprites = sprites
         self.level_number = 1
-        self.camera = Camera(0, 0, screen_resolution)
+        self.stats_config = StatsConfig('resources/stats.csv', self.sprites)
+        self.camera = Camera(0, 0, self.screen_resolution)
         self.groups = GameStateGroups()
-        self.spawner = Spawner(self.groups)
+        self.spawner = Spawner(self.groups, self.camera, self.stats_config, self.fps, self.sprites)
         self.setup_scene()
         self.paused = False
         self.pause = PauseState(self.groups, self.hud, self.screen_resolution, self.pause_font)
 
     def setup_scene(self, keep_player=False):
-        stats_config = StatsConfig('resources/stats.csv', self.sprites)
         try:
             raise FileNotFoundError()
-            level_config = LevelConfig(self.level_number, self.camera, self.fps,
-                                       stats_config, self.spawner, self.groups)
+            level_config = LevelConfig(self.level_number, self.spawner)
         except FileNotFoundError:
-            level_config = RandomLevelConfig(self.level_number, self.camera, self.fps,
-                                             stats_config, self.spawner, self.groups)
+            level_config = RandomLevelConfig(self.level_number, self.spawner)
         level_config.setup_level()
         # setup_object_randomly(background, radius, sprites)
         # setup_object_randomly(background, radius, sprites, n_sample=10, sprite_name='tombstone')
@@ -49,10 +47,12 @@ class GameState:
         self.player.hud = self.hud
 
     def clear_scene(self):
+        del self.camera
         del self.groups
         del self.spawner
+        self.camera = Camera(0, 0, self.screen_resolution)
         self.groups = GameStateGroups()
-        self.spawner = Spawner(self.groups)
+        self.spawner = Spawner(self.groups, self.camera, self.stats_config, self.fps, self.sprites)
         # Run GC to collect old groups and spawner (they have cycles in player object and somewhere else)
         # If not to run, app will alloc more memory than needed
         # There is no memory leak, but it works better using GC

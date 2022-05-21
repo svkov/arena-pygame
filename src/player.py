@@ -5,7 +5,6 @@ from src.animation.states import PlayerStates
 from src.camera import Camera
 from src.groups import GameStateGroups
 from src.ingame_label import ExpLabel, ItemLabel
-from src.inventory import Inventory
 from src.item import InventoryItem
 
 from src.projectile import Projectile
@@ -24,7 +23,6 @@ class Player(Actor):
         self.image = self.animation_manager.image
         self.is_interacting = False
         self.is_in_portal = False
-        self.inventory = Inventory()
         # TODO: connect to HUD more obviously
         # You must specify HUD after creating the player
         self.hud = None
@@ -87,12 +85,6 @@ class Player(Actor):
         for inventory_item in self.groups.items_in_inventory:
             if inventory_item.rect.collidepoint(pos):
                 return inventory_item
-
-    def drop_item(self, inventory_item):
-        inventory_item.kill()
-        self.inventory.remove(inventory_item)
-        self.groups.items_on_floor.add(inventory_item)
-        inventory_item.on_drop(self.pos)
 
     def update(self, *args, **kwargs) -> None:
         screen = kwargs['screen']

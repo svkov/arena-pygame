@@ -1,5 +1,6 @@
 import numpy as np
 from src.animated_enemy import AnimatedEnemy
+from src.camera import Camera
 from src.enemy import Enemy
 from src.groups import GameStateGroups
 import src.animation.generate_state as generate_state
@@ -11,11 +12,22 @@ from src.player import Player
 from src.background import Background
 from src.portal import Portal
 from src.static_object import StaticObject
+from src.stats_config import StatsConfig
 
 class Spawner:
 
-    def __init__(self, groups: GameStateGroups) -> None:
+    def __init__(self, groups: GameStateGroups, camera: Camera, stats_config: StatsConfig, fps, sprites) -> None:
+        self.camera = camera
+        self.fps = fps
+        self.sprites = sprites
         self.groups = groups
+        self.stats_config = stats_config
+        self.shared_args = {
+            'camera': self.camera,
+            'fps': self.fps,
+            'sprites': self.sprites,
+            'groups': self.groups
+        }
         self._map_object_name_to_create_function = {
             'skeleton': self.skeleton,
             'vampire': self.vampire,
@@ -31,15 +43,20 @@ class Spawner:
             'soul_stone': self.soul_stone
         }
 
-    def spawn_object(self, name, *args, **kwargs):
-        return self._map_object_name_to_create_function[name](*args, **kwargs)
+    def spawn_object(self, name, pos):
+        stats = self.stats_config.get_by_name(name)
+        return self._map_object_name_to_create_function[name](pos=pos, **stats, **self.shared_args)
 
     def skeleton(self, *args, **kwargs):
-        skeleton_states = generate_state.skeleton(kwargs['sprites'], kwargs['fps'])
+        skeleton_states = generate_state.skeleton(self.sprites, self.fps)
         stats = EnemyStats(**kwargs)
 
         skeleton = AnimatedEnemy(*args, animation_states=skeleton_states, stats=stats, **kwargs)
         self.groups.spawn_enemy_object(skeleton)
+
+        potion_stats = self.stats_config.get_by_name('hp_potion')
+        potion = self.hp_potion_in_inventory(pos=(0, 0), **potion_stats, **self.shared_args)
+        skeleton.inventory.add(potion)
         return skeleton
 
     def priestess(self, *args, **kwargs):
@@ -54,9 +71,16 @@ class Spawner:
         self.groups.spawn_enemy_object(vampire)
         return vampire
 
-    def hp_potion(self, *args, **kwargs):
-        potion = Potion(*args, **kwargs, owner=None)
+    def hp_potion(self, pos):
+        stats = self.stats_config.get_by_name('hp_potion')
+        potion = Potion(pos, **stats, owner=None)
         self.groups.spawn_item(potion)
+        return potion
+
+    def hp_potion_in_inventory(self, pos, owner=None):
+        stats = self.stats_config.get_by_name('hp_potion')
+        potion = Potion(pos, **stats, owner=owner)
+        self.groups.items_in_inventory.add(potion)
         return potion
 
     def sword(self, *args, **kwargs):

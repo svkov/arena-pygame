@@ -1,3 +1,5 @@
+import itertools
+
 from src.item import InventoryItem
 
 
@@ -58,6 +60,14 @@ class Inventory:
                 if isinstance(self.inventory[i][j], class_item):
                     return self.inventory[i][j]
         return None
+
+    def as_list(self):
+        inventory_list = []
+        for i in range(self.height):
+            for j in range(self.width):
+                if self.inventory[i][j] is not None:
+                    inventory_list.append(self.inventory[i][j])
+        return inventory_list
 
     def get_item(self, i, j):
         return self.inventory[i][j]

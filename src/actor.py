@@ -6,6 +6,7 @@ from src.game_object import GameObject
 from src.groups import GameStateGroups
 from src.hp_bar import HpBar
 from src.ingame_label import DamageLabel
+from src.inventory import Inventory
 
 
 class Actor(GameObject):
@@ -22,6 +23,7 @@ class Actor(GameObject):
         self.hp = self.max_hp
         self.hp_bar = HpBar(self, groups=groups)
         self.camera = kwargs['camera']
+        self.inventory = Inventory()
         self.weapon = kwargs.get('weapon', None)
         self.armor = kwargs.get('armor', None)
         attack_speed_in_frames = stats.attack_speed_in_frames(kwargs['fps'])
@@ -56,6 +58,12 @@ class Actor(GameObject):
     def update_cooldown(self):
         for key, val in self.cooldowns.items():
             val.update_cooldown()
+
+    def drop_item(self, inventory_item):
+        inventory_item.kill()
+        self.inventory.remove(inventory_item)
+        self.groups.items_on_floor.add(inventory_item)
+        inventory_item.on_drop(self.pos)
 
     def update(self, *args, **kwargs) -> None:
         self.update_cooldown()

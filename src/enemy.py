@@ -2,6 +2,7 @@ import pygame
 from src.actor import Actor
 from src.behavior import Behavior
 from src.camera import Camera
+from src.item.potion import Potion
 from src.projectile import Projectile
 
 
@@ -39,6 +40,11 @@ class Enemy(Actor):
     def on_death(self, death_from):
         super().on_death(death_from)
         death_from.owner.increase_xp(self.exp_after_death)
+        self.drop_all_items()
 
     def increase_xp(self):
         pass
+
+    def drop_all_items(self):
+        for item in self.inventory.as_list():
+            self.drop_item(item)
