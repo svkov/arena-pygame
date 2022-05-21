@@ -64,6 +64,12 @@ class RandomLevelConfig:
             sword = self.spawner.sword_in_inventory(pos, enemies[enemy_number])
             enemies[enemy_number].inventory.add(sword)
 
+        if np.random.randint(1, 20) == 1:
+            # generate armor
+            enemy_number = np.random.randint(0, self.number_of_enemies - 1)
+            armor = self.spawner.armor_in_inventory(pos, enemies[enemy_number])
+            enemies[enemy_number].inventory.add(armor)
+
     def spawn_static(self):
         for _ in range(self.number_of_static):
             x, y = self.generate_random_point_inside_circle()
