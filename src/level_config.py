@@ -1,9 +1,6 @@
 import numpy as np
 import pandas as pd
-from src.camera import Camera
-from src.groups import GameStateGroups
 from src.spawner import Spawner
-from src.stats_config import StatsConfig
 
 class LevelConfig:
 

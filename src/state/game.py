@@ -31,7 +31,7 @@ class GameState:
 
     def setup_scene(self, keep_player=False):
         try:
-            raise FileNotFoundError()
+            # raise FileNotFoundError()
             level_config = LevelConfig(self.level_number, self.spawner)
         except FileNotFoundError:
             level_config = RandomLevelConfig(self.level_number, self.spawner)

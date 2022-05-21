@@ -1,5 +1,3 @@
-import itertools
-
 from src.item import InventoryItem
 
 

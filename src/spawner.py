@@ -44,88 +44,114 @@ class Spawner:
         }
 
     def spawn_object(self, name, pos):
+        func = self._map_object_name_to_create_function[name]
+        if func.__name__ == 'static_object':
+            return func(pos, name)
+        return func(pos)
+
+    def generate_actor_kwargs(self, name):
+        all_stats = self.stats_config.get_by_name(name)
+        stats = ActorStats(**all_stats)
+        return dict(**all_stats, stats=stats, **self.shared_args)
+
+    def generate_enemy_kwargs(self, name):
+        all_stats = self.stats_config.get_by_name(name)
+        stats = EnemyStats(**all_stats)
+        return dict(**all_stats, stats=stats, **self.shared_args)
+
+    def generate_item_kwargs(self, name, owner):
         stats = self.stats_config.get_by_name(name)
-        return self._map_object_name_to_create_function[name](pos=pos, **stats, **self.shared_args)
+        return dict(**stats, **self.shared_args, owner=owner)
 
-    def skeleton(self, *args, **kwargs):
+    def generate_static_object_kwargs(self, name):
+        stats = self.stats_config.get_by_name(name)
+        return dict(**stats, **self.shared_args)
+
+    def skeleton(self, pos, **kwargs):
+        kwargs = self.generate_enemy_kwargs('skeleton')
+
         skeleton_states = generate_state.skeleton(self.sprites, self.fps)
-        stats = EnemyStats(**kwargs)
-
-        skeleton = AnimatedEnemy(*args, animation_states=skeleton_states, stats=stats, **kwargs)
+        skeleton = AnimatedEnemy(pos, animation_states=skeleton_states, **kwargs)
         self.groups.spawn_enemy_object(skeleton)
 
-        potion_stats = self.stats_config.get_by_name('hp_potion')
-        potion = self.hp_potion_in_inventory(pos=(0, 0), **potion_stats, **self.shared_args)
+        potion = self.hp_potion_in_inventory(pos=(0, 0))
         skeleton.inventory.add(potion)
         return skeleton
 
-    def priestess(self, *args, **kwargs):
-        stats = EnemyStats(**kwargs)
-        priestess = Enemy(*args, stats=stats, **kwargs)
+    def priestess(self, pos, **kwargs):
+        kwargs = self.generate_enemy_kwargs('priestess')
+        priestess = Enemy(pos, **kwargs)
         self.groups.spawn_enemy_object(priestess)
         return priestess
 
-    def vampire(self, *args, **kwargs):
-        stats = EnemyStats(**kwargs)
-        vampire = Enemy(*args, stats=stats, **kwargs)
+    def vampire(self, pos, **kwargs):
+        kwargs = self.generate_enemy_kwargs('vampire')
+        vampire = Enemy(pos, **kwargs)
         self.groups.spawn_enemy_object(vampire)
         return vampire
 
     def hp_potion(self, pos):
-        stats = self.stats_config.get_by_name('hp_potion')
-        potion = Potion(pos, **stats, owner=None)
+        potion = self.get_hp_potion(pos, None)
         self.groups.spawn_item(potion)
         return potion
 
     def hp_potion_in_inventory(self, pos, owner=None):
-        stats = self.stats_config.get_by_name('hp_potion')
-        potion = Potion(pos, **stats, owner=owner)
+        potion = self.get_hp_potion(pos, owner)
         self.groups.items_in_inventory.add(potion)
         return potion
 
-    def sword(self, *args, **kwargs):
-        sword = SwordItem(*args, **kwargs, owner=None)
+    def get_hp_potion(self, pos, owner):
+        kwargs = self.generate_item_kwargs('hp_potion', owner)
+        return Potion(pos, **kwargs)
+
+    def sword(self, pos, owner=None):
+        kwargs = self.generate_item_kwargs('sword', owner)
+        sword = SwordItem(pos, **kwargs)
         self.groups.spawn_item(sword)
         return sword
 
-    def armor(self, *args, **kwargs):
-        armor = ArmorItem(*args, **kwargs, owner=None)
+    def armor(self, pos, owner=None):
+        kwargs = self.generate_item_kwargs('armor', owner)
+        armor = ArmorItem(pos, **kwargs)
         self.groups.spawn_item(armor)
         return armor
 
-    def portal(self, *args, **kwargs):
-        portal = Portal.create_portal(*args, **kwargs)
+    def portal(self, pos, **kwargs):
+        kwargs = self.generate_static_object_kwargs('portal')
+        portal = Portal.create_portal(pos, **kwargs)
         self.groups.interactive_objects.add(portal)
         return portal
 
-    def soul_stone(self, *args, **kwargs):
-        soul_stone = StoneSoulItem(*args, **kwargs, owner=None)
+    def soul_stone(self, pos, owner=None):
+        kwargs = self.generate_item_kwargs('soul_stone', owner)
+        soul_stone = StoneSoulItem(pos, **kwargs)
         self.groups.items_on_floor.add(soul_stone)
         return soul_stone
 
-    def player(self, *args, **kwargs):
-        stats = ActorStats(**kwargs)
-        states = generate_state.player(kwargs['sprites'], kwargs['fps'])
-        player = Player(*args, animation_states=states, stats=stats, **kwargs)
+    def player(self, pos):
+        kwargs = self.generate_actor_kwargs('player')
+        states = generate_state.player(self.sprites, self.fps)
+        player = Player(pos, animation_states=states, **kwargs)
         self.groups.spawn_player_obj(player)
         return player
 
-    def static_object(self, *args, **kwargs):
-        static = StaticObject(*args, **kwargs)
+    def static_object(self, pos, name):
+        kwargs = self.generate_static_object_kwargs(name)
+        static = StaticObject(pos, **kwargs)
         self.groups.spawn_static_object(static)
         return static
 
-    def background(self, *args, **kwargs):
-        background = Background(*args, **kwargs)
+    def background(self, pos):
+        kwargs = self.generate_static_object_kwargs('background')
+        background = Background(pos, **kwargs)
         self.groups.spawn_background(background)
-        sprites = kwargs['sprites']
-        self.setup_arena(background, background.radius, sprites)
+        self.setup_arena(background, background.radius)
         return background
 
-    def setup_arena(self, background, radius, sprites):
+    def setup_arena(self, background, radius):
         for alpha in np.linspace(0, 2 * np.pi, 500):
             pos = background.center
             new_pos_x = pos[0] + np.sin(alpha) * radius
             new_pos_y = pos[1] + np.cos(alpha) * radius
             pos = [new_pos_x, new_pos_y]
-            self.static_object(pos, sprites['wall_without_contour'], (512, 512))
+            self.static_object(pos, 'wall_without_contour')

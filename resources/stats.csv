@@ -3,6 +3,7 @@ skeleton;skeleton;128;128;snow;;10;10;1;0;1;1;10
 player;knight;128;128;snow;;1;10;1;1;30;5;20
 vampire;vampire;128;128;snow;;30;20;1;0;5;1;15
 background;background;8000;8000;;3500;;;;;;;
+wall_without_contour;wall_without_contour;512;512;;;;;;;;;
 cactus;cactus;128;256;;;;;;;;;
 tombstone;tombstone;128;256;;;;;;;;;
 priestess;priestess;128;128;snow;;10;10;1;1;1;1;1

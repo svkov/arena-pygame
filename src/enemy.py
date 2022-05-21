@@ -2,7 +2,6 @@ import pygame
 from src.actor import Actor
 from src.behavior import Behavior
 from src.camera import Camera
-from src.item.potion import Potion
 from src.projectile import Projectile
 
 

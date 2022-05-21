@@ -65,11 +65,11 @@ class ItemLabel(IngameLabel):
     def update(self, *args, **kwargs):
         (x, y) = self.camera.to_screen_coord(self.pos)
         width, height = self.rendered_text.get_size()
-        rect = [
-            x - width // 2,
-            y,
-            width, 
-            height
-        ]
+        # rect = [
+        #     x - width // 2,
+        #     y,
+        #     width,
+        #     height
+        # ]
         # pygame.draw.rect(kwargs['screen'], '#3d3d3d', rect)
         super().update(*args, **kwargs)
