@@ -7,6 +7,7 @@ from src.groups import GameStateGroups
 from src.hp_bar import HpBar
 from src.ingame_label import DamageLabel
 from src.inventory import Inventory
+from src.item.wieldable import WieldableItem
 
 
 class Actor(GameObject):
@@ -60,6 +61,8 @@ class Actor(GameObject):
             val.update_cooldown()
 
     def drop_item(self, inventory_item):
+        if issubclass(inventory_item.__class__, WieldableItem):
+            inventory_item.unwield()
         inventory_item.kill()
         self.inventory.remove(inventory_item)
         self.groups.items_on_floor.add(inventory_item)
