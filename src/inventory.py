@@ -29,6 +29,7 @@ class Inventory:
                 break
 
     def sort(self):
+        # TODO: fix bug with sorting
         new_inventory = [[None for i in range(self.width)] for j in range(self.height)]
         filled = 0
         for i in range(self.height):

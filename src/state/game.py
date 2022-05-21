@@ -5,10 +5,12 @@ from src.camera import Camera
 from src.groups import GameStateGroups
 from src.hud import HUD
 from src.level_config import LevelConfig
+from src.player import Player
 from src.spawner import Spawner
 from src.state.pause import PauseState
 from src.static_object import StaticObject
 from src.stats_config import StatsConfig
+import gc
 
 class GameState:
     def __init__(self, game, screen_resolution, fps, sprites) -> None:
@@ -22,19 +24,36 @@ class GameState:
         self.groups = GameStateGroups()
         self.spawner = Spawner(self.groups)
         self.setup_scene()
-        self.hud = HUD(self.player, self.hud_font)
-        self.player.hud = self.hud
         self.paused = False
         self.pause = PauseState(self.groups, self.hud, self.screen_resolution, self.pause_font)
 
-    def setup_scene(self):
+    def setup_scene(self, keep_player=False):
         stats_config = StatsConfig('resources/stats.csv', self.sprites)
         level_config = LevelConfig('resources/level2.csv', self.camera, self.fps,
                                    stats_config, self.spawner, self.groups)
         level_config.setup_level()
         # setup_object_randomly(background, radius, sprites)
         # setup_object_randomly(background, radius, sprites, n_sample=10, sprite_name='tombstone')
-        self.player = level_config.player
+        if keep_player and self.player is not None:
+            old_player = self.player
+            self.player = Player.recreate_player(old_player, level_config.player)
+        else:
+            self.player = level_config.player
+        self.hud = HUD(self.player, self.hud_font)
+        self.player.hud = self.hud
+
+    def clear_scene(self):
+        del self.groups
+        del self.spawner
+        self.groups = GameStateGroups()
+        self.spawner = Spawner(self.groups)
+        # Run GC to collect old groups and spawner (they have cycles in player object and somewhere else)
+        # If not to run, app will alloc more memory than needed
+        # There is no memory leak, but it works better using GC
+        gc.collect()
+
+    def clear_scene_for_next_level(self):
+        self.groups.clear_before_next_level()
 
     def handle_events(self, events):
         for event in events:
@@ -65,7 +84,8 @@ class GameState:
         if not self.player.is_alive:
             self.game.game_over()
         if self.player.is_in_portal:
-            self.game.win()
+            self.clear_scene_for_next_level()
+            self.setup_scene(keep_player=True)
         screen.fill((0, 0, 0))
         self.groups.background_group.draw(screen)
         self.groups.update(update_kwargs)

@@ -52,6 +52,18 @@ class GameStateGroups:
         for group in self.draw_groups_order:
             group.draw(screen)
 
+    def clear_before_next_level(self):
+        self.background_group.empty()
+        self.static_objects.empty()
+        self.items_on_floor.empty()
+        self.player_objects.empty()
+        self.player_projectiles.empty()
+        self.enemy_objects.empty()
+        self.enemy_projectiles.empty()
+        self.ui_objects.empty()
+        self.items_description.empty()
+        self.interactive_objects.empty()
+
     def handle_collisions(self, update_kwargs):
         CollisionHandler.full_collision(self.player_objects, self.enemy_projectiles, self.static_objects, update_kwargs)
         CollisionHandler.full_collision(self.enemy_objects, self.player_projectiles, self.static_objects, update_kwargs)

@@ -17,10 +17,8 @@ class Player(Actor):
         super().__init__(*args, **kwargs)
         self.camera: Camera = kwargs['camera']
         self.exp = 0
-        self.level = 1
-        self.exp_to_lvlup = 100
-        self._low_damage = 100
-        self._high_damage = 150
+        self.level = kwargs.get('level', 1)
+        self.exp_to_lvlup = kwargs.get('exp_tp_lvlup', 100)
         self.animation_manager = AnimationManager(kwargs['animation_states'], default_state=PlayerStates.IDLE)
         self.animation_manager.set_state(PlayerStates.IDLE)
         self.image = self.animation_manager.image
@@ -30,6 +28,14 @@ class Player(Actor):
         # TODO: connect to HUD more obviously
         # You must specify HUD after creating the player
         self.hud = None
+
+    @classmethod
+    def recreate_player(cls, old_player, new_player):
+        new_player.inventory = old_player.inventory
+        new_player.weapon = old_player.weapon
+        new_player.armor = old_player.armor
+        new_player.hp = old_player.hp
+        return new_player
 
     def handle_keyboard_input(self, keyboard):
         self.set_zero_speed()
