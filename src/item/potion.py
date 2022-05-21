@@ -10,6 +10,14 @@ class Potion(InventoryItem):
         self.hp_recover = kwargs.get('hp', 30)
 
     def on_use(self):
+        """
+        Return True if need to be removed from inventory
+        """
         hp_to_recover = self.owner.stats.max_hp - self.owner.hp
-        self.owner.hp += min(self.hp_recover, hp_to_recover)
-        return super().on_use()
+        if hp_to_recover > 0:
+            self.owner.hp += min(self.hp_recover, hp_to_recover)
+            super().on_use()
+            self.kill()
+            return True
+        else:
+            return False

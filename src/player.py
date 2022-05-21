@@ -54,18 +54,37 @@ class Player(Actor):
             self.cooldowns['hp_potion'].reset_counter()
 
         mouse_pos = pygame.mouse.get_pos()
+        inventory_item = self.find_inventory_item_collision(mouse_pos)
+        if inventory_item is not None:
+            self.spawn_item_description(inventory_item, mouse_pos)
+
+    def handle_events(self, events):
+        for event in events:
+            if event.type == pygame.MOUSEBUTTONUP:
+                mouse_pos = pygame.mouse.get_pos()
+                inventory_item = self.find_inventory_item_collision(mouse_pos)
+                if inventory_item is not None:
+                    self.use_inventory_item(inventory_item)
+
+    def use_inventory_item(self, item):
+        must_delete = item.on_use()
+        if must_delete:
+            self.inventory.remove(item)
+
+    def find_inventory_item_collision(self, pos):
         for inventory_item in self.groups.items_in_inventory:
-            if inventory_item.rect.collidepoint(mouse_pos):
-                self.spawn_item_description(inventory_item, mouse_pos)
-                break
+            if inventory_item.rect.collidepoint(pos):
+                return inventory_item
 
     def update(self, *args, **kwargs) -> None:
         screen = kwargs['screen']
         dt = kwargs['dt']
         camera: Camera = kwargs['camera']
         groups: GameStateGroups = kwargs['groups']
+        events = kwargs['events']
         self.handle_keyboard_input()
         self.handle_mouse_input(groups)
+        self.handle_events(events)
         self.handle_animation()
         self.update_cooldown()
 

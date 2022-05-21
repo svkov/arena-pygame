@@ -36,8 +36,8 @@ class GameState:
         # setup_object_randomly(background, radius, sprites, n_sample=10, sprite_name='tombstone')
         self.player = level_config.player
 
-    def handle_events(self):
-        for event in pygame.event.get():
+    def handle_events(self, events):
+        for event in events:
             if event.type == pygame.QUIT:
                 self.running = False
             if event.type == pygame.KEYUP:
@@ -45,13 +45,15 @@ class GameState:
                     self.paused = not self.paused
 
     def update(self, **kwargs):
-        self.handle_events()
+        events = pygame.event.get()
+        self.handle_events(events)
         screen = kwargs['screen']
 
         update_kwargs = {
             **kwargs,
             'camera': self.camera,
-            'groups': self.groups
+            'groups': self.groups,
+            'events': events
         }
 
         if not self.paused:

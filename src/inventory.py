@@ -25,6 +25,16 @@ class Inventory:
             if inserted:
                 break
 
+    def sort(self):
+        new_inventory = [[None for i in range(self.width)] for j in range(self.height)]
+        filled = 0
+        for i in range(self.height):
+            for j in range(self.width):
+                if self.inventory[i][j] is not None:
+                    new_inventory[filled // self.height][filled % self.width] = self.inventory[i][j]
+                    filled += 1
+        self.inventory = new_inventory
+
     def remove(self, item: InventoryItem):
         removed = False
         for i in range(self.height):
@@ -36,6 +46,7 @@ class Inventory:
                     break
             if removed:
                 break
+        self.sort()
 
     def get_item(self, i, j):
         return self.inventory[i][j]
