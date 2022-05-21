@@ -4,7 +4,7 @@ import pygame
 from src.camera import Camera
 from src.groups import GameStateGroups
 from src.hud import HUD
-from src.level_config import LevelConfig
+from src.level_config import LevelConfig, RandomLevelConfig
 from src.player import Player
 from src.spawner import Spawner
 from src.state.pause import PauseState
@@ -20,6 +20,7 @@ class GameState:
         self.screen_resolution = screen_resolution
         self.fps = fps
         self.sprites = sprites
+        self.level_number = 1
         self.camera = Camera(0, 0, screen_resolution)
         self.groups = GameStateGroups()
         self.spawner = Spawner(self.groups)
@@ -29,8 +30,13 @@ class GameState:
 
     def setup_scene(self, keep_player=False):
         stats_config = StatsConfig('resources/stats.csv', self.sprites)
-        level_config = LevelConfig('resources/level2.csv', self.camera, self.fps,
-                                   stats_config, self.spawner, self.groups)
+        try:
+            raise FileNotFoundError()
+            level_config = LevelConfig(self.level_number, self.camera, self.fps,
+                                       stats_config, self.spawner, self.groups)
+        except FileNotFoundError:
+            level_config = RandomLevelConfig(self.level_number, self.camera, self.fps,
+                                             stats_config, self.spawner, self.groups)
         level_config.setup_level()
         # setup_object_randomly(background, radius, sprites)
         # setup_object_randomly(background, radius, sprites, n_sample=10, sprite_name='tombstone')
@@ -85,6 +91,7 @@ class GameState:
             self.game.game_over()
         if self.player.is_in_portal:
             self.clear_scene_for_next_level()
+            self.level_number += 1
             self.setup_scene(keep_player=True)
         screen.fill((0, 0, 0))
         self.groups.background_group.draw(screen)
