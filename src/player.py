@@ -33,6 +33,9 @@ class Player(Actor):
         new_player.weapon = old_player.weapon
         new_player.armor = old_player.armor
         new_player.hp = old_player.hp
+        new_player.stats = old_player.stats
+        new_player.exp_to_lvlup = old_player.exp_to_lvlup
+        new_player.level = old_player.level
         return new_player
 
     def handle_keyboard_input(self, keyboard):

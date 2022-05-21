@@ -25,11 +25,12 @@ class RandomLevelConfig:
     player_default_pos = (3500, 3500)
     portal_default_pos = (3500, 2000)
 
-    def __init__(self, level_number, spawner: Spawner) -> None:
+    def __init__(self, level_number, spawner: Spawner, debug) -> None:
         self.level_number = level_number
         self.spawner = spawner
         self.number_of_enemies = level_number * 5
         self.number_of_static = 3
+        self.debug = debug
 
     def setup_level(self):
         self.spawner.spawn_object('background', pos=(0, 0))
@@ -49,6 +50,7 @@ class RandomLevelConfig:
 
     def generate_drop(self, enemies):
         pos = (-1000, -1000)
+        self.generate_debug_drop()
         soul_stone = self.spawner.soul_stone(pos)
         enemies[-1].inventory.add(soul_stone)
 
@@ -69,6 +71,12 @@ class RandomLevelConfig:
             enemy_number = np.random.randint(0, self.number_of_enemies - 1)
             armor = self.spawner.armor_in_inventory(pos, enemies[enemy_number])
             enemies[enemy_number].inventory.add(armor)
+
+    def generate_debug_drop(self):
+        if self.debug:
+            self.spawner.spawn_object('soul_stone', self.player.pos)
+            self.spawner.spawn_object('sword', self.player.pos)
+            self.spawner.spawn_object('armor', self.player.pos)
 
     def spawn_static(self):
         for _ in range(self.number_of_static):

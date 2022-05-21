@@ -51,7 +51,8 @@ class Game:
             'screen': self.screen,
             'dt': dt,
             'sprites': self.sprites,
-            'draw_enemy_attention': self.config.draw_enemy_attention
+            'draw_enemy_attention': self.config.draw_enemy_attention,
+            'debug': self.config.debug
         }
         self.fader.update(**update_kwargs)
         pygame.display.flip()

@@ -34,7 +34,7 @@ class GameState:
             # raise FileNotFoundError()
             level_config = LevelConfig(self.level_number, self.spawner)
         except FileNotFoundError:
-            level_config = RandomLevelConfig(self.level_number, self.spawner)
+            level_config = RandomLevelConfig(self.level_number, self.spawner, self.game.config.debug)
         level_config.setup_level()
         # setup_object_randomly(background, radius, sprites)
         # setup_object_randomly(background, radius, sprites, n_sample=10, sprite_name='tombstone')
