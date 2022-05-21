@@ -51,6 +51,13 @@ class Inventory:
                 break
         self.sort()
 
+    def contains(self, class_item):
+        for i in range(self.height):
+            for j in range(self.width):
+                if isinstance(self.inventory[i][j], class_item):
+                    return self.inventory[i][j]
+        return None
+
     def get_item(self, i, j):
         return self.inventory[i][j]
 

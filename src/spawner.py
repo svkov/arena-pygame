@@ -5,6 +5,7 @@ from src.groups import GameStateGroups
 import src.animation.generate_state as generate_state
 from src.actor_stats import ActorStats, EnemyStats
 from src.item.potion import Potion
+from src.item.quest_item import StoneSoulItem
 from src.item.sword import ArmorItem, SwordItem
 from src.player import Player
 from src.background import Background
@@ -26,7 +27,8 @@ class Spawner:
             'hp_potion': self.hp_potion,
             'sword': self.sword,
             'armor': self.armor,
-            'portal': self.portal
+            'portal': self.portal,
+            'soul_stone': self.soul_stone
         }
 
     def spawn_object(self, name, *args, **kwargs):
@@ -71,6 +73,11 @@ class Spawner:
         portal = Portal.create_portal(*args, **kwargs)
         self.groups.interactive_objects.add(portal)
         return portal
+
+    def soul_stone(self, *args, **kwargs):
+        soul_stone = StoneSoulItem(*args, **kwargs, owner=None)
+        self.groups.items_on_floor.add(soul_stone)
+        return soul_stone
 
     def player(self, *args, **kwargs):
         stats = ActorStats(**kwargs)

@@ -25,6 +25,7 @@ class Player(Actor):
         self.animation_manager.set_state(PlayerStates.IDLE)
         self.image = self.animation_manager.image
         self.is_interacting = False
+        self.is_in_portal = False
         self.inventory = Inventory()
         # TODO: connect to HUD more obviously
         # You must specify HUD after creating the player
@@ -105,6 +106,9 @@ class Player(Actor):
 
         self.animation_manager.update()
         self.image = self.animation_manager.image
+
+    def go_to_portal(self):
+        self.is_in_portal = True
 
     def handle_animation(self):
         if not self.animation_manager.is_busy:

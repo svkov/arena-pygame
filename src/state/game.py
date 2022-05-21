@@ -64,7 +64,7 @@ class GameState:
     def _update(self, screen, update_kwargs):
         if not self.player.is_alive:
             self.game.game_over()
-        if self.is_win():
+        if self.player.is_in_portal:
             self.game.win()
         screen.fill((0, 0, 0))
         self.groups.background_group.draw(screen)
@@ -78,9 +78,6 @@ class GameState:
 
     def _update_paused(self, *args, **kwargs):
         self.pause.update(*args, **kwargs)
-
-    def is_win(self):
-        return len(self.groups.enemy_objects) == 0
 
     def setup_object_randomly(self, background, radius, sprites, n_sample=15, sprite_name='cactus', image_size=None):
         if image_size is None:
