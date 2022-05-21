@@ -1,35 +1,30 @@
-from src.item import InventoryItem
+from src.item.wieldable import ItemStats, WieldableItem
 
 
-class SwordItem(InventoryItem):
+class SwordItem(WieldableItem):
     description = "This sword looks powerful"
 
     def __init__(self, *args, **kwargs) -> None:
+        stats = kwargs.get('stats', ItemStats(damage=10))
+        kwargs['stats'] = stats
         super().__init__(*args, **kwargs)
-        self.stats = kwargs.get('stats', ItemStats(damage=10))
 
-    def on_use(self):
-        super().on_use()
-        if self.is_using_now:
-            self.unwield()
-        else:
-            self.wield()
-        return False
+    def get_owner_wield_slot(self):
+        return self.owner.weapon
 
-    def wield(self):
-        if self.owner.weapon is not None:
-            self.owner.weapon.unwield()
-        self.owner.weapon = self
-        self.is_using_now = True
+    def set_owner_wield_slot(self, val):
+        self.owner.weapon = val
 
-    def unwield(self):
-        self.owner.weapon = None
-        self.is_using_now = False
+class ArmorItem(WieldableItem):
+    description = "Looks like it can protect you"
 
-class ItemStats:
-    def __init__(self, **stats) -> None:
-        self._stats = stats
+    def __init__(self, *args, **kwargs) -> None:
+        stats = kwargs.get('stats', ItemStats(defense=10))
+        kwargs['stats'] = stats
+        super().__init__(*args, **kwargs)
 
-    @property
-    def damage(self):
-        return self._stats['damage']
+    def get_owner_wield_slot(self):
+        return self.owner.armor
+
+    def set_owner_wield_slot(self, val):
+        self.owner.armor = val

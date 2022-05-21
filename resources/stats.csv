@@ -5,6 +5,7 @@ vampire;vampire;128;128;snow;;30;20;1;0;5;1;15
 background;background;8000;8000;;3500;;;;;;;
 cactus;cactus;128;256;;;;;;;;;
 tombstone;tombstone;128;256;;;;;;;;;
-priestess;priestess;128;128;snow;;1;1;1;1;1;1;1
+priestess;priestess;128;128;snow;;10;10;1;1;1;1;1
 hp_potion;hp_potion;64;64;;;;;;;;;
 sword;sword;64;64;;;;;;;;;
+armor;armor;64;64;;;;;;;;;

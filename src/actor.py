@@ -23,6 +23,7 @@ class Actor(GameObject):
         self.hp_bar = HpBar(self, groups=groups)
         self.camera = kwargs['camera']
         self.weapon = None
+        self.armor = None
         attack_speed_in_frames = stats.attack_speed_in_frames(kwargs['fps'])
         # TODO: integrate with potion module
         hp_potion_cooldown = 50
@@ -81,7 +82,10 @@ class Actor(GameObject):
     def on_collision(self, obj):
         if self.cooldowns['damage'].is_cooldown_over:
             damage = obj.damage
-            damage = self.stats.damage_take(damage)
+            if self.armor is not None:
+                damage = self.stats.damage_take(damage, self.armor.stats.defense)
+            else:
+                damage = self.stats.damage_take(damage)
             damage_label = DamageLabel(f'-{int(damage)}', self.pos, self.camera)
             self.groups.spawn_ui(damage_label)
             self.hp -= damage

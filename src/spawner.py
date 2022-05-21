@@ -5,7 +5,7 @@ from src.groups import GameStateGroups
 import src.animation.generate_state as generate_state
 from src.actor_stats import ActorStats, EnemyStats
 from src.item.potion import Potion
-from src.item.sword import SwordItem
+from src.item.sword import ArmorItem, SwordItem
 from src.player import Player
 from src.background import Background
 from src.static_object import StaticObject
@@ -23,7 +23,8 @@ class Spawner:
             'tombstone': self.static_object,
             'priestess': self.priestess,
             'hp_potion': self.hp_potion,
-            'sword': self.sword
+            'sword': self.sword,
+            'armor': self.armor
         }
 
     def spawn_object(self, name, *args, **kwargs):
@@ -58,6 +59,11 @@ class Spawner:
         sword = SwordItem(*args, **kwargs, owner=None)
         self.groups.spawn_item(sword)
         return sword
+
+    def armor(self, *args, **kwargs):
+        armor = ArmorItem(*args, **kwargs, owner=None)
+        self.groups.spawn_item(armor)
+        return armor
 
     def player(self, *args, **kwargs):
         stats = ActorStats(**kwargs)

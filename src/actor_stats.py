@@ -25,8 +25,8 @@ class ActorStats:
     def max_hp(self):
         return max(self.base_hp + self.strength * 25, 1)
 
-    def damage_take(self, raw_damage) -> float:
-        return max(raw_damage - self.defense, 1)
+    def damage_take(self, raw_damage, equipment_defence=0) -> float:
+        return max(raw_damage - (self.defense + equipment_defence), 1)
 
     def exp_gain(self, raw_exp) -> float:
         return raw_exp * (1 + self.intelligence / 100)
