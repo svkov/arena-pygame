@@ -67,6 +67,12 @@ class Inventory:
                     inventory_list.append(self.inventory[i][j])
         return inventory_list
 
+    def set_new_owner(self, owner):
+        for i in range(self.height):
+            for j in range(self.width):
+                if self.inventory[i][j]:
+                    self.inventory[i][j].owner = owner
+
     def get_item(self, i, j):
         return self.inventory[i][j]
 
