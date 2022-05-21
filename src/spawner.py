@@ -8,6 +8,7 @@ from src.item.potion import Potion
 from src.item.sword import ArmorItem, SwordItem
 from src.player import Player
 from src.background import Background
+from src.portal import Portal
 from src.static_object import StaticObject
 
 class Spawner:
@@ -24,7 +25,8 @@ class Spawner:
             'priestess': self.priestess,
             'hp_potion': self.hp_potion,
             'sword': self.sword,
-            'armor': self.armor
+            'armor': self.armor,
+            'portal': self.portal
         }
 
     def spawn_object(self, name, *args, **kwargs):
@@ -64,6 +66,11 @@ class Spawner:
         armor = ArmorItem(*args, **kwargs, owner=None)
         self.groups.spawn_item(armor)
         return armor
+
+    def portal(self, *args, **kwargs):
+        portal = Portal.create_portal(*args, **kwargs)
+        self.groups.interactive_objects.add(portal)
+        return portal
 
     def player(self, *args, **kwargs):
         stats = ActorStats(**kwargs)
