@@ -36,3 +36,13 @@ class CollisionHandler:
             if collided_objects:
                 item = collided_objects[0]
                 player.collide_with_item(item)
+
+    @staticmethod
+    def player_collision_to_interactive_objects(player_group: Group, interactive_group: Group):
+        for player in player_group:
+            if not player.is_interacting:
+                continue
+            collided_objects = pygame.sprite.spritecollide(player, interactive_group, False)
+            if collided_objects:
+                obj = collided_objects[0]
+                obj.on_interact(player)

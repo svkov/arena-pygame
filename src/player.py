@@ -24,15 +24,14 @@ class Player(Actor):
         self.animation_manager = AnimationManager(kwargs['animation_states'], default_state=PlayerStates.IDLE)
         self.animation_manager.set_state(PlayerStates.IDLE)
         self.image = self.animation_manager.image
-        self.picking_up = False
+        self.is_interacting = False
         self.inventory = Inventory()
         # TODO: connect to HUD more obviously
         # You must specify HUD after creating the player
         self.hud = None
 
-    def handle_keyboard_input(self):
+    def handle_keyboard_input(self, keyboard):
         self.set_zero_speed()
-        keyboard = pygame.key.get_pressed()
         if keyboard[pygame.K_w]:
             self.speed[1] = -1
         if keyboard[pygame.K_s]:
@@ -42,10 +41,6 @@ class Player(Actor):
         if keyboard[pygame.K_d]:
             self.speed[0] = 1
         self.normalize_speed()
-
-        self.picking_up = False
-        if keyboard[pygame.K_f]:
-            self.picking_up = True
 
     def handle_mouse_input(self, groups: GameStateGroups):
         if pygame.mouse.get_pressed()[0] and self.cooldowns['shoot'].is_cooldown_over:
@@ -59,6 +54,7 @@ class Player(Actor):
             self.spawn_item_description(inventory_item, mouse_pos)
 
     def handle_events(self, events):
+        self.is_interacting = False
         for event in events:
             if event.type == pygame.MOUSEBUTTONUP:
                 if event.button == 1:
@@ -71,6 +67,9 @@ class Player(Actor):
                     inventory_item = self.find_inventory_item_collision(mouse_pos)
                     if inventory_item is not None:
                         self.drop_item(inventory_item)
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_f:
+                    self.is_interacting = True
 
     def use_inventory_item(self, item):
         must_delete = item.on_use()
@@ -94,9 +93,10 @@ class Player(Actor):
         camera: Camera = kwargs['camera']
         groups: GameStateGroups = kwargs['groups']
         events = kwargs['events']
-        self.handle_keyboard_input()
-        self.handle_mouse_input(groups)
+        keyboard = pygame.key.get_pressed()
         self.handle_events(events)
+        self.handle_keyboard_input(keyboard)
+        self.handle_mouse_input(groups)
         self.handle_animation()
         self.update_cooldown()
 
@@ -152,7 +152,7 @@ class Player(Actor):
         if self.hud is None:
             pass
         self.hud.info_description = item.description
-        if self.picking_up and self.inventory.is_enough_space():
+        if self.is_interacting and self.inventory.is_enough_space():
             item.on_pickup(self)
             self.groups.items_on_floor.remove(item)
             self.groups.items_in_inventory.add(item)

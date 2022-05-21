@@ -56,6 +56,7 @@ class GameStateGroups:
         CollisionHandler.full_collision(self.player_objects, self.enemy_projectiles, self.static_objects, update_kwargs)
         CollisionHandler.full_collision(self.enemy_objects, self.player_projectiles, self.static_objects, update_kwargs)
         CollisionHandler.player_collision_to_items(self.player_objects, self.items_on_floor)
+        CollisionHandler.player_collision_to_interactive_objects(self.player_objects, self.interactive_objects)
 
     def spawn_enemy_projectile(self, obj):
         self.enemy_projectiles.add(obj)

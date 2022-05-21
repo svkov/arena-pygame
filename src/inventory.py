@@ -13,6 +13,9 @@ class Inventory:
     def is_enough_space(self):
         return self.empty_space > 0
 
+    def is_empty(self):
+        return self.empty_space == self.size
+
     def add(self, item: InventoryItem):
         inserted = False
         for i in range(self.height):
