@@ -40,7 +40,7 @@ class Projectile(GameObject):
         if image_size is None:
             image_size = (32, 32)
         target_pos = np.array(target_pos)
-        target_world_pos = camera.to_world_coord(target_pos) - np.array(image_size) / 2
+        target_world_pos = camera.to_world_coord(target_pos) - np.array(image_size) * camera.zoom_factor / 2
         owner_world_pos = camera.to_world_coord(owner_obj.center)
         direction = np.array(target_world_pos) - owner_world_pos
         direction = direction / np.linalg.norm(direction)

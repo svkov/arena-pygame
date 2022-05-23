@@ -21,10 +21,15 @@ class Camera:
         return np.array(self.get_pos())
 
     def to_screen_coord(self, pos):
-        return np.array(pos) - self.get_pos_arr() + self.screen_resolution // 2 - 64
+        self_pos = self.get_pos_arr()
+        pos = np.array(pos)
+        return (pos - self_pos - 64) * self.zoom_factor + self.screen_resolution // 2
 
     def to_world_coord(self, pos):
-        return np.array(pos) + self.get_pos_arr() - self.screen_resolution // 2 + 64
+        self_pos = self.get_pos_arr()
+        pos = np.array(pos)
+        # works ALMOST properly
+        return (pos - self.screen_resolution // 2) / self.zoom_factor + self_pos + 64 * self.zoom_factor
 
     def image_size_with_zoom(self, original_image_size):
         return (np.array(original_image_size) * self.zoom_factor).astype(np.int)

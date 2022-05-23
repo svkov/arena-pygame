@@ -37,21 +37,14 @@ class GameObject(pygame.sprite.Sprite):
             self.image = self.image_by_zoom[camera.zoom_factor]
             self.rect = self.image.get_rect()
 
-        # old_size = np.array(self.image.get_size())
-        # new_size = camera.image_size_with_zoom(self.image_size)
-        # if any(old_size != new_size):
-        #     print('update', self, old_size, new_size)
-        #     self.image = pygame.transform.scale(self.image, camera.image_size_with_zoom(self.image_size))
-        # else:
-        #     print('not update')
-
     def set_image_size(self, new_image_size):
         self.image_size = new_image_size
         self.image = pygame.transform.scale(self.image, self.image_size)
 
     @property
     def center(self):
-        return (self.rect.x + self.image_size[0] // 2, self.rect.y + self.image_size[1] // 2)
+        return (self.rect.x + self.image_size[0] * self.camera.zoom_factor // 2,
+                self.rect.y + self.image_size[1] * self.camera.zoom_factor // 2)
 
     @property
     def pos_right(self):
