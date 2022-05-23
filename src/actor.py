@@ -16,7 +16,7 @@ class Actor(GameObject):
                  damage_recieve_cooldown=None,
                  projectile_image=None, stats: ActorStats = None,
                  groups: GameStateGroups = None, **kwargs):
-        super().__init__(pos, image, image_size)
+        super().__init__(pos, image, image_size, **kwargs)
         self.stats: ActorStats = stats
         self.groups: GameStateGroups = groups
         self.speed = np.array([0, 0])
@@ -75,6 +75,7 @@ class Actor(GameObject):
         self.camera: Camera = kwargs['camera']
         self.normalize_speed()
         self.move_world_coord(dt)
+        self.update_zoom(self.camera)
         self.update_screen_coord(screen, self.camera)
 
     def normalize_speed(self):

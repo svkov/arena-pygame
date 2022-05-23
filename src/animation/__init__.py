@@ -1,18 +1,20 @@
 import pygame
 
 from typing import Dict, List
+from src.camera import Camera
 
-from src.utils import crop_spritesheet_by_image_size, crop_spritesheet_by_matrix_size
+from src.utils import crop_spritesheet_by_image_size, crop_spritesheet_by_matrix_size, preresize_image_list
 
 class Animation:
 
-    def __init__(self, spritesheet, duration, fps,
+    def __init__(self, spritesheet, duration, fps, camera: Camera,
                  image_size=None, matrix_size=None, scene_image_size=None, times_to_play=None):
+        self.camera = camera
         if scene_image_size is None:
             scene_image_size = (128, 128)
         self.scene_image_size = scene_image_size
         self.sprites: List[pygame.surface.Surface] = self.get_sprites(spritesheet, image_size, matrix_size)
-        self.resize_sprites()
+        self.sprites_by_zoom = preresize_image_list(self.sprites, self.camera, self.scene_image_size)
         self._counter = 0
         self.image_counter = 0
         self.duration = duration
@@ -49,10 +51,6 @@ class Animation:
             raise ValueError('must specify image size or matrix size')
         return sprites
 
-    def resize_sprites(self):
-        for i, sprite in enumerate(self.sprites):
-            self.sprites[i] = pygame.transform.scale(sprite, self.scene_image_size)
-
     def update(self):
         if self._is_playing:
             self._counter += 1
@@ -78,7 +76,7 @@ class Animation:
         return self._is_playing and self.times_to_play is not None
 
     def get_image(self):
-        return self.sprites[self.image_counter]
+        return self.sprites_by_zoom[self.camera.zoom_factor][self.image_counter]
 
     def reset_animation(self):
         self._counter = 0

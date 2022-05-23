@@ -52,25 +52,25 @@ class Spawner:
     def generate_actor_kwargs(self, name):
         all_stats = self.stats_config.get_by_name(name)
         stats = ActorStats(**all_stats)
-        return dict(**all_stats, stats=stats, **self.shared_args)
+        return dict(**all_stats, stats=stats, **self.shared_args, name=name)
 
     def generate_enemy_kwargs(self, name):
         all_stats = self.stats_config.get_by_name(name)
         stats = EnemyStats(**all_stats)
-        return dict(**all_stats, stats=stats, **self.shared_args)
+        return dict(**all_stats, stats=stats, **self.shared_args, name=name)
 
     def generate_item_kwargs(self, name, owner):
         stats = self.stats_config.get_by_name(name)
-        return dict(**stats, **self.shared_args, owner=owner)
+        return dict(**stats, **self.shared_args, owner=owner, name=name)
 
     def generate_static_object_kwargs(self, name):
         stats = self.stats_config.get_by_name(name)
-        return dict(**stats, **self.shared_args)
+        return dict(**stats, **self.shared_args, name=name)
 
     def skeleton(self, pos, **kwargs):
         kwargs = self.generate_enemy_kwargs('skeleton')
 
-        skeleton_states = generate_state.skeleton(self.sprites, self.fps)
+        skeleton_states = generate_state.skeleton(self.sprites, self.fps, self.camera)
         skeleton = AnimatedEnemy(pos, animation_states=skeleton_states, **kwargs)
         self.groups.spawn_enemy_object(skeleton)
         return skeleton
@@ -144,7 +144,7 @@ class Spawner:
 
     def player(self, pos):
         kwargs = self.generate_actor_kwargs('player')
-        states = generate_state.player(self.sprites, self.fps)
+        states = generate_state.player(self.sprites, self.fps, self.camera)
         player = Player(pos, animation_states=states, **kwargs)
         self.groups.spawn_player_obj(player)
         return player
@@ -163,7 +163,7 @@ class Spawner:
         return background
 
     def setup_arena(self, background, radius):
-        for alpha in np.linspace(0, 2 * np.pi, 500):
+        for alpha in np.linspace(0, 2 * np.pi, 100):
             pos = background.center
             new_pos_x = pos[0] + np.sin(alpha) * radius
             new_pos_y = pos[1] + np.cos(alpha) * radius

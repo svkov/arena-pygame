@@ -80,6 +80,11 @@ class Player(Actor):
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_f:
                     self.is_interacting = True
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 4:
+                    self.camera.zoom_out()
+                elif event.button == 5:
+                    self.camera.zoom_in()
 
     def use_inventory_item(self, item):
         must_delete = item.on_use()
@@ -109,6 +114,7 @@ class Player(Actor):
         self.update_cooldown()
 
         self.move_world_coord(dt)
+        self.update_zoom(camera)
         self.update_screen_coord(screen, camera)
 
         self.animation_manager.update()

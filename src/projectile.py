@@ -12,8 +12,9 @@ class Projectile(GameObject):
                  image,
                  image_size=None,
                  range=500,
-                 owner=None):
-        super().__init__(pos, image, image_size)
+                 owner=None,
+                 **kwargs):
+        super().__init__(pos, image, image_size, **kwargs)
         self.speed = np.array(speed)
         self.dist = 0
         self.range = range
@@ -45,7 +46,7 @@ class Projectile(GameObject):
         direction = direction / np.linalg.norm(direction)
         speed_vector = direction * speed
         return cls(owner_world_pos, speed_vector, image=image,
-                   image_size=image_size, owner=owner_obj)
+                   image_size=image_size, owner=owner_obj, camera=camera)
 
     @property
     def damage(self):

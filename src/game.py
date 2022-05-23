@@ -1,8 +1,7 @@
-import os
-from typing import Dict
 import pygame
 from src.fader import Fader
 from src.game_config import GameConfig
+from src.sprite_loader import SpriteLoader
 from src.state.game import GameState
 from src.state.menu import MenuState
 
@@ -13,7 +12,8 @@ class Game:
         self.fps = self.config.fps
         self.screen_resolution = self.config.screen_resolution
         self.screen = pygame.display.set_mode(self.screen_resolution)
-        self.sprites = Game.load_sprites('assets')
+        self.sprites = SpriteLoader('assets')
+        self.sprites.load()
         self.running = True
         self.init_level()
         self.clock = pygame.time.Clock()
@@ -33,16 +33,6 @@ class Game:
         if keyboard[pygame.K_q]:
             self.running = False
 
-    @staticmethod
-    def load_sprites(path_to_assets) -> Dict[str, pygame.surface.Surface]:
-        sprites = {}
-        for asset in os.listdir(path_to_assets):
-            if '.png' in asset:
-                path = os.path.join(path_to_assets, asset)
-                sprite_name = os.path.splitext(asset)[0]
-                sprites[sprite_name] = pygame.image.load(path).convert_alpha()
-        return sprites
-
     def update(self):
         dt = self.clock.tick(self.fps)
         self.handle_input_keyboard()
@@ -56,6 +46,7 @@ class Game:
         }
         self.fader.update(**update_kwargs)
         pygame.display.flip()
+        # pygame.display.update()
 
     def start_game(self):
         self.fader.next()
