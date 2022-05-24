@@ -157,14 +157,19 @@ class Spawner:
 
     def background(self, pos):
         kwargs = self.generate_static_object_kwargs('background')
-        background = Background(pos, **kwargs)
-        self.groups.spawn_background(background)
-        self.setup_arena(background, background.radius)
-        return background
+        # background = Background(pos, **kwargs)
+        for i in range(15):
+            for j in range(15):
+                new_pos = [pos[0] + i * 510, pos[1] + j * 510]
+                background_i = Background(new_pos, **kwargs)
+                self.groups.spawn_background(background_i)
+                self.groups.visible_background_group.add(background_i)
+        self.setup_arena(np.array([3500, 3500]), 3500)
+        return background_i
 
-    def setup_arena(self, background: Background, radius):
+    def setup_arena(self, center, radius):
         for alpha in np.linspace(0, 2 * np.pi, 100):
-            pos = background.center_world
+            pos = center
             new_pos_x = pos[0] + np.sin(alpha) * radius
             new_pos_y = pos[1] + np.cos(alpha) * radius
             pos = [new_pos_x, new_pos_y]

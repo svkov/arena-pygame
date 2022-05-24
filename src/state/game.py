@@ -94,7 +94,7 @@ class GameState:
             self.level_number += 1
             self.setup_scene(keep_player=True)
         screen.fill((0, 0, 0))
-        self.groups.background_group.draw(screen)
+        # self.groups.background_group.draw(screen)
         self.groups.update(update_kwargs)
         self.groups.handle_collisions(update_kwargs)
 

@@ -1,5 +1,5 @@
+debug: true
 draw_enemy_attention: false
 fps: 60
-resolution_x: 1920
-resolution_y: 1080
-debug: true
+resolution_x: 2560
+resolution_y: 1440

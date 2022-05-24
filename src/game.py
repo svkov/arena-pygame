@@ -45,8 +45,8 @@ class Game:
             'debug': self.config.debug
         }
         self.fader.update(**update_kwargs)
-        pygame.display.flip()
-        # pygame.display.update()
+        # pygame.display.flip()
+        pygame.display.update()
 
     def start_game(self):
         self.fader.next()

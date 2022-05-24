@@ -6,6 +6,7 @@ class GameStateGroups:
     def __init__(self) -> None:
         self.static_objects = Group()
         self.background_group = Group()
+        self.visible_background_group = Group()
         self.items_on_floor = Group()
         self.interactive_objects = Group()
 
@@ -33,6 +34,7 @@ class GameStateGroups:
             self.interactive_objects
         ]
         self.draw_groups_order = [
+            self.visible_background_group,
             self.static_objects,
             self.interactive_objects,
             self.items_on_floor,
@@ -53,6 +55,7 @@ class GameStateGroups:
             group.draw(screen)
 
     def clear_before_next_level(self):
+        self.visible_background_group.empty()
         self.background_group.empty()
         self.static_objects.empty()
         self.items_on_floor.empty()
