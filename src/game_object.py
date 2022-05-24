@@ -35,7 +35,10 @@ class GameObject(pygame.sprite.Sprite):
     def update_zoom(self, camera):
         if self.image != self.image_by_zoom[camera.zoom_factor]:
             self.image = self.image_by_zoom[camera.zoom_factor]
-            self.rect = self.image.get_rect()
+            new_width = int(self.camera.zoom_factor * self.image_size[0])
+            new_height = int(self.camera.zoom_factor * self.image_size[1])
+            self.rect.width = new_width
+            self.rect.height = new_height
 
     def set_image_size(self, new_image_size):
         self.image_size = new_image_size
