@@ -11,8 +11,11 @@ class RectangleSurface(pygame.sprite.Sprite):
         self.size = size
         self.owner = owner
         if size is None:
-            self.size = (self.owner.image_size[0], 10)
+            self.size = [self.owner.image_size[0], 10]
         self.color = color
+        self.set_image()
+
+    def set_image(self):
         self.image = pygame.Surface(self.size)
         self.image.fill(self.color)
         self.rect = self.image.get_rect()
@@ -23,6 +26,9 @@ class RectangleSurface(pygame.sprite.Sprite):
     def update_rect(self):
         self.rect.x = int(self.pos[0])
         self.rect.y = int(self.pos[1])
+        if self.size[0] != self.owner.rect.width:
+            self.size[0] = self.owner.rect.width
+            self.set_image()
 
     def set_rect_size(self, rect_size):
         self.rect.width = int(rect_size[0])

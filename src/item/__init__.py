@@ -14,6 +14,10 @@ class InventoryItem(GameObject):
         self.rect.x = int(self.pos[0])
         self.rect.y = int(self.pos[1])
 
+    def update_zoom(self, camera):
+        if self.owner is None:
+            return super().update_zoom(camera)
+
     def on_use(self):
         pass
 

@@ -1,6 +1,6 @@
 from src.game_object import GameObject
 from src.item.quest_item import StoneSoulItem
-
+from src.utils import preresize_image
 
 class Portal(GameObject):
 
@@ -9,20 +9,22 @@ class Portal(GameObject):
         self.deactivated_image = kwargs.get('image')
         self.activated_image = kwargs.get('activated_image')
         super().__init__(*args, **kwargs)
+        self.activated_portal_by_zoom = preresize_image(self.activated_image,
+                                                        self.camera,
+                                                        self.image_size)
+        self.deactivated_portal_by_zoom = self.image_by_zoom.copy()
         self.deactivate_portal()
 
     def update(self, *args, **kwargs):
         super().update(*args, **kwargs)
 
     def activate_portal(self):
+        self.image_by_zoom = self.activated_portal_by_zoom
         self.is_activated = True
-        self.image = self.activated_image
-        self.set_image_size(self.image_size)
 
     def deactivate_portal(self):
+        self.image_by_zoom = self.deactivated_portal_by_zoom
         self.is_activated = False
-        self.image = self.deactivated_image
-        self.set_image_size(self.image_size)
 
     def on_interact(self, actor):
         if not self.is_activated:

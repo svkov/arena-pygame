@@ -12,6 +12,7 @@ class AnimatedEnemy(Enemy):
 
     def update(self, *args, **kwargs) -> None:
         super().update(*args, **kwargs)
+        self.update_zoom(self.camera)
         self.set_walk_animation()
         self.animation_manager.update()
         self.image = self.animation_manager.image

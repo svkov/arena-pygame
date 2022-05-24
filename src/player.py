@@ -80,6 +80,11 @@ class Player(Actor):
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_f:
                     self.is_interacting = True
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 4:
+                    self.camera.zoom_out()
+                elif event.button == 5:
+                    self.camera.zoom_in()
 
     def use_inventory_item(self, item):
         must_delete = item.on_use()
@@ -96,7 +101,6 @@ class Player(Actor):
                 return inventory_item
 
     def update(self, *args, **kwargs) -> None:
-        screen = kwargs['screen']
         dt = kwargs['dt']
         camera: Camera = kwargs['camera']
         groups: GameStateGroups = kwargs['groups']
@@ -109,7 +113,8 @@ class Player(Actor):
         self.update_cooldown()
 
         self.move_world_coord(dt)
-        self.update_screen_coord(screen, camera)
+        self.update_zoom(camera)
+        self.update_screen_coord()
 
         self.animation_manager.update()
         self.image = self.animation_manager.image
@@ -124,9 +129,9 @@ class Player(Actor):
             else:
                 self.animation_manager.set_state(PlayerStates.IDLE)
 
-    def update_screen_coord(self, screen, camera: Camera):
-        self.update_camera_pos(camera)
-        super().update_screen_coord(screen, camera)
+    def update_screen_coord(self):
+        self.update_camera_pos(self.camera)
+        super().update_screen_coord()
 
     def update_camera_pos(self, camera: Camera):
         camera.x = self.pos[0]
