@@ -31,7 +31,7 @@ class StaticObject(GameObject):
         else:
             self._complex_collision(right_collision, left_collision, top_collision, bottom_collision, obj)
         if right_collision or left_collision or top_collision or bottom_collision:
-            obj.update_screen_coord(screen, camera)
+            obj.update_screen_coord()
 
     def _simple_collision(self, right_collision, left_collision, top_collision, bottom_collision, obj: Actor):
         if right_collision:

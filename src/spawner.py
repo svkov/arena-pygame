@@ -65,7 +65,7 @@ class Spawner:
 
     def generate_static_object_kwargs(self, name):
         stats = self.stats_config.get_by_name(name)
-        return dict(**stats, **self.shared_args, name=name)
+        return dict(**stats, **self.shared_args, name=name, pos_in_screen_coord=True)
 
     def skeleton(self, pos, **kwargs):
         kwargs = self.generate_enemy_kwargs('skeleton')
@@ -162,9 +162,9 @@ class Spawner:
         self.setup_arena(background, background.radius)
         return background
 
-    def setup_arena(self, background, radius):
+    def setup_arena(self, background: Background, radius):
         for alpha in np.linspace(0, 2 * np.pi, 100):
-            pos = background.center
+            pos = background.center_world
             new_pos_x = pos[0] + np.sin(alpha) * radius
             new_pos_y = pos[1] + np.cos(alpha) * radius
             pos = [new_pos_x, new_pos_y]

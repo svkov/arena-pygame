@@ -41,11 +41,10 @@ class Projectile(GameObject):
             image_size = (32, 32)
         target_pos = np.array(target_pos)
         target_world_pos = camera.to_world_coord(target_pos) - np.array(image_size) * camera.zoom_factor / 2
-        owner_world_pos = camera.to_world_coord(owner_obj.center)
-        direction = np.array(target_world_pos) - owner_world_pos
+        direction = np.array(target_world_pos) - owner_obj.center_world
         direction = direction / np.linalg.norm(direction)
         speed_vector = direction * speed
-        return cls(owner_world_pos, speed_vector, image=image,
+        return cls(owner_obj.center_world, speed_vector, image=image,
                    image_size=image_size, owner=owner_obj, camera=camera)
 
     @property

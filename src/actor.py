@@ -70,13 +70,12 @@ class Actor(GameObject):
 
     def update(self, *args, **kwargs) -> None:
         self.update_cooldown()
-        screen = kwargs['screen']
         dt = kwargs['dt']
         self.camera: Camera = kwargs['camera']
         self.normalize_speed()
         self.move_world_coord(dt)
         self.update_zoom(self.camera)
-        self.update_screen_coord(screen, self.camera)
+        self.update_screen_coord()
 
     def normalize_speed(self):
         if np.linalg.norm(self.speed) < self.stats.movement_speed:
@@ -87,9 +86,6 @@ class Actor(GameObject):
 
     def move_world_coord(self, dt):
         self.pos = self.pos + self.speed * dt
-
-    def update_screen_coord(self, screen, camera: Camera):
-        super().update_screen_coord(camera)
 
     def on_collision(self, obj):
         if self.cooldowns['damage'].is_cooldown_over:

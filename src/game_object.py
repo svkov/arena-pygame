@@ -6,7 +6,7 @@ import src.utils as utils
 
 class GameObject(pygame.sprite.Sprite):
 
-    def __init__(self, pos, image, image_size=None, **kwargs) -> None:
+    def __init__(self, pos, image, image_size=None, pos_in_world_coord=True, **kwargs) -> None:
         pygame.sprite.Sprite.__init__(self)
         self.pos = np.array(pos, dtype=np.float)
         self.camera: Camera = kwargs['camera']
@@ -19,16 +19,19 @@ class GameObject(pygame.sprite.Sprite):
         self.image_by_zoom = utils.preresize_image(self.image, self.camera, self.image_size)
         self.image = self.image_by_zoom[self.camera.zoom_factor]
         self.rect = self.image.get_rect()
-        self.rect.x = self.pos[0]
-        self.rect.y = self.pos[1]
+        if pos_in_world_coord:
+            self.update_screen_coord()
+        else:
+            self.rect.x = self.pos[0]
+            self.rect.y = self.pos[1]
 
     def update(self, *args, **kwargs):
         camera = kwargs['camera']
         self.update_zoom(camera)
-        self.update_screen_coord(camera)
+        self.update_screen_coord()
 
-    def update_screen_coord(self, camera):
-        new_pos = camera.to_screen_coord(self.pos)
+    def update_screen_coord(self):
+        new_pos = self.camera.to_screen_coord(self.pos)
         self.rect.x = int(new_pos[0])
         self.rect.y = int(new_pos[1])
 
@@ -45,9 +48,14 @@ class GameObject(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.image, self.image_size)
 
     @property
-    def center(self):
-        return (self.rect.x + self.image_size[0] * self.camera.zoom_factor // 2,
-                self.rect.y + self.image_size[1] * self.camera.zoom_factor // 2)
+    def center_world(self):
+        return (self.pos[0] + self.image_size[0] // 2,
+                self.pos[1] + self.image_size[1] // 2)
+
+    @property
+    def center_screen(self):
+        return (int(self.rect.x + self.image_size[0] // 2),
+                int(self.rect.y + self.image_size[1]) // 2)
 
     @property
     def pos_right(self):
