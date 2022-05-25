@@ -1,7 +1,9 @@
 import numpy as np
+import pygame
 from src.animated_enemy import AnimatedEnemy
 from src.camera import Camera
 from src.enemy import Enemy
+from src.game_config import GameConfig
 from src.groups import GameStateGroups
 import src.animation.generate_state as generate_state
 from src.actor_stats import ActorStats, EnemyStats
@@ -16,17 +18,24 @@ from src.stats_config import StatsConfig
 
 class Spawner:
 
-    def __init__(self, groups: GameStateGroups, camera: Camera, stats_config: StatsConfig, fps, sprites) -> None:
+    def __init__(self, groups: GameStateGroups,
+                 camera: Camera,
+                 stats_config: StatsConfig,
+                 fps,
+                 sprites,
+                 game_config: GameConfig) -> None:
         self.camera = camera
         self.fps = fps
         self.sprites = sprites
         self.groups = groups
         self.stats_config = stats_config
+        self.game_config = game_config
         self.shared_args = {
             'camera': self.camera,
             'fps': self.fps,
             'sprites': self.sprites,
-            'groups': self.groups
+            'groups': self.groups,
+            'game_config': self.game_config
         }
         self._map_object_name_to_create_function = {
             'skeleton': self.skeleton,
@@ -157,20 +166,61 @@ class Spawner:
 
     def background(self, pos):
         kwargs = self.generate_static_object_kwargs('background')
-        # background = Background(pos, **kwargs)
-        for i in range(15):
-            for j in range(15):
-                new_pos = [pos[0] + i * 510, pos[1] + j * 510]
+        center = np.array([3500, 3500])
+        outer_arena_rect, inner_arena_rect, arena = self.setup_arena(center, 3500)
+        background_i = Background((3500, 3500), **kwargs)
+        for i in range(20):
+            for j in range(20):
+                new_pos = [pos[0] + i * kwargs['image_size_x'] - 5, pos[1] + j * kwargs['image_size_y'] - 5]
                 background_i = Background(new_pos, **kwargs)
-                self.groups.spawn_background(background_i)
-                self.groups.visible_background_group.add(background_i)
-        self.setup_arena(np.array([3500, 3500]), 3500)
+                collide_inner = background_i.rect.colliderect(inner_arena_rect)
+                distance = np.linalg.norm(np.array(background_i.pos) - center)
+                if distance < kwargs['radius'] + 100 and collide_inner:
+                    self.groups.spawn_background(background_i)
+                    self.groups.visible_background_group.add(background_i)
         return background_i
 
     def setup_arena(self, center, radius):
+        outer_left = center[0]
+        outer_right = center[0]
+        outer_top = center[0]
+        outer_bottom = center[0]
+
+        inner_left = center[0]
+        inner_right = center[0]
+        inner_top = center[0]
+        inner_bottom = center[0]
+
+        arena = [self.static_object([3600, 3600], 'wall_without_contour', 45)]
         for alpha in np.linspace(0, 2 * np.pi, 65):
             pos = center
             new_pos_x = pos[0] + np.sin(alpha) * radius
             new_pos_y = pos[1] + np.cos(alpha) * radius
-            pos = [new_pos_x, new_pos_y]
-            self.static_object(pos, 'wall_without_contour', angle=np.degrees(alpha))
+            pos = np.array([new_pos_x, new_pos_y])
+            obj = self.static_object(pos, 'wall_without_contour', angle=np.degrees(alpha))
+            # calculate outer rect
+            if obj.rect.left < outer_left:
+                outer_left = obj.rect.left
+            if obj.rect.right > outer_right:
+                outer_right = obj.rect.right
+            if obj.rect.top < outer_top:
+                outer_top = obj.rect.top
+            if obj.rect.bottom > outer_bottom:
+                outer_bottom = obj.rect.bottom
+            # calculate inner rect
+            if obj.rect.right < inner_left:
+                inner_left = obj.rect.right
+            if obj.rect.left > inner_right:
+                inner_right = obj.rect.left
+            if obj.rect.top > inner_bottom:
+                inner_bottom = obj.rect.top
+            if obj.rect.bottom < inner_top:
+                inner_top = obj.rect.bottom
+            arena.append(obj)
+        outer_rect = pygame.Rect(outer_left, outer_top, outer_right - outer_left, outer_bottom - outer_top)
+        inner_rect = pygame.Rect(inner_left, inner_top, inner_right - inner_left, inner_bottom - inner_top)
+        return outer_rect, inner_rect, arena
+
+    def find_closest_arena_wall(self, background_i, arena):
+        distances = [np.linalg.norm(wall.pos - background_i.pos) for wall in arena]
+        return arena[np.argmin(distances)]

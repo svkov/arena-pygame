@@ -6,7 +6,7 @@ class Camera:
 
     def __init__(self, x, y, screen_resolution) -> None:
         self.zoom_factor = 1
-        self.min_zoom_factor = 0.5
+        self.min_zoom_factor = 0.1
         self.max_zoom_factor = 1.5
         self.zoom_step = 0.1
         self.x = x

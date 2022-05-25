@@ -16,7 +16,7 @@ class Enemy(Actor):
         if self.cooldowns['shoot'].is_cooldown_over:
             self.cooldowns['shoot'].reset_counter()
             p = Projectile.shoot(self, camera.to_screen_coord(camera.get_pos()), camera, self.projectile_image,
-                                 speed=self.stats.projectile_speed)
+                                 speed=self.stats.projectile_speed, config=self.game_config)
             self.groups.spawn_enemy_projectile(p)
 
     def update(self, *args, **kwargs) -> None:

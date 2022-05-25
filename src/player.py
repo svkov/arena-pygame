@@ -139,7 +139,7 @@ class Player(Actor):
 
     def shoot(self, groups: GameStateGroups):
         p = Projectile.shoot(self, pygame.mouse.get_pos(), self.camera, self.projectile_image,
-                             speed=self.stats.projectile_speed)
+                             speed=self.stats.projectile_speed, config=self.game_config)
         groups.spawn_player_projectile(p)
         self.cooldowns['shoot'].reset_counter()
         self.animation_manager.set_state(PlayerStates.ATTACK)

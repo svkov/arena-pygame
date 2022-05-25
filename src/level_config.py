@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from src.game_config import GameConfig
 from src.spawner import Spawner
 
 class LevelConfig:
@@ -25,12 +26,12 @@ class RandomLevelConfig:
     player_default_pos = (3500, 3500)
     portal_default_pos = (3500, 2000)
 
-    def __init__(self, level_number, spawner: Spawner, debug) -> None:
+    def __init__(self, level_number, spawner: Spawner, game_config: GameConfig) -> None:
         self.level_number = level_number
         self.spawner = spawner
         self.number_of_enemies = level_number * 5
         self.number_of_static = 3
-        self.debug = debug
+        self.game_config = game_config
 
     def setup_level(self):
         self.spawner.spawn_object('background', pos=(0, 0))
@@ -73,7 +74,7 @@ class RandomLevelConfig:
             enemies[enemy_number].inventory.add(armor)
 
     def generate_debug_drop(self):
-        if self.debug:
+        if self.game_config.debug:
             self.spawner.spawn_object('soul_stone', self.player.pos)
             self.spawner.spawn_object('sword', self.player.pos)
             self.spawner.spawn_object('armor', self.player.pos)

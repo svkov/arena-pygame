@@ -2,11 +2,13 @@ import numpy as np
 import pygame
 
 from src.camera import Camera
+from src.game_config import GameConfig
 import src.utils as utils
 
 class GameObject(pygame.sprite.Sprite):
 
-    def __init__(self, pos, image, image_size=None, pos_in_world_coord=True, angle=0, **kwargs) -> None:
+    def __init__(self, pos, image, image_size=None, pos_in_world_coord=True,
+                 angle=0, game_config: GameConfig = None, **kwargs) -> None:
         pygame.sprite.Sprite.__init__(self)
         self.pos = np.array(pos, dtype=np.float)
         self.rotation_angle = angle
@@ -21,7 +23,9 @@ class GameObject(pygame.sprite.Sprite):
         self.rect = rect
 
         self.image_by_zoom = utils.preresize_image(self.image, self.camera, self.image_size)
-        self.image = self.image_by_zoom[self.camera.zoom_factor]
+        self.game_config = game_config
+        self.draw_debug_rects()
+
         self.rect = self.image.get_rect()
         if pos_in_world_coord:
             self.update_screen_coord()
@@ -38,6 +42,17 @@ class GameObject(pygame.sprite.Sprite):
         new_pos = self.camera.to_screen_coord(self.pos)
         self.rect.x = int(new_pos[0])
         self.rect.y = int(new_pos[1])
+
+    def draw_debug_rects(self):
+        if self.game_config.draw_rects:
+            for zoom_factor, image in self.image_by_zoom.items():
+                zoomed_image_size = (
+                    self.image_size[0] * zoom_factor,
+                    self.image_size[1] * zoom_factor
+                )
+                rect = [0, 0, zoomed_image_size[0], zoomed_image_size[1]]
+                pygame.draw.rect(image, (255, 0, 0), rect, width=3)
+        self.image = self.image_by_zoom[self.camera.zoom_factor]
 
     def update_zoom(self, camera):
         if self.image != self.image_by_zoom[camera.zoom_factor]:

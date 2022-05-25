@@ -9,6 +9,7 @@ class GameConfig:
         self.screen_resolution = (self.cfg['resolution_x'], self.cfg['resolution_y'])
         self.draw_enemy_attention = self.cfg['draw_enemy_attention']
         self.debug = self.cfg['debug']
+        self.draw_rects = self.cfg['draw_rects']
 
     def load_file(self):
         with open(self.path, "r") as stream:
@@ -27,5 +28,6 @@ class GameConfig:
             'resolution_x': self.screen_resolution[0],
             'resolution_y': self.screen_resolution[1],
             'draw_enemy_attention': self.draw_enemy_attention,
-            'debug': self.debug
+            'debug': self.debug,
+            'draw_rects': self.draw_rects
         }

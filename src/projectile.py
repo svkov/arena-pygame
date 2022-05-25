@@ -36,7 +36,7 @@ class Projectile(GameObject):
         self.kill()
 
     @classmethod
-    def shoot(cls, owner_obj, target_pos, camera: Camera, image, speed=1, image_size=None):
+    def shoot(cls, owner_obj, target_pos, camera: Camera, image, speed=1, image_size=None, config=None):
         if image_size is None:
             image_size = (32, 32)
         target_pos = np.array(target_pos)
@@ -45,7 +45,7 @@ class Projectile(GameObject):
         direction = direction / np.linalg.norm(direction)
         speed_vector = direction * speed
         return cls(owner_obj.center_world, speed_vector, image=image,
-                   image_size=image_size, owner=owner_obj, camera=camera)
+                   image_size=image_size, owner=owner_obj, camera=camera, game_config=config)
 
     @property
     def damage(self):
