@@ -6,15 +6,19 @@ import src.utils as utils
 
 class GameObject(pygame.sprite.Sprite):
 
-    def __init__(self, pos, image, image_size=None, pos_in_world_coord=True, **kwargs) -> None:
+    def __init__(self, pos, image, image_size=None, pos_in_world_coord=True, angle=0, **kwargs) -> None:
         pygame.sprite.Sprite.__init__(self)
         self.pos = np.array(pos, dtype=np.float)
+        self.rotation_angle = angle
         self.camera: Camera = kwargs['camera']
         self.image_size = image_size
         if image_size is None:
             self.image_size = (128, 128)
 
+        center = self.camera.to_screen_coord(self.pos)
+        image, rect = self.rot_center(image, self.rotation_angle, center)
         self.image: pygame.surface.Surface = image
+        self.rect = rect
 
         self.image_by_zoom = utils.preresize_image(self.image, self.camera, self.image_size)
         self.image = self.image_by_zoom[self.camera.zoom_factor]
@@ -46,6 +50,15 @@ class GameObject(pygame.sprite.Sprite):
     def set_image_size(self, new_image_size):
         self.image_size = new_image_size
         self.image = pygame.transform.scale(self.image, self.image_size)
+
+    @property
+    def current_image(self):
+        return self.image_by_zoom[self.camera.zoom_factor]
+
+    def rot_center(self, image, angle, center):
+        rotated_image = pygame.transform.rotate(image, angle)
+        new_rect = rotated_image.get_rect(center=image.get_rect(center=center).center)
+        return rotated_image, new_rect
 
     @property
     def center_world(self):

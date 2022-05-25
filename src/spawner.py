@@ -149,9 +149,9 @@ class Spawner:
         self.groups.spawn_player_obj(player)
         return player
 
-    def static_object(self, pos, name):
+    def static_object(self, pos, name, angle=0):
         kwargs = self.generate_static_object_kwargs(name)
-        static = StaticObject(pos, **kwargs)
+        static = StaticObject(pos, angle=angle, **kwargs)
         self.groups.spawn_static_object(static)
         return static
 
@@ -168,9 +168,9 @@ class Spawner:
         return background_i
 
     def setup_arena(self, center, radius):
-        for alpha in np.linspace(0, 2 * np.pi, 100):
+        for alpha in np.linspace(0, 2 * np.pi, 65):
             pos = center
             new_pos_x = pos[0] + np.sin(alpha) * radius
             new_pos_y = pos[1] + np.cos(alpha) * radius
             pos = [new_pos_x, new_pos_y]
-            self.static_object(pos, 'wall_without_contour')
+            self.static_object(pos, 'wall_without_contour', angle=np.degrees(alpha))
