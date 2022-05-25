@@ -169,7 +169,7 @@ class Spawner:
         center = np.array([3500, 3500])
         outer_arena_rect, inner_arena_rect, arena = self.setup_arena(center, 3500)
         center_background = Background(center, **kwargs)
-        center_background.radius = 3300
+        center_background.radius = 3500
         background_tiles = []
         for i in range(20):
             for j in range(20):
@@ -180,7 +180,7 @@ class Spawner:
                 background_i = Background(new_pos, **kwargs)
                 background_i.radius = background_i.image_size[0] // 2
                 collide_inner = pygame.sprite.collide_circle(background_i, center_background)
-                distance = np.linalg.norm(np.array(background_i.pos) - center)
+                distance = np.linalg.norm(np.array(background_i.center_world) - center)
                 if distance < kwargs['radius'] or collide_inner:
                     self.groups.spawn_background(background_i)
                     self.groups.visible_background_group.add(background_i)
@@ -198,7 +198,7 @@ class Spawner:
         inner_top = center[0]
         inner_bottom = center[0]
 
-        arena = [self.static_object([3600, 3600], 'wall_without_contour', 45)]
+        arena = []
         for alpha in np.linspace(0, 2 * np.pi, 65):
             pos = center
             new_pos_x = pos[0] + np.sin(alpha) * radius
