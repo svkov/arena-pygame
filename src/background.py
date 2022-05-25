@@ -9,14 +9,14 @@ class Background(GameObject):
         super().__init__(pos, image, image_size, **kwargs)
         self.radius = kwargs['radius']
         self.groups_global: GameStateGroups = kwargs['groups']
-        self.distance_from_player = 1500
+        self.distance_from_player = max(self.game_config.screen_resolution)
 
     def update(self, *args, **kwargs):
         if self.is_far_from_player():
             self.unmount_from_screen()
         else:
             self.mount_to_screen()
-        return super().update(*args, **kwargs)
+        super().update(*args, **kwargs)
 
     def is_far_from_player(self):
         camera_screen_pos = self.camera.to_screen_coord(self.camera.get_pos_arr())
