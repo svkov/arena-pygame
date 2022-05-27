@@ -37,8 +37,10 @@ class RandomLevelConfig:
         self.spawner.spawn_object('background', pos=(0, 0))
         self.player = self.spawner.spawn_object('player', pos=self.player_default_pos)
 
-        self.spawn_enemies()
-        self.spawn_static()
+        if self.game_config.spawn_enemies:
+            self.spawn_enemies()
+        if self.game_config.spawn_static:
+            self.spawn_static()
         self.spawn_portal()
 
     def spawn_enemies(self):

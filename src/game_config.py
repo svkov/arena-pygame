@@ -10,6 +10,8 @@ class GameConfig:
         self.draw_enemy_attention = self.cfg['draw_enemy_attention']
         self.debug = self.cfg['debug']
         self.draw_rects = self.cfg['draw_rects']
+        self.spawn_enemies = self.cfg['spawn_enemies']
+        self.spawn_static = self.cfg['spawn_static']
 
     def load_file(self):
         with open(self.path, "r") as stream:
@@ -29,5 +31,7 @@ class GameConfig:
             'resolution_y': self.screen_resolution[1],
             'draw_enemy_attention': self.draw_enemy_attention,
             'debug': self.debug,
-            'draw_rects': self.draw_rects
+            'draw_rects': self.draw_rects,
+            'spawn_enemies': self.spawn_enemies,
+            'spawn_statis': self.spawn_static
         }
