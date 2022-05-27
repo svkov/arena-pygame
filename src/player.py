@@ -4,7 +4,7 @@ from src.animation import AnimationManager
 from src.animation.states import PlayerStates
 from src.camera import Camera
 from src.groups import GameStateGroups
-from src.ingame_label import ExpLabel, ItemLabel
+from src.ingame_label import ExpLabel, ItemLabel, LevelUpLabel
 from src.item import InventoryItem
 
 from src.projectile import Projectile
@@ -154,6 +154,10 @@ class Player(Actor):
         exp_label = ExpLabel(f'+{int(exp)} XP', self.pos, self.camera)
         self.groups.spawn_ui(exp_label)
 
+    def make_lvlup_label(self):
+        lvlup_label = LevelUpLabel(self.pos, self.camera, self.game_config)
+        self.groups.spawn_ui(lvlup_label)
+
     def spawn_item_description(self, item, mouse_pos):
         exp_label = ItemLabel(item.description, mouse_pos, self.camera)
         self.groups.items_description.add(exp_label)
@@ -163,6 +167,7 @@ class Player(Actor):
             # if exp is enough to lvlup multiple times
             self.level += self.exp // self.exp_to_lvlup
             self.exp = self.exp % self.exp_to_lvlup
+            self.make_lvlup_label()
 
     def collide_with_item(self, item: InventoryItem):
         if self.hud is None:
