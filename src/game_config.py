@@ -33,5 +33,5 @@ class GameConfig:
             'debug': self.debug,
             'draw_rects': self.draw_rects,
             'spawn_enemies': self.spawn_enemies,
-            'spawn_statis': self.spawn_static
+            'spawn_static': self.spawn_static
         }

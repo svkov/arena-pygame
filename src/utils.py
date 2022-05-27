@@ -15,7 +15,7 @@ def crop_spritesheet_by_image_size(image: pygame.surface.Surface,
 def crop_spritesheet_by_matrix_size(image: pygame.surface.Surface,
                                     matrix_size: Tuple[int, int]) -> List[pygame.surface.Surface]:
     rows, cols = matrix_size
-    full_height, full_width = image.get_size()
+    full_width, full_height = image.get_size()
     width = full_width // rows
     height = full_height // cols
     image_size = (width, height)
@@ -30,9 +30,7 @@ def crop_by_matrix_size_and_image_size(image: pygame.surface.Surface,
     for row in range(rows):
         for col in range(cols):
             x = row * width
-            x = x - 1 if x > 0 else x
             y = col * height
-            y = y - 1 if y > 0 else y
             rect = [x, y, width - 1, height - 1]
             sprite = image.subsurface(rect)
             sprites.append(sprite)

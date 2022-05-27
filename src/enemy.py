@@ -23,7 +23,10 @@ class Enemy(Actor):
         camera: Camera = kwargs['camera']
         screen = kwargs['screen']
         draw_enemy_attention = kwargs['draw_enemy_attention']
-        self.behavior.update(*args, **kwargs)
+        if self.is_alive:
+            self.behavior.update(*args, **kwargs)
+        else:
+            self.speed = self.speed * 0
         super().update(*args, **kwargs)
         self.draw_attention_circle(screen, camera, draw_enemy_attention)
 

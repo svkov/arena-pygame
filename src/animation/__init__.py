@@ -57,6 +57,8 @@ class Animation:
             if self.one_frame_counter == self._counter:
                 self.next_image()
                 self._counter = 0
+        else:
+            self.image_counter = self.images_in_anim - 1
 
     def next_image(self):
         self.image_counter += 1
@@ -69,6 +71,7 @@ class Animation:
         if self.times_to_play is None:
             return
         if self.times_played == self.times_to_play:
+            self.image_counter = self.images_in_anim - 1
             self._is_playing = False
 
     @property

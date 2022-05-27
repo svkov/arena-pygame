@@ -15,6 +15,7 @@ class GameStateGroups:
 
         self.enemy_projectiles = Group()
         self.enemy_objects = Group()
+        self.enemy_dying = Group()
 
         self.ui_objects = Group()
 
@@ -28,6 +29,7 @@ class GameStateGroups:
             self.player_projectiles,
             self.enemy_objects,
             self.enemy_projectiles,
+            self.enemy_dying,
             self.ui_objects,
             self.items_in_inventory,
             self.items_description,
@@ -40,6 +42,7 @@ class GameStateGroups:
             self.items_on_floor,
             self.player_objects,
             self.player_projectiles,
+            self.enemy_dying,
             self.enemy_objects,
             self.enemy_projectiles,
             self.ui_objects,

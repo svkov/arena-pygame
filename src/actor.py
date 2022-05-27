@@ -1,5 +1,6 @@
 import numpy as np
 from src.actor_stats import ActorStats
+from src.animation import Animation
 from src.camera import Camera
 from src.cooldown_mixin import CooldownMixin
 from src.game_object import GameObject
@@ -27,6 +28,9 @@ class Actor(GameObject):
         self.inventory = Inventory()
         self.weapon = kwargs.get('weapon', None)
         self.armor = kwargs.get('armor', None)
+        self.death_animation: Animation = kwargs.get('death_animation', None)
+        self.lifetime_after_death = kwargs.get('lifetime_after_death', 3.0)
+        self.lifetime_after_death_counter = self.lifetime_after_death * self.game_config.fps
         attack_speed_in_frames = stats.attack_speed_in_frames(kwargs['fps'])
         # TODO: integrate with potion module
         hp_potion_cooldown = 50
@@ -76,6 +80,18 @@ class Actor(GameObject):
         self.move_world_coord(dt)
         self.update_zoom(self.camera)
         self.update_screen_coord()
+        self.update_animation_if_needed()
+
+    def update_animation_if_needed(self):
+        if not self.is_alive and self.death_animation is not None:
+            self.image = self.death_animation.get_image()
+            self.death_animation.update()
+            if not self.death_animation.is_playing:
+                self.lifetime_after_death_counter -= 1
+                if self.lifetime_after_death_counter < 0:
+                    self.kill()
+            return True
+        return False
 
     def normalize_speed(self):
         if np.linalg.norm(self.speed) < self.stats.movement_speed:
@@ -99,8 +115,10 @@ class Actor(GameObject):
             self.hp -= damage
             if self.hp <= 0:
                 self.on_death(obj)
-                self.kill()
+                # self.kill()
             self.cooldowns['damage'].reset_counter()
 
     def on_death(self, death_from):
         self.hp_bar.on_death()
+        self.kill()
+        self.groups.enemy_dying.add(self)

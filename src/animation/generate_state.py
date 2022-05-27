@@ -20,3 +20,7 @@ def player(sprites, fps, camera):
         PlayerStates.BACK: Animation(sprites['knight_back'], duration=0.4, fps=fps, camera=camera,
                                      image_size=(512, 512), times_to_play=1),
     }
+
+def skeleton_die(sprites, fps, camera):
+    return Animation(sprites['skeleton_die'], duration=0.8, fps=fps,
+                     camera=camera, matrix_size=(4, 1), times_to_play=1)

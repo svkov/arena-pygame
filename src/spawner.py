@@ -80,7 +80,11 @@ class Spawner:
         kwargs = self.generate_enemy_kwargs('skeleton')
 
         skeleton_states = generate_state.skeleton(self.sprites, self.fps, self.camera)
-        skeleton = AnimatedEnemy(pos, animation_states=skeleton_states, **kwargs)
+        death_animation = generate_state.skeleton_die(self.sprites, self.fps, self.camera)
+        skeleton = AnimatedEnemy(pos,
+                                 animation_states=skeleton_states,
+                                 death_animation=death_animation,
+                                 **kwargs)
         self.groups.spawn_enemy_object(skeleton)
         return skeleton
 
