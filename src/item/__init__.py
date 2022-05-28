@@ -26,6 +26,7 @@ class InventoryItem(GameObject):
 
     def on_pickup(self, owner):
         self.owner = owner
+        self.image = self.image_by_zoom[1]
 
     def on_drop(self, pos):
         self.owner = None
