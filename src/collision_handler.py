@@ -22,7 +22,14 @@ class CollisionHandler:
         for game_obj in obj_group:
             collided_objects = pygame.sprite.spritecollide(game_obj, static_group, False)
             for collided in collided_objects:
-                collided.on_collision(game_obj, **kwargs)
+                CollisionHandler.collide_two_sprites_mask(game_obj, collided, kwargs)
+
+    @staticmethod
+    def collide_two_sprites_mask(game_obj, static_obj, kwargs):
+        col_point = pygame.sprite.collide_mask(game_obj, static_obj)
+        if col_point:
+            static_obj.on_collision(game_obj, **kwargs)
+            game_obj.on_collision(static_obj)
 
     @staticmethod
     def collide_projectiles_to_static(projectile_group: Group, static_group: Group):

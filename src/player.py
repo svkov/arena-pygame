@@ -112,6 +112,7 @@ class Player(Actor):
         self.handle_animation()
         self.update_cooldown()
 
+        self.update_collision(dt)
         self.move_world_coord(dt)
         self.update_zoom(camera)
         self.update_screen_coord()
