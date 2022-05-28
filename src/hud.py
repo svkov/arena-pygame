@@ -122,8 +122,10 @@ class HUD(pygame.sprite.Sprite):
     def draw_inventory_cell(self, screen, rect, item):
         background_color = self.hud_config.panel_color
         if item is not None:
-            item.set_image_size((rect[2] - 2, rect[3] - 2))
             item.pos = [rect[0], rect[1]]
+            item.rect.width = rect[2] - 2
+            item.rect.height = rect[3] - 2
+            item.set_image_size((item.rect.width, item.rect.height))
             if item.is_using_now:
                 background_color = self.hud_config.inventory_using_cell_color
         pygame.draw.rect(screen, background_color, rect)

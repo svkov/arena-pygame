@@ -4,5 +4,5 @@ draw_rects: false
 fps: 60
 resolution_x: 1280
 resolution_y: 720
-spawn_enemies: false
+spawn_enemies: true
 spawn_static: true
