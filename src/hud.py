@@ -20,11 +20,17 @@ class HUD(pygame.sprite.Sprite):
         resolution = kwargs['screen_resolution']
         self.draw_hud_area(screen, resolution)
         self.current_y = self.hud_config.hp_pivot * (self.y_start + self.height)
+        self.draw_horizontal_line(screen)
         self.draw_stats(screen)
+        self.draw_horizontal_line(screen)
         self.draw_hp(screen)
+        self.draw_horizontal_line(screen)
         self.draw_exp(screen)
+        self.draw_horizontal_line(screen)
         self.draw_inventory(screen)
+        self.draw_horizontal_line(screen)
         self.draw_info_field(screen, self.info_description)
+        # self.draw_horizontal_line(screen)
         self.info_description = ''
 
     def draw_hud_area(self, screen, resolution):
@@ -32,8 +38,28 @@ class HUD(pygame.sprite.Sprite):
         self.y_start = 0
         self.width = self.hud_config.percent_to_hud * resolution[0]
         self.height = resolution[1]
-        pygame.draw.rect(screen, (255, 255, 255),
+        pygame.draw.rect(screen, self.hud_config.panel_color,
                          (self.x_start, self.y_start, self.width, self.height))
+
+        separating_vertical_line_rect = [
+            self.x_start,
+            self.y_start,
+            self.hud_config.line_thickness,
+            self.height
+        ]
+        pygame.draw.rect(screen, self.hud_config.separating_line_color,
+                         separating_vertical_line_rect)
+        self.x_start += self.hud_config.line_thickness
+
+    def draw_horizontal_line(self, screen):
+        rect = [
+            self.x_start,
+            self.current_y,
+            self.width,
+            self.hud_config.line_thickness
+        ]
+        self.current_y += self.hud_config.line_thickness
+        pygame.draw.rect(screen, self.hud_config.separating_line_color, rect)
 
     def draw_hp(self, screen):
         self.hp_progress = self.player.hp / self.player.max_hp
@@ -91,7 +117,7 @@ class HUD(pygame.sprite.Sprite):
                 ]
                 item = self.player.inventory.get_item(cell_j, cell_i)
                 self.draw_inventory_cell(screen, rect, item)
-        self.current_y += height + self.hud_config.margin * 2
+        self.current_y += height
 
     def draw_inventory_cell(self, screen, rect, item):
         background_color = self.hud_config.panel_color
@@ -137,39 +163,36 @@ class HUD(pygame.sprite.Sprite):
         content_agi = f'AGI: {int(self.player.stats.agility)}'
         content_spd = f'SPD: {int(self.player.stats.speed)}'
         content_lvl = f'LVL: {int(self.player.level)}'
-        indent = 100
-        text_size = self.draw_text_tuple(
-            screen,
-            self.font,
-            self.current_y,
-            self.x_start,
-            [content_str, content_def],
-            indent=indent
-        )
-        self.current_y += text_size[1] + self.hud_config.margin
-        text_size = self.draw_text_tuple(
-            screen,
-            self.font,
-            self.current_y,
-            self.x_start,
-            [content_int, content_agi],
-            indent=indent
-        )
-        self.current_y += text_size[1] + self.hud_config.margin
-        text_size = self.draw_text_tuple(
-            screen,
-            self.font,
-            self.current_y,
-            self.x_start,
-            [content_spd, content_lvl],
-            indent=indent
-        )
-        self.current_y += text_size[1] + self.hud_config.margin
+        indent = self.width // 2
+        left_col_content = [
+            content_str,
+            content_int,
+            content_spd
+        ]
+        right_col_content = [
+            content_def,
+            content_agi,
+            content_lvl
+        ]
+        for left_text, right_text in zip(left_col_content, right_col_content):
+            text_size = self.draw_text_tuple(
+                screen,
+                self.font,
+                self.current_y,
+                self.x_start + 5,
+                [left_text, right_text],
+                indent=indent
+            )
+            self.current_y += text_size[1] + self.hud_config.margin
 
     def draw_stats_area(self, screen: pygame.surface.Surface):
-        pygame.draw.rect(screen, self.hud_config.panel_color,
-                         (self.x_start, self.current_y - 5, self.width,
-                          (self.hud_config.hp_height + self.hud_config.margin) * 2 + 5))
+        rect = [
+            self.x_start,
+            self.current_y,
+            self.width,
+            (self.hud_config.hp_height + self.hud_config.margin) * 2 + 5
+        ]
+        pygame.draw.rect(screen, self.hud_config.panel_color, rect)
 
     def draw_text_tuple(self, screen, font, y_start, x_start, content: Tuple[str, str], color=None, indent=10):
         if color is None:
@@ -179,10 +202,10 @@ class HUD(pygame.sprite.Sprite):
         for content_i in content:
             text_surface = font.render(content_i, False, color)
             text_size = text_surface.get_size()
+            self.draw_text(screen, text_surface, y_start, x_start)
             x_start += indent
             full_width += indent
             full_height = max(full_height, text_size[1])
-            self.draw_text(screen, text_surface, y_start, x_start)
         full_width -= indent
         return (full_width, full_height)
 
