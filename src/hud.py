@@ -60,6 +60,7 @@ class HUD(pygame.sprite.Sprite):
         ]
         self.current_y += self.hud_config.line_thickness
         pygame.draw.rect(screen, self.hud_config.separating_line_color, rect)
+        self.current_y += self.hud_config.margin
 
     def draw_hp(self, screen):
         self.hp_progress = self.player.hp / self.player.max_hp
