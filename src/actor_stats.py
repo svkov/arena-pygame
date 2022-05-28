@@ -17,6 +17,13 @@ class ActorStats:
         # movement speed
         self.speed = np.clip(speed, 1, 100)
 
+    def on_level_up(self):
+        self.strength += np.random.randint(0, 3)
+        self.intelligence += np.random.randint(0, 3)
+        self.agility += np.random.randint(0, 3)
+        self.defense += np.random.randint(0, 3)
+        self.speed += np.random.randint(0, 3)
+
     @property
     def damage(self):
         return self.base_atk + self.strength

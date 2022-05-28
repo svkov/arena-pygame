@@ -166,7 +166,11 @@ class Player(Actor):
     def lvlup_if_needed(self):
         if self.exp >= self.exp_to_lvlup:
             # if exp is enough to lvlup multiple times
-            self.level += self.exp // self.exp_to_lvlup
+            levels_up = int(self.exp // self.exp_to_lvlup)
+            self.level += levels_up
+            hp_percent_before = self.hp / self.max_hp
+            [self.stats.on_level_up() for _ in range(levels_up)]
+            self.hp = self.max_hp * hp_percent_before
             self.exp = self.exp % self.exp_to_lvlup
             self.make_lvlup_label()
 
