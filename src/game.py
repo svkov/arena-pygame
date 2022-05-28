@@ -1,6 +1,7 @@
 import pygame
 from src.fader import Fader
 from src.game_config import GameConfig
+from src.high_score import HighScores
 from src.sprite_loader import SpriteLoader
 from src.state.game import GameState
 from src.state.menu import MenuState
@@ -17,6 +18,7 @@ class Game:
         self.running = True
         self.init_level()
         self.clock = pygame.time.Clock()
+        self.high_scores = HighScores()
 
     def init_level(self):
         menu = MenuState(self, self.screen_resolution)
@@ -68,8 +70,9 @@ class Game:
         self.state = self.states['menu']
 
     def game_over(self):
-        score = self.states['game'].calculate_score()
-        print('score:', score)
+        game: GameState = self.states['game']
+        score = game.calculate_score()
+        self.high_scores.add('player', game.level_number, score)
         self.states['game'] = None
         self.fader.next()
         self.go_to_menu()
