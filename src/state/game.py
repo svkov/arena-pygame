@@ -28,6 +28,10 @@ class GameState:
         self.setup_scene()
         self.paused = False
         self.pause = PauseState(self.groups, self.hud, self.screen_resolution, self.pause_font)
+        self.is_fading = False
+
+    def calculate_score(self):
+        return sum(self.player.kills.values()) + (self.level_number - 1) * 1000
 
     def setup_scene(self, keep_player=False):
         try:
@@ -87,8 +91,9 @@ class GameState:
             self._update_paused(screen=screen)
 
     def _update(self, screen, update_kwargs):
-        if not self.player.is_alive:
+        if not self.player.is_alive and not self.is_fading:
             self.game.game_over()
+            self.is_fading = True
         if self.player.is_in_portal:
             self.clear_scene_for_next_level()
             self.level_number += 1

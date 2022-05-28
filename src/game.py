@@ -68,9 +68,11 @@ class Game:
         self.state = self.states['menu']
 
     def game_over(self):
-        self.go_to_menu()
+        score = self.states['game'].calculate_score()
+        print('score:', score)
         self.states['game'] = None
         self.fader.next()
+        self.go_to_menu()
 
     def win(self):
         self.go_to_menu()
