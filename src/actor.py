@@ -1,4 +1,5 @@
 import numpy as np
+import pygame
 from src.actor_stats import ActorStats
 from src.animation import Animation
 from src.camera import Camera
@@ -34,6 +35,7 @@ class Actor(GameObject, CollisionMixin):
         self.lifetime_after_death = kwargs.get('lifetime_after_death', 3.0)
         self.lifetime_after_death_counter = self.lifetime_after_death * self.game_config.fps
         self.colliding_objects = []
+        self.is_going_left = False
         attack_speed_in_frames = stats.attack_speed_in_frames(kwargs['fps'])
         # TODO: integrate with potion module
         hp_potion_cooldown = 50
@@ -62,6 +64,7 @@ class Actor(GameObject, CollisionMixin):
 
     def set_zero_speed(self):
         self.speed = np.array([0, 0])
+        self.is_going_left = False
 
     def update_cooldown(self):
         for key, val in self.cooldowns.items():
@@ -85,6 +88,11 @@ class Actor(GameObject, CollisionMixin):
         self.update_zoom(self.camera)
         self.update_screen_coord()
         self.update_animation_if_needed()
+        self.flip_image_if_needed()
+
+    def flip_image_if_needed(self):
+        if self.is_going_left:
+            self.image = pygame.transform.flip(self.image, True, False)
 
     def update_collision(self, dt):
         for obj in self.colliding_objects:

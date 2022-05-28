@@ -46,6 +46,10 @@ class Behavior:
 
     def set_actor_speed(self):
         self.actor.speed = self.destination - self.actor.pos
+        if self.actor.speed[0] < 0:
+            self.actor.is_going_left = True
+        else:
+            self.actor.is_going_left = False
 
     def choose_random_destination(self):
         close_to_destination = np.linalg.norm(self.destination - self.actor.pos) < 20

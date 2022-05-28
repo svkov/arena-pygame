@@ -48,6 +48,7 @@ class Player(Actor):
             self.speed[1] = 1
         if keyboard[pygame.K_a]:
             self.speed[0] = -1
+            self.is_going_left = True
         if keyboard[pygame.K_d]:
             self.speed[0] = 1
         self.normalize_speed()
@@ -119,6 +120,7 @@ class Player(Actor):
 
         self.animation_manager.update()
         self.image = self.animation_manager.image
+        self.flip_image_if_needed()
 
     def go_to_portal(self):
         self.is_in_portal = True
