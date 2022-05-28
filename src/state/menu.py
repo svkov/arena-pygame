@@ -82,7 +82,7 @@ class MenuState:
             theme=pygame_menu.themes.THEME_DEFAULT,
             title='High Scores'
         )
-        content = str(self.game.high_scores.df)
+        content = self.game.high_scores.get_str()
         self.high_scores_menu.add.label(content)
         self.high_scores_menu.add.button('Back', self.to_main)
 
