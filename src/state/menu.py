@@ -66,6 +66,8 @@ class MenuState:
         help_content = 'W-A-S-D - move \n' \
             'P - pause \n' \
             'LMB - attack \n' \
+            'Mouse Wheel - zoom in and out \n' \
+            'F - pick up items/interact \n' \
             'Q - exit \n' \
             '\n'
         self.help_menu.add.label(help_content)
