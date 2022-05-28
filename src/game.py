@@ -10,6 +10,7 @@ class Game:
 
     def __init__(self) -> None:
         self.config = GameConfig('config.yaml')
+        self.high_scores = HighScores()
         self.fps = self.config.fps
         self.screen_resolution = self.config.screen_resolution
         self.screen = pygame.display.set_mode(self.screen_resolution)
@@ -18,7 +19,6 @@ class Game:
         self.running = True
         self.init_level()
         self.clock = pygame.time.Clock()
-        self.high_scores = HighScores()
 
     def init_level(self):
         menu = MenuState(self, self.screen_resolution)

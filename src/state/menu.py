@@ -9,6 +9,7 @@ class MenuState:
         self.init_menu()
         self.init_settings()
         self.init_help()
+        self.init_high_scores()
         self.current_menu = self.menu
         self.current_menu.enable()
 
@@ -20,7 +21,8 @@ class MenuState:
             title='Arena',
         )
         self.menu.add.button('Start game', self.start_game)
-        self.menu.add.selector('Difficulty: ', [('Hard', 1), ('Easy', 2)])
+        self.menu.add.button('High Scores', self.to_high_scores)
+        # self.menu.add.selector('Difficulty: ', [('Hard', 1), ('Easy', 2)])
         self.menu.add.button('Settings', self.to_settings)
         self.menu.add.button('Help', self.to_help)
         self.menu.add.button('Quit', pygame_menu.events.EXIT)
@@ -72,6 +74,17 @@ class MenuState:
             '\n'
         self.help_menu.add.label(help_content)
         self.help_menu.add.button('Back', self.to_main)
+
+    def init_high_scores(self):
+        self.high_scores_menu = pygame_menu.Menu(
+            width=self.screen_resolution[0],
+            height=self.screen_resolution[1],
+            theme=pygame_menu.themes.THEME_DEFAULT,
+            title='High Scores'
+        )
+        content = str(self.game.high_scores.df)
+        self.high_scores_menu.add.label(content)
+        self.high_scores_menu.add.button('Back', self.to_main)
 
     def select_fps_index(self):
         for index, (str_fps, fps) in enumerate(self.fps_selectable):
@@ -126,4 +139,9 @@ class MenuState:
     def to_help(self):
         self.current_menu.disable()
         self.current_menu = self.help_menu
+        self.current_menu.enable()
+
+    def to_high_scores(self):
+        self.current_menu.disable()
+        self.current_menu = self.high_scores_menu
         self.current_menu.enable()
