@@ -24,6 +24,9 @@ class ActorStats:
         self.defense += np.random.randint(0, 3)
         self.speed += np.random.randint(0, 3)
 
+    def scores_when_killed(self):
+        return (self.max_hp + self.defense * 5 + self.damage * self.attack_speed_in_frames(30))
+
     @property
     def damage(self):
         return self.base_atk + self.strength

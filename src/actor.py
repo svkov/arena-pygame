@@ -32,10 +32,12 @@ class Actor(GameObject, CollisionMixin):
         self.weapon = kwargs.get('weapon', None)
         self.armor = kwargs.get('armor', None)
         self.death_animation: Animation = kwargs.get('death_animation', None)
+        self.name = kwargs.get('name', 'unknown')
         self.lifetime_after_death = kwargs.get('lifetime_after_death', 3.0)
         self.lifetime_after_death_counter = self.lifetime_after_death * self.game_config.fps
         self.colliding_objects = []
         self.is_going_left = False
+        self.kills = {}
         attack_speed_in_frames = stats.attack_speed_in_frames(kwargs['fps'])
         # TODO: integrate with potion module
         hp_potion_cooldown = 50
@@ -157,7 +159,7 @@ class Actor(GameObject, CollisionMixin):
         else:
             self.on_static_collision(obj)
 
-    def on_projectile_collision(self, obj):
+    def on_projectile_collision(self, obj: Projectile):
         if self.cooldowns['damage'].is_cooldown_over:
             damage = obj.damage
             if self.armor is not None:
@@ -171,7 +173,8 @@ class Actor(GameObject, CollisionMixin):
                 self.on_death(obj)
             self.cooldowns['damage'].reset_counter()
 
-    def on_death(self, death_from):
+    def on_death(self, death_from: Projectile):
+        death_from.owner.on_kill(self)
         self.hp_bar.on_death()
         self.kill()
         self.groups.enemy_dying.add(self)
@@ -179,3 +182,7 @@ class Actor(GameObject, CollisionMixin):
     def on_static_collision(self, obj):
         self.colliding_objects.append(obj)
         return super().on_collision(obj)
+
+    def on_kill(self, killed):
+        score = killed.stats.scores_when_killed()
+        self.kills[killed.name] = self.kills.get(killed.name, 0) + score

@@ -61,20 +61,20 @@ class Spawner:
     def generate_actor_kwargs(self, name):
         all_stats = self.stats_config.get_by_name(name)
         stats = ActorStats(**all_stats)
-        return dict(**all_stats, stats=stats, **self.shared_args, name=name)
+        return dict(**all_stats, stats=stats, **self.shared_args)
 
     def generate_enemy_kwargs(self, name):
         all_stats = self.stats_config.get_by_name(name)
         stats = EnemyStats(**all_stats)
-        return dict(**all_stats, stats=stats, **self.shared_args, name=name)
+        return dict(**all_stats, stats=stats, **self.shared_args)
 
     def generate_item_kwargs(self, name, owner):
         stats = self.stats_config.get_by_name(name)
-        return dict(**stats, **self.shared_args, owner=owner, name=name)
+        return dict(**stats, **self.shared_args, owner=owner)
 
     def generate_static_object_kwargs(self, name):
         stats = self.stats_config.get_by_name(name)
-        return dict(**stats, **self.shared_args, name=name, pos_in_screen_coord=True)
+        return dict(**stats, **self.shared_args, pos_in_screen_coord=True)
 
     def skeleton(self, pos, **kwargs):
         kwargs = self.generate_enemy_kwargs('skeleton')

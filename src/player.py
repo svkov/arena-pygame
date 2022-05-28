@@ -38,6 +38,7 @@ class Player(Actor):
         new_player.exp = old_player.exp
         new_player.exp_to_lvlup = old_player.exp_to_lvlup
         new_player.level = old_player.level
+        new_player.kills = old_player.kills
         return new_player
 
     def handle_keyboard_input(self, keyboard):

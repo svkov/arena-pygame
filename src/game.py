@@ -19,14 +19,21 @@ class Game:
         self.clock = pygame.time.Clock()
 
     def init_level(self):
+        menu = MenuState(self, self.screen_resolution)
         self.states = {
-            'game': GameState(self, self.screen_resolution, self.fps, self.sprites),
-            'menu': MenuState(self, self.screen_resolution),
+            'game': self.create_game_state(),
+            'menu': menu,
             # TODO: make game over screen
-            'game_over': MenuState(self, self.screen_resolution),
+            'game_over': menu,
         }
         self.go_to_menu()
-        self.fader = Fader([self.states['menu'], self.states['game']], callback=self.set_game_state)
+        self.fader = self.create_fader()
+
+    def create_game_state(self):
+        return GameState(self, self.screen_resolution, self.fps, self.sprites)
+
+    def create_fader(self):
+        return Fader([self.states['menu'], self.states['game']], callback=self.set_game_state)
 
     def handle_input_keyboard(self):
         keyboard = pygame.key.get_pressed()
@@ -49,6 +56,9 @@ class Game:
         pygame.display.update()
 
     def start_game(self):
+        if self.states['game'] is None:
+            self.states['game'] = self.create_game_state()
+            self.fader = self.create_fader()
         self.fader.next()
 
     def set_game_state(self):
@@ -59,6 +69,7 @@ class Game:
 
     def game_over(self):
         self.go_to_menu()
+        self.states['game'] = None
         self.fader.next()
 
     def win(self):

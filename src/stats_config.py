@@ -11,6 +11,7 @@ class StatsConfig:
         d = self.df.loc[name].to_dict()
         d['image_size'] = d['image_size_x'], d['image_size_y']
         d['image'] = self.sprites[d['image']]
+        d['name'] = name
         if d['projectile_image'] in self.sprites:
             d['projectile_image'] = self.sprites[d['projectile_image']]
         return d
