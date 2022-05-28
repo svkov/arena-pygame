@@ -175,6 +175,7 @@ class Player(Actor):
             self.hp = self.max_hp * hp_percent_before
             self.exp = self.exp % self.exp_to_lvlup
             self.make_lvlup_label()
+            self.exp_to_lvlup += levels_up * 100
 
     def collide_with_item(self, item: InventoryItem):
         if self.hud is None:
