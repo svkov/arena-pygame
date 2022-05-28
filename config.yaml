@@ -1,4 +1,4 @@
-debug: true
+debug: false
 draw_enemy_attention: false
 draw_rects: false
 fps: 60

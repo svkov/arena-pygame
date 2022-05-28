@@ -39,7 +39,7 @@ class Game:
 
     def handle_input_keyboard(self):
         keyboard = pygame.key.get_pressed()
-        if keyboard[pygame.K_q]:
+        if keyboard[pygame.K_ESCAPE]:
             self.running = False
 
     def update(self):

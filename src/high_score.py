@@ -29,6 +29,5 @@ class HighScores:
     def get_str(self):
         tmp_df = self.df.head(10).copy()
         tmp_df['date'] = tmp_df['datetime'].dt.strftime('%Y-%m-%d %H:%M')
-        # tmp_df = tmp_df.set_index('date')
         tmp_df = tmp_df[['name', 'date', 'player_level', 'score']]
         return tmp_df.to_string(index=False)
