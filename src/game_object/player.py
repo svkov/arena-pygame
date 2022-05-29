@@ -102,7 +102,6 @@ class Player(Actor):
 
     def update(self, *args, **kwargs) -> None:
         dt = kwargs['dt']
-        camera: Camera = kwargs['camera']
         groups: GameStateGroups = kwargs['groups']
         events = kwargs['events']
         keyboard = pygame.key.get_pressed()
@@ -114,7 +113,7 @@ class Player(Actor):
 
         self.update_collision(dt)
         self.move_world_coord(dt)
-        self.update_zoom(camera)
+        self.update_zoom()
         self.update_screen_coord()
 
         self.animation_manager.update()

@@ -1,18 +1,29 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING, Tuple
+
 import numpy as np
 import pygame
-
-from src.camera import Camera
-from src.game_config import GameConfig
 import src.utils as utils
+
+if TYPE_CHECKING:
+    from src.camera import Camera
+    from src.game_config import GameConfig
 
 class GameObject(pygame.sprite.Sprite):
 
-    def __init__(self, pos, image, image_size=None, pos_in_world_coord=True,
-                 angle=0, game_config: GameConfig = None, **kwargs) -> None:
+    def __init__(self,
+                 pos: Tuple[int, int],
+                 image: pygame.surface.Surface,
+                 image_size: Tuple[int, int] = None,
+                 camera: Camera = None,
+                 pos_in_world_coord: bool = True,
+                 angle: int = 0,
+                 game_config: GameConfig = None,
+                 **kwargs) -> None:
         pygame.sprite.Sprite.__init__(self)
         self.pos = np.array(pos, dtype=np.float)
         self.rotation_angle = angle
-        self.camera: Camera = kwargs['camera']
+        self.camera = camera
         self.image_size = image_size
         if image_size is None:
             self.image_size = (128, 128)
@@ -34,8 +45,7 @@ class GameObject(pygame.sprite.Sprite):
             self.rect.y = self.pos[1]
 
     def update(self, *args, **kwargs):
-        camera = kwargs['camera']
-        self.update_zoom(camera)
+        self.update_zoom()
         self.update_screen_coord()
 
     def update_screen_coord(self):
@@ -54,9 +64,9 @@ class GameObject(pygame.sprite.Sprite):
                 pygame.draw.rect(image, (255, 0, 0), rect, width=3)
         self.image = self.image_by_zoom[self.camera.zoom_factor]
 
-    def update_zoom(self, camera):
-        if self.image != self.image_by_zoom[camera.zoom_factor]:
-            self.image = self.image_by_zoom[camera.zoom_factor]
+    def update_zoom(self):
+        if self.image != self.image_by_zoom[self.camera.zoom_factor]:
+            self.image = self.image_by_zoom[self.camera.zoom_factor]
             new_width = int(self.camera.zoom_factor * self.image_size[0])
             new_height = int(self.camera.zoom_factor * self.image_size[1])
             self.rect.width = new_width
