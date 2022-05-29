@@ -65,15 +65,15 @@ class Actor(GameObject, CollisionMixin):
         pass
 
     @property
-    def is_alive(self):
+    def is_alive(self) -> bool:
         return self.hp > 0
 
     @property
-    def max_hp(self):
+    def max_hp(self) -> float:
         return self.stats.max_hp
 
     @property
-    def damage(self):
+    def damage(self) -> float:
         if self.weapon:
             return self.stats.damage + self.weapon.stats.damage
         return self.stats.damage
@@ -86,7 +86,7 @@ class Actor(GameObject, CollisionMixin):
         for key, val in self.cooldowns.items():
             val.update_cooldown()
 
-    def drop_item(self, inventory_item):
+    def drop_item(self, inventory_item: InventoryItem):
         if issubclass(inventory_item.__class__, WieldableItem):
             inventory_item.unwield()
         inventory_item.kill()
@@ -95,9 +95,8 @@ class Actor(GameObject, CollisionMixin):
         inventory_item.on_drop(self.pos)
 
     def update(self, *args, **kwargs) -> None:
+        dt: float = kwargs['dt']
         self.update_cooldown()
-        dt = kwargs['dt']
-        self.camera: Camera = kwargs['camera']
         self.normalize_speed()
         self.update_collision(dt)
         self.move_world_coord(dt)
@@ -110,7 +109,7 @@ class Actor(GameObject, CollisionMixin):
         if self.is_going_left:
             self.image = pygame.transform.flip(self.image, True, False)
 
-    def update_collision(self, dt):
+    def update_collision(self, dt: float):
         for obj in self.colliding_objects:
             self._collision(obj, dt=dt)
         self.colliding_objects.clear()
@@ -164,10 +163,10 @@ class Actor(GameObject, CollisionMixin):
             self.speed = self.speed / np.linalg.norm(self.speed)
             self.speed = self.speed * self.stats.movement_speed
 
-    def move_world_coord(self, dt):
+    def move_world_coord(self, dt: float):
         self.pos = self.pos + self.speed * dt
 
-    def on_collision(self, obj):
+    def on_collision(self, obj: GameObject):
         if isinstance(obj, Projectile):
             self.on_projectile_collision(obj)
         else:
@@ -193,10 +192,10 @@ class Actor(GameObject, CollisionMixin):
         self.kill()
         self.groups.enemy_dying.add(self)
 
-    def on_static_collision(self, obj):
+    def on_static_collision(self, obj: GameObject):
         self.colliding_objects.append(obj)
         return super().on_collision(obj)
 
-    def on_kill(self, killed):
+    def on_kill(self, killed: Actor):
         score = killed.stats.scores_when_killed()
         self.kills[killed.name] = self.kills.get(killed.name, 0) + score
