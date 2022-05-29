@@ -3,20 +3,21 @@ import numpy as np
 import pygame
 from typing import TYPE_CHECKING
 from src.game_object import GameObject
-from src.animation import Animation
 from src.collision_mixin import CollisionMixin
 from src.cooldown_mixin import CooldownMixin
 from src.game_object.projectile import Projectile
-from src.groups import GameStateGroups
-from src.hp_bar import HpBar
 from src.ingame_label import DamageLabel
 from src.inventory import Inventory
 from src.item.wieldable import WieldableItem
+from src.hp_bar import HpBar
 
 if TYPE_CHECKING:
     from typing import Tuple
     from src.actor_stats import ActorStats
     from src.camera import Camera
+    from src.groups import GameStateGroups
+    from src.animation import Animation
+    from src.item import InventoryItem
 
 class Actor(GameObject, CollisionMixin):
 
@@ -28,26 +29,30 @@ class Actor(GameObject, CollisionMixin):
                  projectile_image: pygame.surface.Surface = None,
                  stats: ActorStats = None,
                  groups: GameStateGroups = None,
+                 weapon: InventoryItem = None,
+                 armor: InventoryItem = None,
+                 death_animation: Animation = None,
+                 name: str = 'unknown',
+                 lifetime_after_death: float = 3.0,
                  **kwargs):
-        super().__init__(pos, image, image_size, **kwargs)
+        super().__init__(pos, image=image, image_size=image_size, **kwargs)
         self.stats = stats
         self.groups = groups
         self.speed = np.array([0, 0])
         self.projectile_image = projectile_image
         self.hp = self.max_hp
         self.hp_bar = HpBar(self, groups=groups)
-        self.camera = kwargs['camera']
         self.inventory = Inventory()
-        self.weapon = kwargs.get('weapon', None)
-        self.armor = kwargs.get('armor', None)
-        self.death_animation: Animation = kwargs.get('death_animation', None)
-        self.name = kwargs.get('name', 'unknown')
-        self.lifetime_after_death = kwargs.get('lifetime_after_death', 3.0)
+        self.weapon = weapon
+        self.armor = armor
+        self.death_animation = death_animation
+        self.name = name
+        self.lifetime_after_death = lifetime_after_death
         self.lifetime_after_death_counter = self.lifetime_after_death * self.game_config.fps
         self.colliding_objects = []
         self.is_going_left = False
         self.kills = {}
-        attack_speed_in_frames = stats.attack_speed_in_frames(kwargs['fps'])
+        attack_speed_in_frames = stats.attack_speed_in_frames(self.game_config.fps)
         # TODO: integrate with potion module
         hp_potion_cooldown = 50
         self.cooldowns = {
@@ -96,7 +101,7 @@ class Actor(GameObject, CollisionMixin):
         self.normalize_speed()
         self.update_collision(dt)
         self.move_world_coord(dt)
-        self.update_zoom(self.camera)
+        self.update_zoom()
         self.update_screen_coord()
         self.update_animation_if_needed()
         self.flip_image_if_needed()
