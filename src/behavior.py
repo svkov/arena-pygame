@@ -1,7 +1,7 @@
 import numpy as np
 
-from src.actor import Actor
 from src.camera import Camera
+from src.game_object.actor import Actor
 
 class Behavior:
 

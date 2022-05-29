@@ -1,19 +1,19 @@
 import numpy as np
 import pygame
-from src.animated_enemy import AnimatedEnemy
 from src.camera import Camera
-from src.enemy import Enemy
 from src.game_config import GameConfig
+from src.game_object.animated_enemy import AnimatedEnemy
+from src.game_object.background import Background
+from src.game_object.enemy import Enemy
+from src.game_object.player import Player
+from src.game_object.static_object import StaticObject
 from src.groups import GameStateGroups
 import src.animation.generate_state as generate_state
 from src.actor_stats import ActorStats, EnemyStats
 from src.item.potion import Potion
 from src.item.quest_item import StoneSoulItem
 from src.item.sword import ArmorItem, SwordItem
-from src.player import Player
-from src.background import Background
 from src.portal import Portal
-from src.static_object import StaticObject
 from src.stats_config import StatsConfig
 
 class Spawner:

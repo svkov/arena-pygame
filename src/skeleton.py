@@ -1,5 +1,5 @@
-from src.animated_enemy import EnemyStates
 from src.animation import Animation
+from src.animation.states import EnemyStates
 
 def generate_skeleton_states(sprites, fps):
     return {

@@ -1,4 +1,4 @@
-from src.actor import Actor
+from src.game_object.actor import Actor
 
 
 class Container(Actor):

@@ -1,28 +1,37 @@
+from __future__ import annotations
 import numpy as np
 import pygame
-from src.actor_stats import ActorStats
+from typing import TYPE_CHECKING
+from src.game_object import GameObject
 from src.animation import Animation
-from src.camera import Camera
 from src.collision_mixin import CollisionMixin
 from src.cooldown_mixin import CooldownMixin
-from src.game_object import GameObject
+from src.game_object.projectile import Projectile
 from src.groups import GameStateGroups
 from src.hp_bar import HpBar
 from src.ingame_label import DamageLabel
 from src.inventory import Inventory
 from src.item.wieldable import WieldableItem
-from src.projectile import Projectile
 
+if TYPE_CHECKING:
+    from typing import Tuple
+    from src.actor_stats import ActorStats
+    from src.camera import Camera
 
 class Actor(GameObject, CollisionMixin):
 
-    def __init__(self, pos, image, image_size=None,
-                 damage_recieve_cooldown=None,
-                 projectile_image=None, stats: ActorStats = None,
-                 groups: GameStateGroups = None, **kwargs):
+    def __init__(self,
+                 pos: Tuple[int, int],
+                 image: pygame.surface.Surface,
+                 image_size: Tuple[int, int] = None,
+                 damage_recieve_cooldown: int = None,
+                 projectile_image: pygame.surface.Surface = None,
+                 stats: ActorStats = None,
+                 groups: GameStateGroups = None,
+                 **kwargs):
         super().__init__(pos, image, image_size, **kwargs)
-        self.stats: ActorStats = stats
-        self.groups: GameStateGroups = groups
+        self.stats = stats
+        self.groups = groups
         self.speed = np.array([0, 0])
         self.projectile_image = projectile_image
         self.hp = self.max_hp

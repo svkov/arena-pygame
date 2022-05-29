@@ -1,6 +1,6 @@
 from src.animation import AnimationManager
 from src.animation.states import EnemyStates
-from src.enemy import Enemy
+from src.game_object.enemy import Enemy
 
 class AnimatedEnemy(Enemy):
 

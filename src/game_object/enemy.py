@@ -1,8 +1,8 @@
 import pygame
-from src.actor import Actor
 from src.behavior import Behavior
 from src.camera import Camera
-from src.projectile import Projectile
+from src.game_object.actor import Actor
+from src.game_object.projectile import Projectile
 
 
 class Enemy(Actor):

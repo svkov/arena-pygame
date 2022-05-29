@@ -5,10 +5,10 @@ from src.camera import Camera
 from src.groups import GameStateGroups
 from src.hud import HUD
 from src.level_config import LevelConfig, RandomLevelConfig
-from src.player import Player
+from src.game_object.player import Player
 from src.spawner import Spawner
 from src.state.pause import PauseState
-from src.static_object import StaticObject
+from src.game_object.static_object import StaticObject
 from src.stats_config import StatsConfig
 import gc
 
