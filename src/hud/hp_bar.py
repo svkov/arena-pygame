@@ -1,15 +1,19 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING, Tuple
 import pygame
-from src.camera import Camera
 
-from src.game_object import GameObject
-from src.groups import GameStateGroups
-
+if TYPE_CHECKING:
+    from typing import Union
+    from src.game_object.actor import Actor
+    from src.camera import Camera
+    from src.groups import GameStateGroups
+    from src.game_object import GameObject
 
 class RectangleSurface(pygame.sprite.Sprite):
     def __init__(self,
-                 owner,
-                 color,
-                 size=None) -> None:
+                 owner: Actor,
+                 color: Union[Tuple[int, int, int], str],
+                 size: Tuple[int, int] = None) -> None:
         super().__init__()
         self.size = size
         self.owner = owner
