@@ -13,7 +13,7 @@ from src.actor_stats import ActorStats, EnemyStats
 from src.item.potion import Potion
 from src.item.quest_item import StoneSoulItem
 from src.item.sword import ArmorItem, SwordItem
-from src.portal import Portal
+from src.game_object.portal import Portal
 from src.stats_config import StatsConfig
 
 class Spawner:
