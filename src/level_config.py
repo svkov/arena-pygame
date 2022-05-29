@@ -90,7 +90,7 @@ class RandomLevelConfig:
         self.spawner.spawn_object('portal', pos=self.portal_default_pos)
 
     def generate_random_point_inside_circle(self):
-        distance_from_center = np.random.randint(1, self.radius - 600)
+        distance_from_center = np.random.randint(1000, self.radius - 600)
         alpha = np.random.uniform(0, np.pi * 2)
         x = distance_from_center * np.cos(alpha) + self.radius
         y = distance_from_center * np.sin(alpha) + self.radius
