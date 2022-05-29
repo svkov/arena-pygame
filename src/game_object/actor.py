@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 from src.game_object import GameObject
 from src.collision_mixin import CollisionMixin
 from src.cooldown_mixin import CooldownMixin
+from src.game_object.moving_object import MovingObject
 from src.game_object.projectile import Projectile
 from src.ingame_label import DamageLabel
 from src.inventory import Inventory
@@ -14,12 +15,11 @@ from src.hp_bar import HpBar
 if TYPE_CHECKING:
     from typing import Tuple
     from src.actor_stats import ActorStats
-    from src.camera import Camera
     from src.groups import GameStateGroups
     from src.animation import Animation
     from src.item import InventoryItem
 
-class Actor(GameObject, CollisionMixin):
+class Actor(MovingObject, CollisionMixin):
 
     def __init__(self,
                  pos: Tuple[int, int],
@@ -38,7 +38,6 @@ class Actor(GameObject, CollisionMixin):
         super().__init__(pos, image=image, image_size=image_size, **kwargs)
         self.stats = stats
         self.groups = groups
-        self.speed = np.array([0, 0])
         self.projectile_image = projectile_image
         self.hp = self.max_hp
         self.hp_bar = HpBar(self, groups=groups)
@@ -61,7 +60,7 @@ class Actor(GameObject, CollisionMixin):
             'hp_potion': CooldownMixin(hp_potion_cooldown)
         }
 
-    def shoot(self, camera: Camera):
+    def shoot(self):
         pass
 
     @property
@@ -79,7 +78,7 @@ class Actor(GameObject, CollisionMixin):
         return self.stats.damage
 
     def set_zero_speed(self):
-        self.speed = np.array([0, 0])
+        super().set_zero_speed()
         self.is_going_left = False
 
     def update_cooldown(self):
@@ -155,16 +154,6 @@ class Actor(GameObject, CollisionMixin):
                     self.kill()
             return True
         return False
-
-    def normalize_speed(self):
-        if np.linalg.norm(self.speed) < self.stats.movement_speed:
-            return
-        if np.linalg.norm(self.speed) > 0:
-            self.speed = self.speed / np.linalg.norm(self.speed)
-            self.speed = self.speed * self.stats.movement_speed
-
-    def move_world_coord(self, dt: float):
-        self.pos = self.pos + self.speed * dt
 
     def on_collision(self, obj: GameObject):
         if isinstance(obj, Projectile):
