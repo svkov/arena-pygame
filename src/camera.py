@@ -1,5 +1,5 @@
 import numpy as np
-from src.hud_config import HUDConfig
+from src.hud.hud_config import HUDConfig
 
 
 class Camera:

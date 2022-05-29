@@ -5,7 +5,7 @@ from src.camera import Camera
 from src.game_object.actor import Actor
 from src.game_object.projectile import Projectile
 from src.groups import GameStateGroups
-from src.ingame_label import ExpLabel, ItemLabel, LevelUpLabel
+from src.hud.ingame_label import ExpLabel, ItemLabel, LevelUpLabel
 from src.item import InventoryItem
 
 class Player(Actor):

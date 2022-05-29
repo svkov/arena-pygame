@@ -6,7 +6,10 @@ from src.groups import GameStateGroups
 
 
 class RectangleSurface(pygame.sprite.Sprite):
-    def __init__(self, owner, color, size=None) -> None:
+    def __init__(self,
+                 owner,
+                 color,
+                 size=None) -> None:
         super().__init__()
         self.size = size
         self.owner = owner

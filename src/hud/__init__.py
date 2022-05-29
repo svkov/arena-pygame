@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import Tuple, TYPE_CHECKING
 import numpy as np
 import pygame
-from src.hud_config import HUDConfig
+from src.hud.hud_config import HUDConfig
 
 if TYPE_CHECKING:
     from src.game_object.player import Player
