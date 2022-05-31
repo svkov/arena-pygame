@@ -43,7 +43,7 @@ class InputHandler:
             self.player.shoot()
         item = self.player.find_inventory_item_collision(mouse_pos)
         if item is not None:
-            self.player.spawn_item_description(item, mouse_pos)
+            self.player.label_manager.spawn_item_label(item, mouse_pos)
 
     def handle_mouse_event(self, event):
         mouse_pos = pygame.mouse.get_pos()

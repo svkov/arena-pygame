@@ -4,7 +4,7 @@ from src.animation.states import PlayerStates
 from src.core.input_handler import InputHandler
 from src.game_object.actor import Actor
 from src.game_object.projectile import Projectile
-from src.hud.ingame_label import ExpLabel, ItemLabel, LevelUpLabel
+from src.hud.label_manager import LabelManager
 from src.item import InventoryItem
 
 class Player(Actor):
@@ -23,6 +23,7 @@ class Player(Actor):
         self.animation_manager.set_state(PlayerStates.IDLE)
         self.image = self.animation_manager.image
         self.input_handler = InputHandler(self)
+        self.label_manager = LabelManager(self, self.groups, self.camera)
         self.is_interacting = False
         self.is_in_portal = False
         # TODO: connect to HUD more obviously
@@ -102,20 +103,8 @@ class Player(Actor):
     def increase_xp(self, new_exp):
         exp = self.stats.exp_gain(new_exp)
         self.exp += exp
-        self.make_exp_label(exp)
+        self.label_manager.spawn_exp_label(exp)
         self.lvlup_if_needed()
-
-    def make_exp_label(self, exp):
-        exp_label = ExpLabel(f'+{int(exp)} XP', self.pos, self.camera)
-        self.groups.spawn_ui(exp_label)
-
-    def make_lvlup_label(self):
-        lvlup_label = LevelUpLabel(self.pos, self.camera, self.game_config)
-        self.groups.spawn_ui(lvlup_label)
-
-    def spawn_item_description(self, item, mouse_pos):
-        exp_label = ItemLabel(item.description, mouse_pos, self.camera)
-        self.groups.items_description.add(exp_label)
 
     def lvlup_if_needed(self):
         if self.exp >= self.exp_to_lvlup:
@@ -124,7 +113,7 @@ class Player(Actor):
             self.level += levels_up
             self.level_up(levels_up)
             self.exp = self.exp % self.exp_to_lvlup
-            self.make_lvlup_label()
+            self.label_manager.spawn_level_up_label()
             self.exp_to_lvlup += levels_up * 100
 
     def collide_with_item(self, item: InventoryItem):
