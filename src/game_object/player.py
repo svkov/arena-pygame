@@ -1,10 +1,10 @@
 import pygame
 from src.animation import AnimationManager
 from src.animation.states import PlayerStates
-from src.camera import Camera
+from src.core.camera import Camera
+from src.core.groups import GameStateGroups
 from src.game_object.actor import Actor
 from src.game_object.projectile import Projectile
-from src.groups import GameStateGroups
 from src.hud.ingame_label import ExpLabel, ItemLabel, LevelUpLabel
 from src.item import InventoryItem
 

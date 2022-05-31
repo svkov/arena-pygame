@@ -5,7 +5,7 @@ import pygame
 from src.game_object.moving_object import MovingObject
 
 if TYPE_CHECKING:
-    from src.camera import Camera
+    from src.core.camera import Camera
     from src.game_object import GameObject
     from src.config.game_config import GameConfig
 

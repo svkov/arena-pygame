@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 from src.config.game_config import GameConfig
-from src.spawner import Spawner
+from src.core.spawner import Spawner
 
 class LevelConfig:
 

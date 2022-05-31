@@ -1,6 +1,6 @@
 import numpy as np
 
-from src.camera import Camera
+from src.core.camera import Camera
 from src.game_object.actor import Actor
 
 class Behavior:

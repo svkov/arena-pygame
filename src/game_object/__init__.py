@@ -6,7 +6,7 @@ import pygame
 import src.utils as utils
 
 if TYPE_CHECKING:
-    from src.camera import Camera
+    from src.core.camera import Camera
     from src.config.game_config import GameConfig
 
 class GameObject(pygame.sprite.Sprite):

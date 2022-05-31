@@ -8,14 +8,14 @@ from src.cooldown_mixin import CooldownMixin
 from src.game_object.moving_object import MovingObject
 from src.game_object.projectile import Projectile
 from src.hud.ingame_label import DamageLabel
-from src.inventory import Inventory
+from src.core.inventory import Inventory
 from src.item.wieldable import WieldableItem
 from src.hud.hp_bar import HpBar
 
 if TYPE_CHECKING:
     from typing import Tuple
     from src.actor_stats import ActorStats
-    from src.groups import GameStateGroups
+    from src.core.groups import GameStateGroups
     from src.animation import Animation
     from src.item import InventoryItem
 

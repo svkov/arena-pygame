@@ -2,7 +2,7 @@ from typing import Tuple
 import numpy as np
 import pygame
 
-from src.camera import Camera
+from src.core.camera import Camera
 from src.config.game_config import GameConfig
 from src.game_object import GameObject
 

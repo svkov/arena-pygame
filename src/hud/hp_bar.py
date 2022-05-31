@@ -5,8 +5,8 @@ import pygame
 if TYPE_CHECKING:
     from typing import Union
     from src.game_object.actor import Actor
-    from src.camera import Camera
-    from src.groups import GameStateGroups
+    from src.core.camera import Camera
+    from src.core.groups import GameStateGroups
     from src.game_object import GameObject
 
 class RectangleSurface(pygame.sprite.Sprite):

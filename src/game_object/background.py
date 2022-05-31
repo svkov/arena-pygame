@@ -1,6 +1,6 @@
 import numpy as np
 from src.game_object import GameObject
-from src.groups import GameStateGroups
+from src.core.groups import GameStateGroups
 
 
 class Background(GameObject):
