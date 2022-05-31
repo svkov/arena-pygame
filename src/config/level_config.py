@@ -54,7 +54,8 @@ class RandomLevelConfig:
             enemy: Enemy = self.spawner.spawn_object('skeleton', pos=(x, y))
             enemy.level_up(self.level_number)
             enemies.append(enemy)
-        boss = self.spawner.spawn_object('priestess', pos=self.boss_default_pos)
+        boss: BossEnemy = self.spawner.spawn_object('priestess', pos=self.boss_default_pos)
+        boss.level_up(self.level_number)
         self.generate_drop(enemies, boss)
 
     def generate_drop(self, enemies: List[Enemy], boss: BossEnemy):
