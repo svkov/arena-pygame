@@ -66,25 +66,39 @@ class Player(Actor):
     def handle_events(self, events):
         self.is_interacting = False
         for event in events:
-            if event.type == pygame.MOUSEBUTTONUP:
-                if event.button == 1:
-                    mouse_pos = pygame.mouse.get_pos()
-                    inventory_item = self.find_inventory_item_collision(mouse_pos)
-                    if inventory_item is not None:
-                        self.use_inventory_item(inventory_item)
-                if event.button == 3:
-                    mouse_pos = pygame.mouse.get_pos()
-                    inventory_item = self.find_inventory_item_collision(mouse_pos)
-                    if inventory_item is not None:
-                        self.drop_item(inventory_item)
-            if event.type == pygame.KEYUP:
-                if event.key == pygame.K_f:
-                    self.is_interacting = True
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 4:
-                    self.camera.zoom_out()
-                elif event.button == 5:
-                    self.camera.zoom_in()
+            self.handle_zoom_event(event)
+            self.handle_mouse_event(event)
+            self.handle_interacting_event(event)
+
+    def handle_mouse_event(self, event):
+        if event.type == pygame.MOUSEBUTTONUP:
+            if event.button == 1:
+                self.check_if_item_used()
+            if event.button == 3:
+                self.check_if_item_dropped()
+
+    def handle_zoom_event(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 4:
+                self.camera.zoom_out()
+            elif event.button == 5:
+                self.camera.zoom_in()
+
+    def handle_interacting_event(self, event):
+        if event.type == pygame.KEYUP and event.key == pygame.K_f:
+            self.is_interacting = True
+
+    def check_if_item_used(self):
+        mouse_pos = pygame.mouse.get_pos()
+        inventory_item = self.find_inventory_item_collision(mouse_pos)
+        if inventory_item is not None:
+            self.use_inventory_item(inventory_item)
+
+    def check_if_item_dropped(self):
+        mouse_pos = pygame.mouse.get_pos()
+        inventory_item = self.find_inventory_item_collision(mouse_pos)
+        if inventory_item is not None:
+            self.drop_item(inventory_item)
 
     def use_inventory_item(self, item):
         must_delete = item.on_use()
