@@ -6,7 +6,7 @@ background;background_tile;384;384;;3500;;;;;;;
 wall_without_contour;wall_1;768;768;;;;;;;;;
 cactus;cactus;128;256;;;;;;;;;
 tombstone;tombstone;128;256;;;;;;;;;
-priestess;priestess;128;128;snow;;10;10;1;1;1;1;1
+priestess;priestess;128;128;snow;;10;10;5;1;5;5;15
 hp_potion;hp_potion;64;64;;;;;;;;;
 sword;sword;64;64;;;;;;;;;
 armor;armor;64;64;;;;;;;;;

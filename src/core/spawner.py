@@ -6,6 +6,7 @@ from src.config.game_config import GameConfig
 from src.config.stats_config import StatsConfig
 from src.game_object.animated_enemy import AnimatedEnemy
 from src.game_object.background import Background
+from src.game_object.boss import BossEnemy
 from src.game_object.enemy import Enemy
 from src.game_object.player import Player
 from src.game_object.static_object import StaticObject
@@ -90,7 +91,7 @@ class Spawner:
 
     def priestess(self, pos, **kwargs):
         kwargs = self.generate_enemy_kwargs('priestess')
-        priestess = Enemy(pos, **kwargs)
+        priestess = BossEnemy(pos, **kwargs)
         self.groups.spawn_enemy_object(priestess)
         return priestess
 
