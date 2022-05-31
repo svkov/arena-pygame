@@ -2,7 +2,7 @@ import pygame
 from src.animation import AnimationManager
 from src.animation.states import PlayerStates
 from src.core.camera import Camera
-from src.core.groups import GameStateGroups
+from src.core.input_handler import InputHandler
 from src.game_object.actor import Actor
 from src.game_object.projectile import Projectile
 from src.hud.ingame_label import ExpLabel, ItemLabel, LevelUpLabel
@@ -19,6 +19,7 @@ class Player(Actor):
         self.animation_manager = AnimationManager(kwargs['animation_states'], default_state=PlayerStates.IDLE)
         self.animation_manager.set_state(PlayerStates.IDLE)
         self.image = self.animation_manager.image
+        self.input_handler = InputHandler(self)
         self.is_interacting = False
         self.is_in_portal = False
         # TODO: connect to HUD more obviously
@@ -39,54 +40,11 @@ class Player(Actor):
         new_player.kills = old_player.kills
         return new_player
 
-    def handle_keyboard_input(self, keyboard):
-        self.set_zero_speed()
-        if keyboard[pygame.K_w]:
-            self.speed[1] = -1
-        if keyboard[pygame.K_s]:
-            self.speed[1] = 1
-        if keyboard[pygame.K_a]:
-            self.speed[0] = -1
-            self.is_going_left = True
-        if keyboard[pygame.K_d]:
-            self.speed[0] = 1
-        self.normalize_speed()
-
-    def handle_mouse_input(self, groups: GameStateGroups):
-        if pygame.mouse.get_pressed()[0] and self.cooldowns['shoot'].is_cooldown_over:
-            self.shoot(groups)
-        if pygame.mouse.get_pressed()[2] and self.cooldowns['hp_potion'].is_cooldown_over:
-            self.cooldowns['hp_potion'].reset_counter()
-
+    def check_item_description_spawn(self):
         mouse_pos = pygame.mouse.get_pos()
         inventory_item = self.find_inventory_item_collision(mouse_pos)
         if inventory_item is not None:
             self.spawn_item_description(inventory_item, mouse_pos)
-
-    def handle_events(self, events):
-        self.is_interacting = False
-        for event in events:
-            self.handle_zoom_event(event)
-            self.handle_mouse_event(event)
-            self.handle_interacting_event(event)
-
-    def handle_mouse_event(self, event):
-        if event.type == pygame.MOUSEBUTTONUP:
-            if event.button == 1:
-                self.check_if_item_used()
-            if event.button == 3:
-                self.check_if_item_dropped()
-
-    def handle_zoom_event(self, event):
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if event.button == 4:
-                self.camera.zoom_out()
-            elif event.button == 5:
-                self.camera.zoom_in()
-
-    def handle_interacting_event(self, event):
-        if event.type == pygame.KEYUP and event.key == pygame.K_f:
-            self.is_interacting = True
 
     def check_if_item_used(self):
         mouse_pos = pygame.mouse.get_pos()
@@ -116,12 +74,8 @@ class Player(Actor):
 
     def update(self, *args, **kwargs) -> None:
         dt = kwargs['dt']
-        groups: GameStateGroups = kwargs['groups']
         events = kwargs['events']
-        keyboard = pygame.key.get_pressed()
-        self.handle_events(events)
-        self.handle_keyboard_input(keyboard)
-        self.handle_mouse_input(groups)
+        self.input_handler.handle_input(events)
         self.handle_animation()
         self.update_cooldown()
 
@@ -154,11 +108,11 @@ class Player(Actor):
         camera.x = self.pos[0]
         camera.y = self.pos[1]
 
-    def shoot(self, groups: GameStateGroups):
+    def shoot(self):
         mouse_pos = pygame.mouse.get_pos()
         p = Projectile.shoot(self, mouse_pos, self.camera, self.projectile_image,
                              speed=self.stats.projectile_speed, config=self.game_config)
-        groups.spawn_player_projectile(p)
+        self.groups.spawn_player_projectile(p)
         self.cooldowns['shoot'].reset_counter()
 
         if mouse_pos[1] > self.center_screen[1]:
