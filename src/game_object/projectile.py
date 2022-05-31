@@ -5,6 +5,7 @@ import pygame
 from src.game_object.moving_object import MovingObject
 
 if TYPE_CHECKING:
+    from src.game_object.actor import Actor
     from src.core.camera import Camera
     from src.game_object import GameObject
     from src.config.game_config import GameConfig
@@ -17,7 +18,7 @@ class Projectile(MovingObject):
                  image: pygame.surface.Surface,
                  image_size: Tuple[int, int] = None,
                  range: float = 500,
-                 owner: GameObject = None,
+                 owner: Actor = None,
                  **kwargs):
         super().__init__(pos, image=image, image_size=image_size, **kwargs)
         self.speed = speed

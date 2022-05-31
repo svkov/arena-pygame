@@ -40,23 +40,17 @@ class Player(Actor):
         new_player.kills = old_player.kills
         return new_player
 
-    def check_item_description_spawn(self):
-        mouse_pos = pygame.mouse.get_pos()
-        inventory_item = self.find_inventory_item_collision(mouse_pos)
-        if inventory_item is not None:
-            self.spawn_item_description(inventory_item, mouse_pos)
+    def update(self, *args, **kwargs) -> None:
+        events = kwargs.get('events', [])
+        self.input_handler.handle_input(events)
+        super().update(*args, **kwargs)
 
-    def check_if_item_used(self):
-        mouse_pos = pygame.mouse.get_pos()
-        inventory_item = self.find_inventory_item_collision(mouse_pos)
-        if inventory_item is not None:
-            self.use_inventory_item(inventory_item)
-
-    def check_if_item_dropped(self):
-        mouse_pos = pygame.mouse.get_pos()
-        inventory_item = self.find_inventory_item_collision(mouse_pos)
-        if inventory_item is not None:
-            self.drop_item(inventory_item)
+    def update_animation_if_needed(self):
+        if super().update_animation_if_needed():
+            return True
+        self.set_animation_state()
+        self.animation_manager.update()
+        self.image = self.animation_manager.image
 
     def use_inventory_item(self, item):
         must_delete = item.on_use()
@@ -72,22 +66,10 @@ class Player(Actor):
             if inventory_item.rect.collidepoint(pos):
                 return inventory_item
 
-    def update(self, *args, **kwargs) -> None:
-        events = kwargs.get('events', [])
-        self.input_handler.handle_input(events)
-        super().update(*args, **kwargs)
-
-    def update_animation_if_needed(self):
-        if super().update_animation_if_needed():
-            return True
-        self.handle_animation()
-        self.animation_manager.update()
-        self.image = self.animation_manager.image
-
     def go_to_portal(self):
         self.is_in_portal = True
 
-    def handle_animation(self):
+    def set_animation_state(self):
         if self.is_moving:
             if self.speed[1] < 0:
                 self.animation_manager.set_state(PlayerStates.BACK)
@@ -97,12 +79,8 @@ class Player(Actor):
             self.animation_manager.set_state(PlayerStates.IDLE)
 
     def update_screen_coord(self):
-        self.update_camera_pos(self.camera)
+        self.camera.set_pos(self.pos)
         super().update_screen_coord()
-
-    def update_camera_pos(self, camera: Camera):
-        camera.x = self.pos[0]
-        camera.y = self.pos[1]
 
     def shoot(self):
         mouse_pos = pygame.mouse.get_pos()
@@ -110,7 +88,9 @@ class Player(Actor):
                              speed=self.stats.projectile_speed, config=self.game_config)
         self.groups.spawn_player_projectile(p)
         self.cooldowns['shoot'].reset_counter()
+        self.set_attack_animation_state(mouse_pos)
 
+    def set_attack_animation_state(self, mouse_pos):
         if mouse_pos[1] > self.center_screen[1]:
             self.animation_manager.set_state(PlayerStates.ATTACK, force=True)
         else:

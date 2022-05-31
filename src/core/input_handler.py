@@ -38,16 +38,21 @@ class InputHandler:
         self.player.normalize_speed()
 
     def handle_mouse_input(self):
+        mouse_pos = pygame.mouse.get_pos()
         if pygame.mouse.get_pressed()[0] and self.player.cooldowns['shoot'].is_cooldown_over:
             self.player.shoot()
-        self.player.check_item_description_spawn()
+        item = self.player.find_inventory_item_collision(mouse_pos)
+        if item is not None:
+            self.player.spawn_item_description(item, mouse_pos)
 
     def handle_mouse_event(self, event):
+        mouse_pos = pygame.mouse.get_pos()
         if event.type == pygame.MOUSEBUTTONUP:
-            if event.button == 1:
-                self.player.check_if_item_used()
-            if event.button == 3:
-                self.player.check_if_item_dropped()
+            item = self.player.find_inventory_item_collision(mouse_pos)
+            if event.button == 1 and item is not None:
+                self.player.use_inventory_item(item)
+            if event.button == 3 and item is not None:
+                self.player.drop_item(item)
 
     def handle_zoom_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
