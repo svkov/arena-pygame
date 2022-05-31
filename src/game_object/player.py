@@ -124,11 +124,13 @@ class Player(Actor):
         self.is_in_portal = True
 
     def handle_animation(self):
-        if not self.animation_manager.is_busy:
+        if self.is_moving:
             if self.speed[1] < 0:
                 self.animation_manager.set_state(PlayerStates.BACK)
             else:
-                self.animation_manager.set_state(PlayerStates.IDLE)
+                self.animation_manager.set_state(PlayerStates.WALK)
+        if not self.animation_manager.is_busy:
+            self.animation_manager.set_state(PlayerStates.IDLE)
 
     def update_screen_coord(self):
         self.update_camera_pos(self.camera)
@@ -139,11 +141,16 @@ class Player(Actor):
         camera.y = self.pos[1]
 
     def shoot(self, groups: GameStateGroups):
-        p = Projectile.shoot(self, pygame.mouse.get_pos(), self.camera, self.projectile_image,
+        mouse_pos = pygame.mouse.get_pos()
+        p = Projectile.shoot(self, mouse_pos, self.camera, self.projectile_image,
                              speed=self.stats.projectile_speed, config=self.game_config)
         groups.spawn_player_projectile(p)
         self.cooldowns['shoot'].reset_counter()
-        self.animation_manager.set_state(PlayerStates.ATTACK)
+
+        if mouse_pos[1] > self.center_screen[1]:
+            self.animation_manager.set_state(PlayerStates.ATTACK, force=True)
+        else:
+            self.animation_manager.set_state(PlayerStates.BACK, force=True)
 
     def increase_xp(self, new_exp):
         exp = self.stats.exp_gain(new_exp)
