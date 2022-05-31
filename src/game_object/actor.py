@@ -145,7 +145,10 @@ class Actor(MovingObject, CollisionMixin):
         return pos_after
 
     def update_animation_if_needed(self):
-        if not self.is_alive and self.death_animation is not None:
+        if not self.is_alive:
+            if self.death_animation is None:
+                self.kill()
+                return True
             self.image = self.death_animation.get_image()
             self.death_animation.update()
             if not self.death_animation.is_playing:
