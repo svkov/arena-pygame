@@ -4,12 +4,12 @@ import pygame
 from src.camera import Camera
 from src.groups import GameStateGroups
 from src.hud import HUD
-from src.level_config import LevelConfig, RandomLevelConfig
+from src.config.level_config import LevelConfig, RandomLevelConfig
+from src.config.stats_config import StatsConfig
 from src.game_object.player import Player
 from src.spawner import Spawner
 from src.state.pause import PauseState
 from src.game_object.static_object import StaticObject
-from src.stats_config import StatsConfig
 import gc
 
 class GameState:

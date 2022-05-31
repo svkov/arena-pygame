@@ -7,7 +7,7 @@ import src.utils as utils
 
 if TYPE_CHECKING:
     from src.camera import Camera
-    from src.game_config import GameConfig
+    from src.config.game_config import GameConfig
 
 class GameObject(pygame.sprite.Sprite):
 

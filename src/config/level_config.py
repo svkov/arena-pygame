@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from src.game_config import GameConfig
+from src.config.game_config import GameConfig
 from src.spawner import Spawner
 
 class LevelConfig:

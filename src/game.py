@@ -1,6 +1,6 @@
 import pygame
 from src.fader import Fader
-from src.game_config import GameConfig
+from src.config.game_config import GameConfig
 from src.high_score import HighScores
 from src.sprite_loader import SpriteLoader
 from src.state.game import GameState

@@ -1,7 +1,8 @@
 import numpy as np
 import pygame
 from src.camera import Camera
-from src.game_config import GameConfig
+from src.config.game_config import GameConfig
+from src.config.stats_config import StatsConfig
 from src.game_object.animated_enemy import AnimatedEnemy
 from src.game_object.background import Background
 from src.game_object.enemy import Enemy
@@ -14,7 +15,6 @@ from src.item.potion import Potion
 from src.item.quest_item import StoneSoulItem
 from src.item.sword import ArmorItem, SwordItem
 from src.game_object.portal import Portal
-from src.stats_config import StatsConfig
 
 class Spawner:
 
