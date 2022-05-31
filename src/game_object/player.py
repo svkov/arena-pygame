@@ -73,20 +73,16 @@ class Player(Actor):
                 return inventory_item
 
     def update(self, *args, **kwargs) -> None:
-        dt = kwargs['dt']
-        events = kwargs['events']
+        events = kwargs.get('events', [])
         self.input_handler.handle_input(events)
+        super().update(*args, **kwargs)
+
+    def update_animation_if_needed(self):
+        if super().update_animation_if_needed():
+            return True
         self.handle_animation()
-        self.update_cooldown()
-
-        self.update_collision(dt)
-        self.move_world_coord(dt)
-        self.update_zoom()
-        self.update_screen_coord()
-
         self.animation_manager.update()
         self.image = self.animation_manager.image
-        self.flip_image_if_needed()
 
     def go_to_portal(self):
         self.is_in_portal = True
@@ -149,8 +145,6 @@ class Player(Actor):
             self.exp_to_lvlup += levels_up * 100
 
     def collide_with_item(self, item: InventoryItem):
-        if self.hud is None:
-            pass
         self.hud.info_description = item.description
         if self.is_interacting and self.inventory.is_enough_space():
             item.on_pickup(self)
