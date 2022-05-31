@@ -27,11 +27,11 @@ class GameState:
         self.spawner = Spawner(self.groups, self.camera, self.stats_config, self.fps, self.sprites, self.game.config)
         self.setup_scene()
         self.paused = False
-        self.pause = PauseState(self.groups, self.hud, self.screen_resolution, self.pause_font)
+        self.pause = PauseState(self, self.groups, self.hud, self.screen_resolution, self.pause_font)
         self.is_fading = False
 
     def calculate_score(self):
-        return sum(self.player.kills.values()) + (self.level_number - 1) * 1000
+        return int(sum(self.player.kills.values()) + (self.level_number - 1) * 1000)
 
     def setup_scene(self, keep_player=False):
         try:
