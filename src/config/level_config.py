@@ -51,7 +51,8 @@ class RandomLevelConfig:
         enemies = []
         for _ in range(self.number_of_enemies):
             x, y = self.generate_random_point_inside_circle()
-            enemy = self.spawner.spawn_object('skeleton', pos=(x, y))
+            enemy: Enemy = self.spawner.spawn_object('skeleton', pos=(x, y))
+            enemy.level_up(self.level_number)
             enemies.append(enemy)
         boss = self.spawner.spawn_object('priestess', pos=self.boss_default_pos)
         self.generate_drop(enemies, boss)

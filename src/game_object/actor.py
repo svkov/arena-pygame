@@ -104,6 +104,11 @@ class Actor(MovingObject, CollisionMixin):
         self.update_animation_if_needed()
         self.flip_image_if_needed()
 
+    def level_up(self, levels_up):
+        hp_percent_before = self.hp / self.max_hp
+        [self.stats.on_level_up() for _ in range(levels_up)]
+        self.hp = self.max_hp * hp_percent_before
+
     def flip_image_if_needed(self):
         if self.is_going_left:
             self.image = pygame.transform.flip(self.image, True, False)
