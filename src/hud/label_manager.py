@@ -18,7 +18,7 @@ class LabelManager:
         self.camera = camera
 
     def spawn_item_label(self, item, mouse_pos):
-        exp_label = ItemLabel(item.description, mouse_pos, self.camera)
+        exp_label = ItemLabel(item, mouse_pos, self.camera)
         self.groups.items_description.add(exp_label)
 
     def spawn_level_up_label(self):

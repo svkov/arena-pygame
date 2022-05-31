@@ -2,6 +2,8 @@ from src.game_object import GameObject
 
 
 class InventoryItem(GameObject):
+    name = ''
+    description = ''
 
     def __init__(self, pos, image, image_size, owner, **kwargs) -> None:
         super().__init__(pos, image, image_size, **kwargs)

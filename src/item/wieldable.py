@@ -12,6 +12,14 @@ class ItemStats:
     def defense(self):
         return self._stats.get('defense', 0)
 
+    def __str__(self) -> str:
+        s = ''
+        if self.damage > 0:
+            s += f'Damage: {self.damage}'
+        if self.defense > 0:
+            s += f'Defense: {self.defense}'
+        return s
+
 class WieldableItem(InventoryItem):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)

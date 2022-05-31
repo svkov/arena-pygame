@@ -2,6 +2,7 @@ from src.item.wieldable import ItemStats, WieldableItem
 
 
 class SwordItem(WieldableItem):
+    name = 'Sword'
     description = "This sword looks powerful"
 
     def __init__(self, *args, **kwargs) -> None:
@@ -16,6 +17,7 @@ class SwordItem(WieldableItem):
         self.owner.weapon = val
 
 class ArmorItem(WieldableItem):
+    name = 'Armor'
     description = "Looks like it can protect you"
 
     def __init__(self, *args, **kwargs) -> None:

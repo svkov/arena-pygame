@@ -5,6 +5,7 @@ import pygame
 from src.core.camera import Camera
 from src.config.game_config import GameConfig
 from src.game_object import GameObject
+from src.item import InventoryItem
 
 class IngameLabel(pygame.sprite.Sprite):
 
@@ -14,10 +15,14 @@ class IngameLabel(pygame.sprite.Sprite):
                  color,
                  pos: Tuple[int, int],
                  camera: Camera,
-                 image: pygame.Surface = None) -> None:
+                 image: pygame.Surface = None,
+                 rendered_text: pygame.Surface = None) -> None:
         super().__init__()
         self.font = font
-        self.rendered_text = self.font.render(content, True, color)
+        if rendered_text is None:
+            self.rendered_text = self.font.render(content, True, color)
+        else:
+            self.rendered_text = rendered_text
         self.pos = pos.copy()
         self.camera = camera
         if image is None:
@@ -32,9 +37,15 @@ class IngameLabel(pygame.sprite.Sprite):
 
     def update(self, *args, **kwargs):
         super().update()
+        self.update_pos()
+
+    def update_pos(self):
         (x, y) = self.camera.to_screen_coord(self.pos)
         self.rect.x = int(x)
         self.rect.y = int(y)
+        self.update_lifetime()
+
+    def update_lifetime(self):
         self.lifetime -= 1
         if self.lifetime == 0:
             self.kill()
@@ -64,26 +75,63 @@ class ExpLabel(IngameLabel):
 
 class ItemLabel(IngameLabel):
 
-    def __init__(self, content: str, pos: Tuple[int, int], camera: Camera) -> None:
-        pos = np.array(pos)
-        pos = camera.to_world_coord(pos)
+    def __init__(self, item: InventoryItem, pos: Tuple[int, int], camera: Camera) -> None:
         font = pygame.font.SysFont(pygame.font.get_default_font(), 32)
         color = (255, 255, 255, 0)
-        super().__init__(font, content, color, pos, camera)
+        image = self.get_image(item, font, color)
+        super().__init__(font, item.description, color, np.array(pos), camera, image, self.item_description)
         self.lifetime = 2
-        pos[0] -= self.rendered_text.get_size()[0] // 2
+        self.pos[0] -= self.width + 5
+        self.pos[1] -= self.height + 5
+
+    def get_image(self, item, font, color):
+        self.item_name = font.render(item.name, True, color)
+        self.item_description = font.render(item.description, True, color)
+        if hasattr(item, 'stats'):
+            self.item_stats = font.render(str(item.stats), True, color)
+        else:
+            self.item_stats = pygame.Surface([0, 0])
+        description_size = self.item_description.get_size()
+        name_size = self.item_name.get_size()
+        stats_size = self.item_stats.get_size()
+        image_size = item.image.get_size()
+        margin = 5
+
+        max_between_x = max(description_size[0], name_size[0], stats_size[0])
+        sum_over_y = max(description_size[1] + stats_size[1] + name_size[1], image_size[1])
+        three_margin = margin * 3
+
+        self.width = max_between_x + image_size[0] + three_margin
+        self.height = sum_over_y + three_margin
+
+        text_to_blit = [
+            self.item_name,
+            self.item_stats,
+            self.item_description,
+        ]
+        image = self.get_empty_image(self.width, self.height)
+        image = self.blit_text_to_image(image, text_to_blit, margin, item.image)
+        return image
+
+    def blit_text_to_image(self, image, text_to_blit, margin, item_image):
+        image_size = item_image.get_size()
+        image.blit(item_image, [margin, self.height // 2 - image_size[1] // 2])
+        current_y = margin
+        for text in text_to_blit:
+            image.blit(text, (margin * 2 + image_size[0], current_y))
+            current_y += margin + text.get_size()[1]
+        return image
+
+    def get_empty_image(self, width, height):
+        image = pygame.surface.Surface((width, height))
+        image.fill((0, 0, 0))
+        return image
 
     def update(self, *args, **kwargs):
-        (x, y) = self.camera.to_screen_coord(self.pos)
-        width, height = self.rendered_text.get_size()
-        # rect = [
-        #     x - width // 2,
-        #     y,
-        #     width,
-        #     height
-        # ]
-        # pygame.draw.rect(kwargs['screen'], '#3d3d3d', rect)
-        super().update(*args, **kwargs)
+        x, y = self.pos
+        self.rect.x = int(x)
+        self.rect.y = int(y)
+        self.update_lifetime()
 
 class LevelUpLabel(GameObject):
 

@@ -3,6 +3,7 @@ from src.item import InventoryItem
 
 class Potion(InventoryItem):
     cooldown = 50
+    name = 'HP Potion'
     description = "Drink this potion to recover some HP"
 
     def __init__(self, *args, **kwargs) -> None:
