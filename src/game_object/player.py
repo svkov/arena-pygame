@@ -1,7 +1,6 @@
 import pygame
 from src.animation import AnimationManager
 from src.animation.states import PlayerStates
-from src.core.camera import Camera
 from src.core.input_handler import InputHandler
 from src.game_object.actor import Actor
 from src.game_object.projectile import Projectile
@@ -10,13 +9,17 @@ from src.item import InventoryItem
 
 class Player(Actor):
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self,
+                 *args,
+                 level=1,
+                 exp_to_lvlup=100,
+                 animation_states=None,
+                 **kwargs):
         super().__init__(*args, **kwargs)
-        self.camera: Camera = kwargs['camera']
         self.exp = 0
-        self.level = kwargs.get('level', 1)
-        self.exp_to_lvlup = kwargs.get('exp_tp_lvlup', 100)
-        self.animation_manager = AnimationManager(kwargs['animation_states'], default_state=PlayerStates.IDLE)
+        self.level = level
+        self.exp_to_lvlup = exp_to_lvlup
+        self.animation_manager = AnimationManager(animation_states, default_state=PlayerStates.IDLE)
         self.animation_manager.set_state(PlayerStates.IDLE)
         self.image = self.animation_manager.image
         self.input_handler = InputHandler(self)
