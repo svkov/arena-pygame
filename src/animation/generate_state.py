@@ -12,13 +12,28 @@ def skeleton(sprites, fps, camera):
     }
 
 def player(sprites, fps, camera):
+    shared_args = dict(
+        fps=fps,
+        camera=camera,
+        image_size=(512, 512)
+    )
     return {
-        PlayerStates.IDLE: Animation(sprites['knight_idle'], duration=0.4, fps=fps,
-                                     camera=camera, image_size=(512, 512)),
-        PlayerStates.ATTACK: Animation(sprites['knight_attack'], duration=0.2, fps=fps, camera=camera,
-                                       image_size=(512, 512), times_to_play=1),
-        PlayerStates.BACK: Animation(sprites['knight_back'], duration=0.4, fps=fps, camera=camera,
-                                     image_size=(512, 512), times_to_play=1),
+        PlayerStates.IDLE: Animation(sprites['knight_idle'],
+                                     duration=0.4,
+                                     times_to_play=1,
+                                     **shared_args),
+        PlayerStates.ATTACK: Animation(sprites['knight_attack'],
+                                       duration=0.2,
+                                       times_to_play=1,
+                                       **shared_args),
+        PlayerStates.BACK: Animation(sprites['knight_back'],
+                                     duration=0.4,
+                                     times_to_play=1,
+                                     **shared_args),
+        PlayerStates.WALK: Animation(sprites['knight_walk'],
+                                     duration=0.5,
+                                     times_to_play=1,
+                                     **shared_args)
     }
 
 def skeleton_die(sprites, fps, camera):

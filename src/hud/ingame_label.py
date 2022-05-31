@@ -2,8 +2,8 @@ from typing import Tuple
 import numpy as np
 import pygame
 
-from src.camera import Camera
-from src.game_config import GameConfig
+from src.core.camera import Camera
+from src.config.game_config import GameConfig
 from src.game_object import GameObject
 
 class IngameLabel(pygame.sprite.Sprite):

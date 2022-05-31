@@ -1,7 +1,10 @@
+from typing import List
 import numpy as np
 import pandas as pd
-from src.game_config import GameConfig
-from src.spawner import Spawner
+from src.config.game_config import GameConfig
+from src.core.spawner import Spawner
+from src.game_object.boss import BossEnemy
+from src.game_object.enemy import Enemy
 
 class LevelConfig:
 
@@ -25,6 +28,7 @@ class RandomLevelConfig:
     radius = 3500
     player_default_pos = (3500, 3500)
     portal_default_pos = (3500, 2000)
+    boss_default_pos = (3500, 5000)
 
     def __init__(self, level_number, spawner: Spawner, game_config: GameConfig) -> None:
         self.level_number = level_number
@@ -47,17 +51,20 @@ class RandomLevelConfig:
         enemies = []
         for _ in range(self.number_of_enemies):
             x, y = self.generate_random_point_inside_circle()
-            enemy = self.spawner.spawn_object('skeleton', pos=(x, y))
+            enemy: Enemy = self.spawner.spawn_object('skeleton', pos=(x, y))
+            enemy.level_up(self.level_number)
             enemies.append(enemy)
-        self.generate_drop(enemies)
+        boss: BossEnemy = self.spawner.spawn_object('priestess', pos=self.boss_default_pos)
+        boss.level_up(self.level_number)
+        self.generate_drop(enemies, boss)
 
-    def generate_drop(self, enemies):
+    def generate_drop(self, enemies: List[Enemy], boss: BossEnemy):
         pos = (-1000, -1000)
         self.generate_debug_drop()
         soul_stone = self.spawner.soul_stone(pos)
-        enemies[-1].inventory.add(soul_stone)
+        boss.inventory.add(soul_stone)
 
-        number_of_potions = self.number_of_enemies // 3
+        number_of_potions = self.number_of_enemies // 5
         potion_indices = np.random.choice(self.number_of_enemies - 1, number_of_potions)
         for i in potion_indices:
             potion = self.spawner.hp_potion_in_inventory(pos, enemies[i])

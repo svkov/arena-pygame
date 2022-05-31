@@ -1,5 +1,5 @@
-from src.actor import Actor
 from src.game_object import GameObject
+from src.game_object.actor import Actor
 
 
 class StaticObject(GameObject):

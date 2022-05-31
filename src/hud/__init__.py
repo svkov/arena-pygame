@@ -1,17 +1,19 @@
-from typing import Tuple
+from __future__ import annotations
+from typing import Tuple, TYPE_CHECKING
 import numpy as np
 import pygame
-from src.hud_config import HUDConfig
+from src.hud.hud_config import HUDConfig
 
-from src.player import Player
+if TYPE_CHECKING:
+    from src.game_object.player import Player
 
 
 class HUD(pygame.sprite.Sprite):
 
-    def __init__(self, player, font) -> None:
-        self.player: Player = player
+    def __init__(self, player: Player, font) -> None:
+        self.player = player
         self.font = font
-        self.hud_config: HUDConfig = HUDConfig()
+        self.hud_config = HUDConfig()
         self.info_description = ''
         self.current_y = 0
 

@@ -1,7 +1,7 @@
 import pygame
 
 from typing import Dict, List
-from src.camera import Camera
+from src.core.camera import Camera
 
 from src.utils import crop_spritesheet_by_image_size, crop_spritesheet_by_matrix_size, preresize_image_list
 

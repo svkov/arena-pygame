@@ -1,20 +1,21 @@
 import numpy as np
 import pygame
-from src.animated_enemy import AnimatedEnemy
-from src.camera import Camera
-from src.enemy import Enemy
-from src.game_config import GameConfig
-from src.groups import GameStateGroups
+from src.core.camera import Camera
+from src.core.groups import GameStateGroups
+from src.config.game_config import GameConfig
+from src.config.stats_config import StatsConfig
+from src.game_object.animated_enemy import AnimatedEnemy
+from src.game_object.background import Background
+from src.game_object.boss import BossEnemy
+from src.game_object.enemy import Enemy
+from src.game_object.player import Player
+from src.game_object.static_object import StaticObject
 import src.animation.generate_state as generate_state
 from src.actor_stats import ActorStats, EnemyStats
 from src.item.potion import Potion
 from src.item.quest_item import StoneSoulItem
 from src.item.sword import ArmorItem, SwordItem
-from src.player import Player
-from src.background import Background
-from src.portal import Portal
-from src.static_object import StaticObject
-from src.stats_config import StatsConfig
+from src.game_object.portal import Portal
 
 class Spawner:
 
@@ -90,7 +91,7 @@ class Spawner:
 
     def priestess(self, pos, **kwargs):
         kwargs = self.generate_enemy_kwargs('priestess')
-        priestess = Enemy(pos, **kwargs)
+        priestess = BossEnemy(pos, **kwargs)
         self.groups.spawn_enemy_object(priestess)
         return priestess
 

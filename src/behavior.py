@@ -1,7 +1,7 @@
 import numpy as np
 
-from src.actor import Actor
-from src.camera import Camera
+from src.core.camera import Camera
+from src.game_object.actor import Actor
 
 class Behavior:
 
@@ -25,14 +25,14 @@ class Behavior:
         self.update_attention_for_player()
         self.current_iter += 1
         if self.is_see_player:
-            self.update_on_see_player(camera)
+            self.update_on_see_player()
         else:
             self.update_idle()
 
-    def update_on_see_player(self, camera):
+    def update_on_see_player(self):
         self.destination = self.player_pos
         self.set_actor_speed()
-        self.actor.shoot(camera)
+        self.actor.shoot()
 
     def update_idle(self):
         self.choose_random_destination()

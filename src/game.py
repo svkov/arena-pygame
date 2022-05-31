@@ -1,8 +1,8 @@
 import pygame
-from src.fader import Fader
-from src.game_config import GameConfig
-from src.high_score import HighScores
-from src.sprite_loader import SpriteLoader
+from src.core.fader import Fader
+from src.core.high_score import HighScores
+from src.core.sprite_loader import SpriteLoader
+from src.config.game_config import GameConfig
 from src.state.game import GameState
 from src.state.menu import MenuState
 

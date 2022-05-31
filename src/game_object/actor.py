@@ -1,44 +1,57 @@
+from __future__ import annotations
 import numpy as np
 import pygame
-from src.actor_stats import ActorStats
-from src.animation import Animation
-from src.camera import Camera
+from typing import TYPE_CHECKING
+from src.game_object import GameObject
 from src.collision_mixin import CollisionMixin
 from src.cooldown_mixin import CooldownMixin
-from src.game_object import GameObject
-from src.groups import GameStateGroups
-from src.hp_bar import HpBar
-from src.ingame_label import DamageLabel
-from src.inventory import Inventory
+from src.game_object.moving_object import MovingObject
+from src.game_object.projectile import Projectile
+from src.hud.ingame_label import DamageLabel
+from src.core.inventory import Inventory
 from src.item.wieldable import WieldableItem
-from src.projectile import Projectile
+from src.hud.hp_bar import HpBar
 
+if TYPE_CHECKING:
+    from typing import Tuple
+    from src.actor_stats import ActorStats
+    from src.core.groups import GameStateGroups
+    from src.animation import Animation
+    from src.item import InventoryItem
 
-class Actor(GameObject, CollisionMixin):
+class Actor(MovingObject, CollisionMixin):
 
-    def __init__(self, pos, image, image_size=None,
-                 damage_recieve_cooldown=None,
-                 projectile_image=None, stats: ActorStats = None,
-                 groups: GameStateGroups = None, **kwargs):
-        super().__init__(pos, image, image_size, **kwargs)
-        self.stats: ActorStats = stats
-        self.groups: GameStateGroups = groups
-        self.speed = np.array([0, 0])
+    def __init__(self,
+                 pos: Tuple[int, int],
+                 image: pygame.surface.Surface,
+                 image_size: Tuple[int, int] = None,
+                 damage_recieve_cooldown: int = None,
+                 projectile_image: pygame.surface.Surface = None,
+                 stats: ActorStats = None,
+                 groups: GameStateGroups = None,
+                 weapon: InventoryItem = None,
+                 armor: InventoryItem = None,
+                 death_animation: Animation = None,
+                 name: str = 'unknown',
+                 lifetime_after_death: float = 3.0,
+                 **kwargs):
+        super().__init__(pos, image=image, image_size=image_size, **kwargs)
+        self.stats = stats
+        self.groups = groups
         self.projectile_image = projectile_image
         self.hp = self.max_hp
         self.hp_bar = HpBar(self, groups=groups)
-        self.camera = kwargs['camera']
         self.inventory = Inventory()
-        self.weapon = kwargs.get('weapon', None)
-        self.armor = kwargs.get('armor', None)
-        self.death_animation: Animation = kwargs.get('death_animation', None)
-        self.name = kwargs.get('name', 'unknown')
-        self.lifetime_after_death = kwargs.get('lifetime_after_death', 3.0)
+        self.weapon = weapon
+        self.armor = armor
+        self.death_animation = death_animation
+        self.name = name
+        self.lifetime_after_death = lifetime_after_death
         self.lifetime_after_death_counter = self.lifetime_after_death * self.game_config.fps
         self.colliding_objects = []
         self.is_going_left = False
         self.kills = {}
-        attack_speed_in_frames = stats.attack_speed_in_frames(kwargs['fps'])
+        attack_speed_in_frames = stats.attack_speed_in_frames(self.game_config.fps)
         # TODO: integrate with potion module
         hp_potion_cooldown = 50
         self.cooldowns = {
@@ -47,32 +60,32 @@ class Actor(GameObject, CollisionMixin):
             'hp_potion': CooldownMixin(hp_potion_cooldown)
         }
 
-    def shoot(self, camera: Camera):
+    def shoot(self):
         pass
 
     @property
-    def is_alive(self):
+    def is_alive(self) -> bool:
         return self.hp > 0
 
     @property
-    def max_hp(self):
+    def max_hp(self) -> float:
         return self.stats.max_hp
 
     @property
-    def damage(self):
+    def damage(self) -> float:
         if self.weapon:
             return self.stats.damage + self.weapon.stats.damage
         return self.stats.damage
 
     def set_zero_speed(self):
-        self.speed = np.array([0, 0])
+        super().set_zero_speed()
         self.is_going_left = False
 
     def update_cooldown(self):
         for key, val in self.cooldowns.items():
             val.update_cooldown()
 
-    def drop_item(self, inventory_item):
+    def drop_item(self, inventory_item: InventoryItem):
         if issubclass(inventory_item.__class__, WieldableItem):
             inventory_item.unwield()
         inventory_item.kill()
@@ -81,22 +94,26 @@ class Actor(GameObject, CollisionMixin):
         inventory_item.on_drop(self.pos)
 
     def update(self, *args, **kwargs) -> None:
+        dt: float = kwargs['dt']
         self.update_cooldown()
-        dt = kwargs['dt']
-        self.camera: Camera = kwargs['camera']
         self.normalize_speed()
         self.update_collision(dt)
         self.move_world_coord(dt)
-        self.update_zoom(self.camera)
+        self.update_zoom()
         self.update_screen_coord()
         self.update_animation_if_needed()
         self.flip_image_if_needed()
+
+    def level_up(self, levels_up=1):
+        hp_percent_before = self.hp / self.max_hp
+        [self.stats.on_level_up() for _ in range(levels_up)]
+        self.hp = self.max_hp * hp_percent_before
 
     def flip_image_if_needed(self):
         if self.is_going_left:
             self.image = pygame.transform.flip(self.image, True, False)
 
-    def update_collision(self, dt):
+    def update_collision(self, dt: float):
         for obj in self.colliding_objects:
             self._collision(obj, dt=dt)
         self.colliding_objects.clear()
@@ -133,7 +150,10 @@ class Actor(GameObject, CollisionMixin):
         return pos_after
 
     def update_animation_if_needed(self):
-        if not self.is_alive and self.death_animation is not None:
+        if not self.is_alive:
+            if self.death_animation is None:
+                self.kill()
+                return True
             self.image = self.death_animation.get_image()
             self.death_animation.update()
             if not self.death_animation.is_playing:
@@ -143,17 +163,7 @@ class Actor(GameObject, CollisionMixin):
             return True
         return False
 
-    def normalize_speed(self):
-        if np.linalg.norm(self.speed) < self.stats.movement_speed:
-            return
-        if np.linalg.norm(self.speed) > 0:
-            self.speed = self.speed / np.linalg.norm(self.speed)
-            self.speed = self.speed * self.stats.movement_speed
-
-    def move_world_coord(self, dt):
-        self.pos = self.pos + self.speed * dt
-
-    def on_collision(self, obj):
+    def on_collision(self, obj: GameObject):
         if isinstance(obj, Projectile):
             self.on_projectile_collision(obj)
         else:
@@ -179,10 +189,10 @@ class Actor(GameObject, CollisionMixin):
         self.kill()
         self.groups.enemy_dying.add(self)
 
-    def on_static_collision(self, obj):
+    def on_static_collision(self, obj: GameObject):
         self.colliding_objects.append(obj)
         return super().on_collision(obj)
 
-    def on_kill(self, killed):
+    def on_kill(self, killed: Actor):
         score = killed.stats.scores_when_killed()
         self.kills[killed.name] = self.kills.get(killed.name, 0) + score

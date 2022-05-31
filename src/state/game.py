@@ -1,15 +1,15 @@
 import numpy as np
 import pygame
 
-from src.camera import Camera
-from src.groups import GameStateGroups
+from src.core.camera import Camera
+from src.core.groups import GameStateGroups
+from src.core.spawner import Spawner
 from src.hud import HUD
-from src.level_config import LevelConfig, RandomLevelConfig
-from src.player import Player
-from src.spawner import Spawner
+from src.config.level_config import LevelConfig, RandomLevelConfig
+from src.config.stats_config import StatsConfig
+from src.game_object.player import Player
 from src.state.pause import PauseState
-from src.static_object import StaticObject
-from src.stats_config import StatsConfig
+from src.game_object.static_object import StaticObject
 import gc
 
 class GameState:
@@ -27,11 +27,11 @@ class GameState:
         self.spawner = Spawner(self.groups, self.camera, self.stats_config, self.fps, self.sprites, self.game.config)
         self.setup_scene()
         self.paused = False
-        self.pause = PauseState(self.groups, self.hud, self.screen_resolution, self.pause_font)
+        self.pause = PauseState(self, self.groups, self.hud, self.screen_resolution, self.pause_font)
         self.is_fading = False
 
     def calculate_score(self):
-        return sum(self.player.kills.values()) + (self.level_number - 1) * 1000
+        return int(sum(self.player.kills.values()) + (self.level_number - 1) * 1000)
 
     def setup_scene(self, keep_player=False):
         try:

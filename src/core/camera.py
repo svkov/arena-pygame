@@ -1,5 +1,5 @@
 import numpy as np
-from src.hud_config import HUDConfig
+from src.hud.hud_config import HUDConfig
 
 
 class Camera:
@@ -13,6 +13,10 @@ class Camera:
         self.y = y
         screen_x = screen_resolution[0] * (1 - HUDConfig.percent_to_hud)
         self.screen_resolution = np.array([screen_x, screen_resolution[1]])
+
+    def set_pos(self, pos):
+        self.x = pos[0]
+        self.y = pos[1]
 
     def get_pos(self):
         return (self.x, self.y)
