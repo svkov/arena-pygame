@@ -1,9 +1,11 @@
+from src.item.item_rare import ItemRare
 from src.item.wieldable import ItemStats, WieldableItem
 
 
 class SwordItem(WieldableItem):
     name = 'Sword'
     description = "This sword looks powerful"
+    item_rare = ItemRare.RARE
 
     def __init__(self, *args, **kwargs) -> None:
         stats = kwargs.get('stats', ItemStats(damage=10))
@@ -19,6 +21,7 @@ class SwordItem(WieldableItem):
 class ArmorItem(WieldableItem):
     name = 'Armor'
     description = "Looks like it can protect you"
+    item_rare = ItemRare.RARE
 
     def __init__(self, *args, **kwargs) -> None:
         stats = kwargs.get('stats', ItemStats(defense=10))

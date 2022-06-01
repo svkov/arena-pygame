@@ -1,9 +1,11 @@
 from src.game_object import GameObject
+from src.item.item_rare import ItemRare, rare_to_color, rare_to_name
 
 
 class InventoryItem(GameObject):
     name = ''
     description = ''
+    item_rare = ItemRare.COMMON
 
     def __init__(self, pos, image, image_size, owner, **kwargs) -> None:
         super().__init__(pos, image, image_size, **kwargs)
@@ -33,3 +35,11 @@ class InventoryItem(GameObject):
     def on_drop(self, pos):
         self.owner = None
         self.pos = pos
+
+    @property
+    def item_rare_name(self):
+        return rare_to_name[self.item_rare]
+
+    @property
+    def item_rare_color(self):
+        return rare_to_color[self.item_rare]

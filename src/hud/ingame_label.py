@@ -84,32 +84,35 @@ class ItemLabel(IngameLabel):
         self.pos[0] -= self.width + 5
         self.pos[1] -= self.height + 5
 
-    def get_image(self, item, font, color):
+    def get_image(self, item: InventoryItem, font, color):
         self.item_name = font.render(item.name, True, color)
         self.item_description = font.render(item.description, True, color)
         if hasattr(item, 'stats'):
             self.item_stats = font.render(str(item.stats), True, color)
         else:
             self.item_stats = pygame.Surface([0, 0])
-        description_size = self.item_description.get_size()
-        name_size = self.item_name.get_size()
-        stats_size = self.item_stats.get_size()
-        image_size = item.image.get_size()
-        margin = 5
-
-        max_between_x = max(description_size[0], name_size[0], stats_size[0])
-        sum_over_y = max(description_size[1] + stats_size[1] + name_size[1], image_size[1])
-        three_margin = margin * 3
-
-        self.width = max_between_x + image_size[0] + three_margin
-        self.height = sum_over_y + three_margin
+        self.item_rare = font.render(item.item_rare_name, True, color)
 
         text_to_blit = [
             self.item_name,
+            self.item_rare,
             self.item_stats,
             self.item_description,
         ]
-        image = self.get_empty_image(self.width, self.height)
+
+        text_sizes = [text.get_size() for text in text_to_blit]
+
+        image_size = item.image.get_size()
+        margin = 5
+
+        max_between_x = max(map(lambda x: x[0], text_sizes))
+        sum_over_y = max(sum(map(lambda x: x[1], text_sizes)), image_size[1])
+        three_margin = margin * 3
+
+        self.width = max_between_x + image_size[0] + three_margin
+        self.height = sum_over_y + margin * (len(text_to_blit) + 1)
+
+        image = self.get_empty_image(self.width, self.height, item.item_rare_color)
         image = self.blit_text_to_image(image, text_to_blit, margin, item.image)
         return image
 
@@ -122,9 +125,10 @@ class ItemLabel(IngameLabel):
             current_y += margin + text.get_size()[1]
         return image
 
-    def get_empty_image(self, width, height):
+    def get_empty_image(self, width, height, color=(0, 0, 0)):
         image = pygame.surface.Surface((width, height))
-        image.fill((0, 0, 0))
+        image.fill(color)
+        pygame.draw.rect(image, (0, 0, 0), [0, 0, width - 1, height - 1], width=2)
         return image
 
     def update(self, *args, **kwargs):

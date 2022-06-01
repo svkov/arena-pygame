@@ -1,10 +1,12 @@
 from src.item import InventoryItem
+from src.item.item_rare import ItemRare
 
 
 class Potion(InventoryItem):
     cooldown = 50
     name = 'HP Potion'
     description = "Drink this potion to recover some HP"
+    item_rare = ItemRare.COMMON
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
