@@ -77,26 +77,27 @@ class ItemLabel(IngameLabel):
 
     def __init__(self, item: InventoryItem, pos: Tuple[int, int], camera: Camera) -> None:
         font = pygame.font.SysFont(pygame.font.get_default_font(), 32)
+        italic_font = pygame.font.SysFont(pygame.font.get_default_font(), 25, italic=True)
         color = (255, 255, 255, 0)
-        image = self.get_image(item, font, color)
+        image = self.get_image(item, font, color, italic_font)
         super().__init__(font, item.description, color, np.array(pos), camera, image, self.item_description)
         self.lifetime = 2
         self.pos[0] -= self.width + 5
         self.pos[1] -= self.height + 5
 
-    def get_image(self, item: InventoryItem, font, color):
+    def get_image(self, item: InventoryItem, font, color, italic_font):
         self.item_name = font.render(item.name, True, color)
-        self.item_description = font.render(item.description, True, color)
+        self.item_description = italic_font.render(item.description, True, color)
         if hasattr(item, 'stats'):
             self.item_stats = font.render(str(item.stats), True, color)
         else:
             self.item_stats = pygame.Surface([0, 0])
-        self.item_rare = font.render(item.item_rare_name, True, color)
+        self.item_rare = italic_font.render(item.item_rare_name, True, color)
 
         text_to_blit = [
             self.item_name,
-            self.item_rare,
             self.item_stats,
+            self.item_rare,
             self.item_description,
         ]
 
