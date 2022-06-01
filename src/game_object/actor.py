@@ -15,7 +15,6 @@ from src.hud.hp_bar import HpBar
 if TYPE_CHECKING:
     from typing import Tuple
     from src.actor_stats import ActorStats
-    from src.core.groups import GameStateGroups
     from src.animation import Animation
     from src.item import InventoryItem
 
@@ -28,7 +27,6 @@ class Actor(MovingObject, CollisionMixin):
                  damage_recieve_cooldown: int = None,
                  projectile_image: pygame.surface.Surface = None,
                  stats: ActorStats = None,
-                 groups: GameStateGroups = None,
                  weapon: InventoryItem = None,
                  armor: InventoryItem = None,
                  death_animation: Animation = None,
@@ -37,10 +35,9 @@ class Actor(MovingObject, CollisionMixin):
                  **kwargs):
         super().__init__(pos, image=image, image_size=image_size, **kwargs)
         self.stats = stats
-        self.groups = groups
         self.projectile_image = projectile_image
         self.hp = self.max_hp
-        self.hp_bar = HpBar(self, groups=groups)
+        self.hp_bar = HpBar(self, groups=self.groups)
         self.inventory = Inventory()
         self.weapon = weapon
         self.armor = armor

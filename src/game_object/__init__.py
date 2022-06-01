@@ -8,6 +8,7 @@ import src.utils as utils
 if TYPE_CHECKING:
     from src.core.camera import Camera
     from src.config.game_config import GameConfig
+    from src.core.groups import GameStateGroups
 
 class GameObject(pygame.sprite.Sprite):
 
@@ -19,6 +20,7 @@ class GameObject(pygame.sprite.Sprite):
                  pos_in_world_coord: bool = True,
                  angle: int = 0,
                  game_config: GameConfig = None,
+                 groups: GameStateGroups = None,
                  **kwargs) -> None:
         pygame.sprite.Sprite.__init__(self)
         self.pos = np.array(pos, dtype=np.float)
@@ -27,6 +29,7 @@ class GameObject(pygame.sprite.Sprite):
         self.image_size = image_size
         if image_size is None:
             self.image_size = (128, 128)
+        self.groups = groups
 
         center = self.camera.to_screen_coord(self.pos)
 

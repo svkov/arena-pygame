@@ -1,11 +1,14 @@
-from typing import Tuple
+from __future__ import annotations
+from typing import Tuple, TYPE_CHECKING
 import numpy as np
 import pygame
 
-from src.core.camera import Camera
-from src.config.game_config import GameConfig
 from src.game_object import GameObject
-from src.item import InventoryItem
+
+if TYPE_CHECKING:
+    from src.core.camera import Camera
+    from src.config.game_config import GameConfig
+    from src.item import InventoryItem
 
 class IngameLabel(pygame.sprite.Sprite):
 
@@ -75,17 +78,21 @@ class ExpLabel(IngameLabel):
 
 class ItemLabel(IngameLabel):
 
-    def __init__(self, item: InventoryItem, pos: Tuple[int, int], camera: Camera) -> None:
+    def __init__(self, item: InventoryItem, pos: Tuple[int, int], camera: Camera, with_image=True) -> None:
         font = pygame.font.SysFont(pygame.font.get_default_font(), 32)
         italic_font = pygame.font.SysFont(pygame.font.get_default_font(), 25, italic=True)
         color = (255, 255, 255, 0)
-        image = self.get_image(item, font, color, italic_font)
-        super().__init__(font, item.description, color, np.array(pos), camera, image, self.item_description)
+        image = self.get_image(item, font, color, italic_font, with_image)
+        super().__init__(font, item.description, color, np.array(pos), camera, image, self.item_name)
         self.lifetime = 2
         self.pos[0] -= self.width + 5
         self.pos[1] -= self.height + 5
 
-    def get_image(self, item: InventoryItem, font, color, italic_font):
+    def get_image(self, item: InventoryItem, font, color, italic_font, with_image):
+        text_to_blit = self.get_text_to_blit(item, font, color, italic_font)
+        return self.get_image_by_text_to_blit(item, text_to_blit, with_image)
+
+    def get_text_to_blit(self, item, font, color, italic_font):
         self.item_name = font.render(item.name, True, color)
         self.item_description = italic_font.render(item.description, True, color)
         if hasattr(item, 'stats'):
@@ -100,29 +107,45 @@ class ItemLabel(IngameLabel):
             self.item_rare,
             self.item_description,
         ]
+        return text_to_blit
 
+    def get_image_by_text_to_blit(self, item, text_to_blit, blit_with_item_image=True):
         text_sizes = [text.get_size() for text in text_to_blit]
 
         image_size = item.image.get_size()
         margin = 5
 
         max_between_x = max(map(lambda x: x[0], text_sizes))
-        sum_over_y = max(sum(map(lambda x: x[1], text_sizes)), image_size[1])
+        sum_ = sum(map(lambda x: x[1], text_sizes))
+        if blit_with_item_image:
+            sum_over_y = max(sum_, image_size[1])
+        else:
+            sum_over_y = sum_
         three_margin = margin * 3
 
         self.width = max_between_x + image_size[0] + three_margin
         self.height = sum_over_y + margin * (len(text_to_blit) + 1)
 
         image = self.get_empty_image(self.width, self.height, item.item_rare_color)
-        image = self.blit_text_to_image(image, text_to_blit, margin, item.image)
+        if blit_with_item_image:
+            image = self.blit_text_with_image(image, text_to_blit, margin, item.image)
+        else:
+            image = self.blit_text_without_image(image, text_to_blit, margin)
         return image
 
-    def blit_text_to_image(self, image, text_to_blit, margin, item_image):
+    def blit_text_with_image(self, image, text_to_blit, margin, item_image):
         image_size = item_image.get_size()
         image.blit(item_image, [margin, self.height // 2 - image_size[1] // 2])
         current_y = margin
         for text in text_to_blit:
             image.blit(text, (margin * 2 + image_size[0], current_y))
+            current_y += margin + text.get_size()[1]
+        return image
+
+    def blit_text_without_image(self, image, text_to_blit, margin):
+        current_y = margin
+        for text in text_to_blit:
+            image.blit(text, (margin * 2, current_y))
             current_y += margin + text.get_size()[1]
         return image
 
@@ -138,6 +161,14 @@ class ItemLabel(IngameLabel):
         self.rect.y = int(y)
         self.update_lifetime()
 
+class ItemNameLabel(ItemLabel):
+
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, with_image=False, **kwargs)
+
+    def get_text_to_blit(self, item, font, color, italic_font):
+        self.item_name = font.render(item.name, True, color)
+        return [self.item_name]
 class LevelUpLabel(GameObject):
 
     def __init__(self, pos: Tuple[int, int], camera: Camera, game_config: GameConfig) -> None:

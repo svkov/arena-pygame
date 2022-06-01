@@ -1,4 +1,5 @@
 from src.game_object import GameObject
+from src.hud.ingame_label import ItemNameLabel
 from src.item.item_rare import ItemRare, rare_to_color, rare_to_name
 
 
@@ -14,9 +15,14 @@ class InventoryItem(GameObject):
 
     def update(self, *args, **kwargs):
         if self.owner is None:
+            self.spawn_item_name_label()
             return super().update(*args, **kwargs)
         self.rect.x = int(self.pos[0])
         self.rect.y = int(self.pos[1])
+
+    def spawn_item_name_label(self):
+        label = ItemNameLabel(self, self.camera.to_screen_coord(self.pos), self.camera)
+        self.groups.ui_objects.add(label)
 
     def update_zoom(self):
         if self.owner is None:
