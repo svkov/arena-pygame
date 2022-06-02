@@ -55,9 +55,8 @@ class IngameLabel(pygame.sprite.Sprite):
 
 class DamageLabel(IngameLabel):
 
-    def __init__(self, content: str, pos: Tuple[int, int], camera: Camera) -> None:
+    def __init__(self, content: str, pos: Tuple[int, int], camera: Camera, color=(255, 0, 0, 0)) -> None:
         font = pygame.font.SysFont(pygame.font.get_default_font(), 28)
-        color = (255, 0, 0, 0)
         pos = np.array(pos) + np.random.randint(30, 60, size=2)
         super().__init__(font, content, color, pos, camera)
 
