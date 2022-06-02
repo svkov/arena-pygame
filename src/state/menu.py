@@ -70,7 +70,7 @@ class MenuState:
             'LMB - attack \n' \
             'Mouse Wheel - zoom in and out \n' \
             'F - pick up items/interact \n' \
-            'Q - exit \n' \
+            'ESC - exit \n' \
             '\n'
         self.help_menu.add.label(help_content)
         self.help_menu.add.button('Back', self.to_main)
