@@ -13,7 +13,7 @@ class Game:
         self.high_scores = HighScores()
         self.fps = self.config.fps
         self.screen_resolution = self.config.screen_resolution
-        self.screen = pygame.display.set_mode(self.screen_resolution)
+        self.screen = pygame.display.set_mode(self.screen_resolution, pygame.SRCALPHA)
         self.sprites = SpriteLoader('assets')
         self.sprites.load()
         self.running = True
@@ -29,12 +29,12 @@ class Game:
             'game_over': menu,
         }
         self.go_to_menu()
-        self.fader = self.create_fader()
+        self.fader = self.create_menu_game_fader()
 
     def create_game_state(self):
         return GameState(self, self.screen_resolution, self.fps, self.sprites)
 
-    def create_fader(self):
+    def create_menu_game_fader(self):
         return Fader([self.states['menu'], self.states['game']], callback=self.set_game_state)
 
     def handle_input_keyboard(self):
@@ -60,7 +60,7 @@ class Game:
     def start_game(self):
         if self.states['game'] is None:
             self.states['game'] = self.create_game_state()
-            self.fader = self.create_fader()
+            self.fader = self.create_menu_game_fader()
         self.fader.next()
 
     def set_game_state(self):
@@ -80,3 +80,10 @@ class Game:
     def win(self):
         self.go_to_menu()
         self.init_level()
+
+    def restart_game(self):
+        game: GameState = self.states['game']
+        score = game.calculate_score()
+        self.high_scores.add('player', game.level_number, score)
+        self.states['game'] = None
+        self.start_game()

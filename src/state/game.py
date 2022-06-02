@@ -1,5 +1,6 @@
 import numpy as np
 import pygame
+import pygame_menu
 
 from src.core.camera import Camera
 from src.core.groups import GameStateGroups
@@ -29,6 +30,18 @@ class GameState:
         self.paused = False
         self.pause = PauseState(self, self.groups, self.hud, self.screen_resolution, self.pause_font)
         self.is_fading = False
+        self.init_game_over_menu()
+
+    def init_game_over_menu(self):
+        self.game_over_menu = pygame_menu.Menu(
+            width=self.screen_resolution[0] * 0.8,
+            height=self.screen_resolution[1] * 0.8,
+            theme=pygame_menu.themes.THEME_DEFAULT,
+            title='Game Over',
+        )
+        self.game_over_menu.add.label(f'Score: {self.calculate_score()}')
+        self.game_over_menu.add.button('Start new game', self.game.restart_game)
+        self.game_over_menu.add.button('To main menu', self.game.game_over)
 
     def calculate_score(self):
         return int(sum(self.player.kills.values()) + (self.level_number - 1) * 1000)
@@ -92,12 +105,17 @@ class GameState:
 
     def _update(self, screen, update_kwargs):
         if not self.player.is_alive and not self.is_fading:
-            self.game.game_over()
-            self.is_fading = True
+            self._update_game_over(screen, update_kwargs)
+            return
+            # self.game.game_over()
+            # self.is_fading = True
         if self.player.is_in_portal:
             self.clear_scene_for_next_level()
             self.level_number += 1
             self.setup_scene(keep_player=True)
+        self._update_and_draw(screen, update_kwargs)
+
+    def _update_and_draw(self, screen, update_kwargs):
         screen.fill((0, 0, 0))
         # self.groups.background_group.draw(screen)
         self.groups.update(update_kwargs)
@@ -110,6 +128,17 @@ class GameState:
 
     def _update_paused(self, *args, **kwargs):
         self.pause.update(*args, **kwargs)
+
+    def _update_game_over(self, screen, update_kwargs):
+        self._update_and_draw(screen, update_kwargs)
+        self._draw_game_over_menu(screen, update_kwargs['events'])
+
+    def _draw_game_over_menu(self, screen, events):
+        self.game_over_menu.update(events)
+        veil = pygame.surface.Surface(self.screen_resolution, pygame.SRCALPHA)
+        veil.fill((0, 0, 0, 128))
+        screen.blit(veil, (0, 0))
+        self.game_over_menu.draw(screen)
 
     def setup_object_randomly(self, background, radius, sprites, n_sample=15, sprite_name='cactus', image_size=None):
         if image_size is None:
