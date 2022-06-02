@@ -2,6 +2,7 @@ debug: true
 draw_enemy_attention: false
 draw_rects: false
 fps: 60
+last_player_name: player
 resolution_x: 1280
 resolution_y: 720
 spawn_enemies: true

@@ -12,6 +12,7 @@ class GameConfig:
         self.draw_rects = self.cfg['draw_rects']
         self.spawn_enemies = self.cfg['spawn_enemies']
         self.spawn_static = self.cfg['spawn_static']
+        self.last_player_name = self.cfg['last_player_name']
 
     def load_file(self):
         with open(self.path, "r") as stream:
@@ -33,5 +34,6 @@ class GameConfig:
             'debug': self.debug,
             'draw_rects': self.draw_rects,
             'spawn_enemies': self.spawn_enemies,
-            'spawn_static': self.spawn_static
+            'spawn_static': self.spawn_static,
+            'last_player_name': self.last_player_name
         }

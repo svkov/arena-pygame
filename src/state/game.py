@@ -41,7 +41,7 @@ class GameState:
         )
         self.game_over_menu.add.label(f'Score: {self.calculate_score()}')
         self.game_over_menu.add.label('Your name:')
-        self.player_name_widget = self.game_over_menu.add.text_input('', default='player')
+        self.player_name_widget = self.game_over_menu.add.text_input('', default=self.game.config.last_player_name)
         self.game_over_menu.add.button('Start new game', self.game.restart_game)
         self.game_over_menu.add.button('To main menu', self.game.game_over)
 

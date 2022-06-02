@@ -84,6 +84,10 @@ class Game:
     def restart_game(self):
         game: GameState = self.states['game']
         score = game.calculate_score()
-        self.high_scores.add(game.player_name, game.level_number, score)
+        new_player_name = game.player_name
+        if new_player_name != self.config.last_player_name:
+            self.config.last_player_name = new_player_name
+            self.config.save()
+        self.high_scores.add(new_player_name, game.level_number, score)
         self.states['game'] = None
         self.start_game()
