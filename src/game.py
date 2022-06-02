@@ -1,4 +1,5 @@
 import pygame
+from src.config.stats_config import StatsConfig
 from src.core.fader import Fader
 from src.core.high_score import HighScores
 from src.core.sprite_loader import SpriteLoader
@@ -16,6 +17,7 @@ class Game:
         self.screen = pygame.display.set_mode(self.screen_resolution, pygame.SRCALPHA)
         self.sprites = SpriteLoader('assets')
         self.sprites.load()
+        self.stats_config = StatsConfig('resources/stats.csv', self.sprites)
         self.running = True
         self.init_level()
         self.clock = pygame.time.Clock()
@@ -32,7 +34,7 @@ class Game:
         self.fader = self.create_menu_game_fader()
 
     def create_game_state(self):
-        return GameState(self, self.screen_resolution, self.fps, self.sprites)
+        return GameState(self, self.screen_resolution, self.fps, self.sprites, self.stats_config)
 
     def create_menu_game_fader(self):
         return Fader([self.states['menu'], self.states['game']], callback=self.set_game_state)

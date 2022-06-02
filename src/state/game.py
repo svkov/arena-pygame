@@ -7,13 +7,12 @@ from src.core.groups import GameStateGroups
 from src.core.spawner import Spawner
 from src.hud import HUD
 from src.config.level_config import LevelConfig, RandomLevelConfig
-from src.config.stats_config import StatsConfig
 from src.game_object.player import Player
 from src.game_object.static_object import StaticObject
 import gc
 
 class GameState:
-    def __init__(self, game, screen_resolution, fps, sprites) -> None:
+    def __init__(self, game, screen_resolution, fps, sprites, stats_config) -> None:
         self.game = game
         self.hud_font = pygame.font.SysFont(pygame.font.get_default_font(), 28)
         self.pause_font = pygame.font.SysFont(pygame.font.get_default_font(), 72)
@@ -21,7 +20,7 @@ class GameState:
         self.fps = fps
         self.sprites = sprites
         self.level_number = 1
-        self.stats_config = StatsConfig('resources/stats.csv', self.sprites)
+        self.stats_config = stats_config
         self.camera = Camera(0, 0, self.screen_resolution)
         self.groups = GameStateGroups()
         self.spawner = Spawner(self.groups, self.camera, self.stats_config, self.fps, self.sprites, self.game.config)
