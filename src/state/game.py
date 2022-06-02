@@ -9,7 +9,6 @@ from src.hud import HUD
 from src.config.level_config import LevelConfig, RandomLevelConfig
 from src.config.stats_config import StatsConfig
 from src.game_object.player import Player
-from src.state.pause import PauseState
 from src.game_object.static_object import StaticObject
 import gc
 
@@ -28,9 +27,9 @@ class GameState:
         self.spawner = Spawner(self.groups, self.camera, self.stats_config, self.fps, self.sprites, self.game.config)
         self.setup_scene()
         self.paused = False
-        self.pause = PauseState(self, self.groups, self.hud, self.screen_resolution, self.pause_font)
         self.is_fading = False
         self.init_game_over_menu()
+        self.init_pause_menu()
 
     def init_game_over_menu(self):
         self.game_over_menu = pygame_menu.Menu(
@@ -43,7 +42,27 @@ class GameState:
         self.game_over_menu.add.label('Your name:')
         self.player_name_widget = self.game_over_menu.add.text_input('', default=self.game.config.last_player_name)
         self.game_over_menu.add.button('Start new game', self.game.restart_game)
-        self.game_over_menu.add.button('To main menu', self.game.game_over)
+        self.game_over_menu.add.button('Exit to main menu', self.game.game_over)
+
+    def init_pause_menu(self):
+        self.pause_menu = pygame_menu.Menu(
+            width=self.screen_resolution[0] * 0.8,
+            height=self.screen_resolution[1] * 0.8,
+            theme=pygame_menu.themes.THEME_DEFAULT,
+            title='Pause'
+        )
+        self.pause_menu.add.label(f'Score: {self.calculate_score()}')
+        self.pause_menu.add.label(f'Realms closed: {self.level_number - 1}')
+        self.pause_menu.add.button('Continue', self.unpause)
+        self.pause_menu.add.button('Exit to main menu', self.game.game_over)
+
+    def unpause(self):
+        self.paused = False
+        self.pause_menu.disable()
+
+    def pause(self):
+        self.paused = True
+        self.pause_menu.enable()
 
     @property
     def player_name(self):
@@ -90,7 +109,7 @@ class GameState:
                 self.running = False
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_p:
-                    self.paused = not self.paused
+                    self.pause()
 
     def update(self, **kwargs):
         events = pygame.event.get()
@@ -107,14 +126,12 @@ class GameState:
         if not self.paused:
             self._update(screen, update_kwargs)
         else:
-            self._update_paused(screen=screen)
+            self._update_paused(screen, events)
 
     def _update(self, screen, update_kwargs):
         if not self.player.is_alive and not self.is_fading:
             self._update_game_over(screen, update_kwargs)
             return
-            # self.game.game_over()
-            # self.is_fading = True
         if self.player.is_in_portal:
             self.clear_scene_for_next_level()
             self.level_number += 1
@@ -123,7 +140,6 @@ class GameState:
 
     def _update_and_draw(self, screen, update_kwargs):
         screen.fill((0, 0, 0))
-        # self.groups.background_group.draw(screen)
         self.groups.update(update_kwargs)
         self.groups.handle_collisions(update_kwargs)
 
@@ -132,8 +148,10 @@ class GameState:
         self.groups.items_in_inventory.draw(screen)
         self.groups.items_description.draw(screen)
 
-    def _update_paused(self, *args, **kwargs):
-        self.pause.update(*args, **kwargs)
+    def _update_paused(self, screen, events):
+        self.pause_menu.update(events)
+        if self.pause_menu.is_enabled():
+            self.pause_menu.draw(screen)
 
     def _update_game_over(self, screen, update_kwargs):
         self._update_and_draw(screen, update_kwargs)
