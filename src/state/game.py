@@ -108,8 +108,11 @@ class GameState:
             if event.type == pygame.QUIT:
                 self.running = False
             if event.type == pygame.KEYUP:
-                if event.key == pygame.K_p:
-                    self.pause()
+                if event.key == pygame.K_ESCAPE:
+                    if self.paused:
+                        self.unpause()
+                    else:
+                        self.pause()
 
     def update(self, **kwargs):
         events = pygame.event.get()

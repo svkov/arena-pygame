@@ -44,7 +44,7 @@ class Game:
 
     def update(self):
         dt = self.clock.tick(self.fps)
-        self.handle_input_keyboard()
+        # self.handle_input_keyboard()
 
         update_kwargs = {
             'screen': self.screen,
