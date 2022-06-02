@@ -63,10 +63,17 @@ class Projectile(MovingObject):
         target_world_pos = target_world_pos - corrected_image_size / 2
         direction = target_world_pos - owner_obj.center_world
         speed_vector = direction * speed / np.linalg.norm(direction)
+
+        up_vec = np.array([0, 1])
+        angle_rad = np.arccos(speed_vector @ up_vec / np.linalg.norm(speed_vector))
+        angle_deg = np.rad2deg(angle_rad)
+        if target_pos[0] < owner_obj.center_screen[0]:
+            angle_deg = -angle_deg
         return cls(owner_obj.center_world,
                    speed_vector,
                    image=image,
-                   image_size=image_size,
+                   image_size=corrected_image_size,
                    owner=owner_obj,
                    camera=camera,
-                   game_config=config)
+                   game_config=config,
+                   angle=angle_deg)

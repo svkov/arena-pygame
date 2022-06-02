@@ -89,7 +89,8 @@ class Player(Actor):
     def shoot(self):
         mouse_pos = pygame.mouse.get_pos()
         p = Projectile.shoot(self, mouse_pos, self.camera, self.projectile_image,
-                             speed=self.stats.projectile_speed, config=self.game_config)
+                             speed=self.stats.projectile_speed, config=self.game_config,
+                             image_size=(64, 64))
         self.groups.spawn_player_projectile(p)
         self.cooldowns['shoot'].reset_counter()
         self.set_attack_animation_state(mouse_pos)

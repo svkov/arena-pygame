@@ -1,6 +1,6 @@
 name;image;image_size_x;image_size_y;projectile_image;radius;base_hp;base_atk;strength;intelligence;agility;defense;speed
 skeleton;skeleton;128;128;snow;;10;10;1;0;1;1;10
-player;knight;128;128;snow;;10;10;10;0;10;0;10
+player;knight;128;128;sword_projectile;;10;10;10;0;10;0;10
 vampire;vampire;128;128;snow;;30;20;1;0;5;1;15
 background;background_tile;384;384;;3500;;;;;;;
 wall_without_contour;wall_1;768;768;;;;;;;;;
