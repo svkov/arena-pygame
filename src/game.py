@@ -71,8 +71,7 @@ class Game:
 
     def game_over(self):
         game: GameState = self.states['game']
-        score = game.calculate_score()
-        self.high_scores.add('player', game.level_number, score)
+        self.update_high_score(game)
         self.states['game'] = None
         self.fader.next()
         self.go_to_menu()
@@ -83,11 +82,13 @@ class Game:
 
     def restart_game(self):
         game: GameState = self.states['game']
-        score = game.calculate_score()
+        self.update_high_score(game)
+        self.states['game'] = None
+        self.start_game()
+
+    def update_high_score(self, game):
         new_player_name = game.player_name
         if new_player_name != self.config.last_player_name:
             self.config.last_player_name = new_player_name
             self.config.save()
-        self.high_scores.add(new_player_name, game.level_number, score)
-        self.states['game'] = None
-        self.start_game()
+        self.high_scores.add(new_player_name, game.level_number, game.calculate_score())
