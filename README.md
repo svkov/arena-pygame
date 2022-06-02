@@ -2,7 +2,9 @@
 
 Kill undead on arena, gain experience and find powerfull equipment.
 
-# Build & run
+![screenshot](assets/arena_screenshot.png)
+
+## Build & run
 
 There are two ways to run the game:
 
@@ -11,7 +13,7 @@ There are two ways to run the game:
 
 Link to built app will be soon
 
-## Run from source code
+### Run from source code
 
 If you have non-Windows OS, then it's your way.
 
@@ -29,7 +31,7 @@ You need [Python 3.9](https://www.python.org/downloads/) to be installed on your
 
 `python app.py`
 
-## Download built exe file and run it
+### Download built exe file and run it
 
 Work only on Windows.
 
