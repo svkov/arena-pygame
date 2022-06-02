@@ -37,14 +37,8 @@ class Game:
     def create_menu_game_fader(self):
         return Fader([self.states['menu'], self.states['game']], callback=self.set_game_state)
 
-    def handle_input_keyboard(self):
-        keyboard = pygame.key.get_pressed()
-        if keyboard[pygame.K_ESCAPE]:
-            self.running = False
-
     def update(self):
         dt = self.clock.tick(self.fps)
-        # self.handle_input_keyboard()
 
         update_kwargs = {
             'screen': self.screen,

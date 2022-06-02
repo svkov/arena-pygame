@@ -95,10 +95,17 @@ class MenuState:
             if resolution == self.screen_resolution:
                 return index
 
+    def handle_events(self, events):
+        for event in events:
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_ESCAPE:
+                    self.game.running = False
+
     def update(self, *args, **kwargs):
         events = pygame.event.get()
         screen = kwargs['screen']
         screen.fill((0, 0, 0))
+        self.handle_events(events)
         self.current_menu.update(events)
         self.current_menu.draw(screen)
 
