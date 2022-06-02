@@ -40,8 +40,14 @@ class GameState:
             title='Game Over',
         )
         self.game_over_menu.add.label(f'Score: {self.calculate_score()}')
+        self.game_over_menu.add.label('Your name:')
+        self.player_name_widget = self.game_over_menu.add.text_input('', default='player')
         self.game_over_menu.add.button('Start new game', self.game.restart_game)
         self.game_over_menu.add.button('To main menu', self.game.game_over)
+
+    @property
+    def player_name(self):
+        return self.player_name_widget.get_value()
 
     def calculate_score(self):
         return int(sum(self.player.kills.values()) + (self.level_number - 1) * 1000)
