@@ -14,8 +14,10 @@ class InventoryItem(GameObject):
         self.is_using_now = False
 
     def update(self, *args, **kwargs):
+        show_items = kwargs.get('show_items', False)
         if self.owner is None:
-            self.spawn_item_name_label()
+            if show_items:
+                self.spawn_item_name_label()
             return super().update(*args, **kwargs)
         self.rect.x = int(self.pos[0])
         self.rect.y = int(self.pos[1])

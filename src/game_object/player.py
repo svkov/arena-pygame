@@ -45,6 +45,7 @@ class Player(Actor):
         return new_player
 
     def update(self, *args, **kwargs) -> None:
+        self.show_items = kwargs.get('show_items', False)
         events = kwargs.get('events', [])
         self.input_handler.handle_input(events)
         super().update(*args, **kwargs)

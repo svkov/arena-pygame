@@ -118,12 +118,14 @@ class GameState:
         events = pygame.event.get()
         self.handle_events(events)
         screen = kwargs['screen']
+        show_items = pygame.key.get_pressed()[pygame.K_LALT]
 
         update_kwargs = {
             **kwargs,
             'camera': self.camera,
             'groups': self.groups,
-            'events': events
+            'events': events,
+            'show_items': show_items
         }
 
         if not self.paused:
