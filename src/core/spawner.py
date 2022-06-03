@@ -24,13 +24,15 @@ class Spawner:
                  stats_config: StatsConfig,
                  fps,
                  sprites,
-                 game_config: GameConfig) -> None:
+                 game_config: GameConfig,
+                 background_tiles=None) -> None:
         self.camera = camera
         self.fps = fps
         self.sprites = sprites
         self.groups = groups
         self.stats_config = stats_config
         self.game_config = game_config
+        self.redefine_background(background_tiles)
         self.shared_args = {
             'camera': self.camera,
             'fps': self.fps,
@@ -52,6 +54,16 @@ class Spawner:
             'portal': self.portal,
             'soul_stone': self.soul_stone
         }
+
+    def redefine_background(self, background_tiles):
+        if background_tiles:
+            for tile in background_tiles:
+                tile.kill()
+                self.groups.spawn_background(tile)
+                self.groups.visible_background_group.add(tile)
+            self.background_tiles = background_tiles
+        else:
+            self.background_tiles = []
 
     def spawn_object(self, name, pos):
         func = self._map_object_name_to_create_function[name]
@@ -170,27 +182,33 @@ class Spawner:
         return static
 
     def background(self, pos):
-        kwargs = self.generate_static_object_kwargs('background')
         center = np.array([3500, 3500])
         outer_arena_rect, inner_arena_rect, arena = self.setup_arena(center, 3500)
+        if len(self.background_tiles) > 0:
+            self.redefine_background(self.background_tiles)
+            return self.background_tiles
+        kwargs = self.generate_static_object_kwargs('background')
+
         center_background = Background(center, **kwargs)
         center_background.radius = 3500
-        background_tiles = []
         for i in range(20):
             for j in range(20):
-                new_pos = [
-                    pos[0] + i * (kwargs['image_size_x'] - 5),
-                    pos[1] + j * (kwargs['image_size_y'] - 5)
-                ]
-                background_i = Background(new_pos, **kwargs)
-                background_i.radius = background_i.image_size[0] // 2
-                collide_inner = pygame.sprite.collide_circle(background_i, center_background)
-                distance = np.linalg.norm(np.array(background_i.center_world) - center)
-                if distance < kwargs['radius'] or collide_inner:
-                    self.groups.spawn_background(background_i)
-                    self.groups.visible_background_group.add(background_i)
-                    background_tiles.append(background_i)
-        return background_tiles
+                self.try_to_add_background(i, j, kwargs, pos, center_background, center)
+        return self.background_tiles
+
+    def try_to_add_background(self, i, j, kwargs, pos, center_background, center):
+        new_pos = [
+            pos[0] + i * (kwargs['image_size_x'] - 5),
+            pos[1] + j * (kwargs['image_size_y'] - 5)
+        ]
+        background_i = Background(new_pos, **kwargs)
+        background_i.radius = background_i.image_size[0] // 2
+        collide_inner = pygame.sprite.collide_circle(background_i, center_background)
+        distance = np.linalg.norm(np.array(background_i.center_world) - center)
+        if distance < kwargs['radius'] or collide_inner:
+            self.groups.spawn_background(background_i)
+            self.groups.visible_background_group.add(background_i)
+            self.background_tiles.append(background_i)
 
     def setup_arena(self, center, radius):
         outer_left = center[0]

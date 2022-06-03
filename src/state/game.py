@@ -11,6 +11,7 @@ from src.game_object.player import Player
 from src.game_object.static_object import StaticObject
 import gc
 
+
 class GameState:
     def __init__(self, game, screen_resolution, fps, sprites, stats_config) -> None:
         self.game = game
@@ -88,12 +89,14 @@ class GameState:
         self.player.hud = self.hud
 
     def clear_scene(self):
+        background = self.spawner.background_tiles
         del self.camera
         del self.groups
         del self.spawner
         self.camera = Camera(0, 0, self.screen_resolution)
         self.groups = GameStateGroups()
-        self.spawner = Spawner(self.groups, self.camera, self.stats_config, self.fps, self.sprites, self.game.config)
+        self.spawner = Spawner(self.groups, self.camera, self.stats_config, self.fps,
+                               self.sprites, self.game.config, background)
         # Run GC to collect old groups and spawner (they have cycles in player object and somewhere else)
         # If not to run, app will alloc more memory than needed
         # There is no memory leak, but it works better using GC

@@ -1,8 +1,9 @@
 import pygame
 from src.game import Game
-
+import logging
 
 def main():
+    logging.basicConfig(level=logging.DEBUG)
     pygame.init()
     pygame.display.set_caption("Arena")
     pygame.font.init()

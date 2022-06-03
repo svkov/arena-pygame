@@ -1,5 +1,8 @@
 
+import logging
 from typing import List, Tuple
+from functools import wraps
+from time import time
 import pygame
 
 def crop_spritesheet_by_image_size(image: pygame.surface.Surface,
@@ -54,3 +57,16 @@ def preresize_image_list(image_list, camera, default_image_size):
             image_list_.append(pygame.transform.scale(image, new_image_size))
         image_sheet_by_zoom[zoom] = image_list_
     return image_sheet_by_zoom
+
+def timeit(f, show_args=False):
+    @wraps(f)
+    def wrap(*args, **kw):
+        ts = time()
+        result = f(*args, **kw)
+        te = time()
+        if show_args:
+            logging.info('func:%r args:[%r, %r] took: %2.4f sec' % (f.__name__, args, kw, te-ts))
+        else:
+            logging.info('func:%r took: %2.4f sec' % (f.__name__, te-ts))
+        return result
+    return wrap
